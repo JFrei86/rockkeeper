@@ -1,4 +1,4 @@
-package sqlite;
+package transcend.rockeeper.sqlite;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -6,7 +6,7 @@ import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import data.*;
+import transcend.rockeeper.data.*;
 
 @SuppressLint("NewApi")
 public class DatabaseHelper extends SQLiteOpenHelper {

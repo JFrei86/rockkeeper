@@ -1,4 +1,4 @@
-package data;
+package transcend.rockeeper.data;
 
 public class GoalContract extends Contract {
 

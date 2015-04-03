@@ -1,11 +1,11 @@
-package activities;
+package transcend.rockeeper.activities;
 
 import activities.rockeeper.R;
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Menu;
+//import android.view.Menu;
 
 public class Splash extends ActionBarActivity {
 
@@ -14,8 +14,8 @@ public class Splash extends ActionBarActivity {
 
     /** Called when the activity is first created. */
     @Override
-    public void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
         /* New Handler to start the Menu-Activity 
@@ -24,7 +24,7 @@ public class Splash extends ActionBarActivity {
             @Override
             public void run() {
                 /* Create an Intent that will start the Menu-Activity. */
-                Intent mainIntent = new Intent(Splash.this,Menu.class);
+                Intent mainIntent = new Intent(Splash.this, MainActivity.class);
                 Splash.this.startActivity(mainIntent);
                 Splash.this.finish();
             }
