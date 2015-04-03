@@ -1,6 +1,6 @@
-package transcend.rockeeper.activities;
+package activities;
 
-import transcend.rockeeper.R;
+import activities.rockeeper.R;
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
 import android.os.Bundle;

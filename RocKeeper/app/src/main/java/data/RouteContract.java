@@ -1,4 +1,4 @@
-package transcend.rockeeper.data;
+package data;
 
 import android.provider.BaseColumns;
 

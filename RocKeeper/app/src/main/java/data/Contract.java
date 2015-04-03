@@ -1,4 +1,4 @@
-package transcend.rockeeper.data;
+package data;
 
 import java.util.Date;
 import java.util.Iterator;
