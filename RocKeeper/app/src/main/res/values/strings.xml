@@ -12,5 +12,6 @@
     <string name="title_section2">Dashboard</string>
     <string name="title_section3">Stats</string>
     <string name="title_section4">Goals</string>
+    <string name="title_activity_first_time_page">FirstTimePage</string>
 
 </resources>
