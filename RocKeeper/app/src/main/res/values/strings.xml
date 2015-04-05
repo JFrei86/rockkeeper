@@ -5,6 +5,8 @@
     <string name="minVersion">11</string>
     <string name="targetVersion">22</string>
     <string name="title_activity_splash">Splash</string>
+    <string name="welcome">Welcome to RockKeeper!</string>
+    <string name="fav_location">Favorite climbing location</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
@@ -13,5 +15,6 @@
     <string name="title_section3">Stats</string>
     <string name="title_section4">Goals</string>
     <string name="title_activity_first_time_page">FirstTimePage</string>
+    <string name="submit">Submit</string>
 
 </resources>
