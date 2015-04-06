@@ -34,13 +34,13 @@ public abstract class Contract implements BaseColumns{
 	//Create table SQL Command String
 	public String createTable() {
 		String command = "CREATE TABLE " + tableName() + " (" +
-		Contract._ID + " INTEGER PRIMARY KEY,";
+		Contract._ID + " " + INT + " PRIMARY KEY ";
 		Iterator<String> i = colTypes.keySet().iterator();
 		while(i.hasNext()){
 			String key = i.next();
-			command += key + " " + colTypes.get(key) + ", ";
+			command += ", " + key + " " + colTypes.get(key);
 		}
-		return command + ");";
+		return command + "); ";
 	}
 	
 	//Drop table SQL Command String

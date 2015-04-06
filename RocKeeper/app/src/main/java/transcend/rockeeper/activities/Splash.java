@@ -1,8 +1,10 @@
 package transcend.rockeeper.activities;
 
+import transcend.rockeeper.sqlite.DatabaseHelper;
 import activities.rockeeper.R;
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 //import android.view.Menu;
@@ -18,6 +20,10 @@ public class Splash extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        /** Creating database if first time */
+        DatabaseHelper dbh = new DatabaseHelper(this, null);
+        SQLiteDatabase db = dbh.getWritableDatabase();
+        
         /* New Handler to start the Menu-Activity 
          * and close this Splash-Screen after some seconds.*/
         new Handler().postDelayed(new Runnable(){

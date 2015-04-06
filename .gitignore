@@ -27,3 +27,6 @@ proguard/
 
 *~
 .gitignore
+*.classpath
+RocKeeper/app/src/main/.project
+*.prefs
