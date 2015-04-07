@@ -53,7 +53,8 @@
         android:text="Submit"
         android:id="@+id/submit"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="launchMainPage"/>
 
 
 

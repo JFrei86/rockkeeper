@@ -5,6 +5,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Spinner;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.view.View;
+import android.content.Intent;
 
 
 public class FirstTimePage extends ActionBarActivity {
@@ -13,6 +18,11 @@ public class FirstTimePage extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_time_page);
+
+        Spinner spinner = (Spinner)findViewById(R.id.experience_level);
+        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(this, R.array.experience_array, android.R.layout.simple_spinner_item);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(arrayAdapter);
     }
 
 
@@ -36,5 +46,11 @@ public class FirstTimePage extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void launchMainPage(View view) {
+        Intent mainIntent = new Intent(this, MainActivity.class);
+        this.startActivity(mainIntent);
+        this.finish();
     }
 }

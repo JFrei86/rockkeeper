@@ -18,4 +18,10 @@
     <string name="title_activity_create">Create</string>
     <string name="submit">Submit</string>
 
+    <string-array name="experience_array">
+        <item>Beginner</item>
+        <item>Intermediate</item>
+        <item>Expert</item>
+    </string-array>
+
 </resources>
