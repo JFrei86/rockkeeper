@@ -6,11 +6,11 @@
         android:minSdkVersion="11"
         android:targetSdkVersion="22" />
 
-    <android:uses-permission
+    <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <android:uses-permission
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
 
@@ -38,7 +38,7 @@
             android:label="@string/title_activity_first_time_page" >
         </activity>
         <activity
-            android:name=".CreateActivity"
+            android:name="transcend.rockeeper.activities.CreateActivity"
             android:label="@string/title_activity_create" >
         </activity>
     </application>
