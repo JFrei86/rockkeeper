@@ -10,49 +10,57 @@
     android:id="@+id/section_label">
 
     <TextView
+        android:id="@+id/welcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Welcome to RockKeeper!"
-        android:id="@+id/welcome"
+        android:text="@string/welcome"
         android:layout_centerHorizontal="true"
         android:textColor="#FFFFFF" />
 
     <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:text="Name"
-        android:ems="10"
         android:id="@+id/user_name"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/first_time_page_layout_height"
+        android:layout_marginLeft="@dimen/first_time_page_margin"
+        android:layout_marginRight="@dimen/first_time_page_margin"
+        android:layout_marginTop="40dp"
         android:layout_below="@id/welcome"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="37dp" />
+        android:paddingLeft="5dp"
+        android:background="#FFFFFF"
+        android:inputType="textPersonName"
+        android:textSize="@dimen/first_time_page_text_size"
+        android:hint="@string/name_hint" />
 
     <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/experience_level"
-        android:layout_below="@id/user_name"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/first_time_page_margin"
+        android:layout_marginRight="@dimen/first_time_page_margin"
+        android:layout_marginTop="15dp"
+        android:layout_below="@id/user_name" />
 
     <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/fav_location"
-        android:text="Favorite climbing location"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/first_time_page_layout_height"
+        android:layout_marginLeft="@dimen/first_time_page_margin"
+        android:layout_marginRight="@dimen/first_time_page_margin"
+        android:layout_marginTop="15dp"
+        android:paddingLeft="5dp"
+        android:background="#FFFFFF"
+        android:textSize="@dimen/first_time_page_text_size"
         android:layout_below="@id/experience_level"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:hint="@string/fav_location_hint" />
 
     <Button
+        android:id="@+id/submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Submit"
-        android:id="@+id/submit"
-        android:layout_centerVertical="true"
+        android:layout_marginTop="30dp"
+        android:layout_below="@id/fav_location"
+        android:text="@string/submit"
         android:layout_centerHorizontal="true"
         android:onClick="launchMainPage"/>
 

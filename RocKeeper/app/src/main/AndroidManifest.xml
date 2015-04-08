@@ -31,11 +31,11 @@
         </activity>
         <activity
             android:name="transcend.rockeeper.activities.MainActivity"
-            android:label="@string/title_activity_main" >
+            android:label="@string/title_activity_main">
         </activity>
         <activity
             android:name="transcend.rockeeper.activities.FirstTimePage"
-            android:label="@string/title_activity_first_time_page" >
+            android:label="@string/title_activity_first_time_page">
         </activity>
         <activity
             android:name="transcend.rockeeper.activities.CreateActivity"
