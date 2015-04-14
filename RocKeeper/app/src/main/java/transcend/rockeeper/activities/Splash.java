@@ -14,7 +14,7 @@ import android.os.Handler;
 public class Splash extends ActionBarActivity {
 
 	/** Duration of wait **/
-    private final int SPLASH_DISPLAY_LENGTH = 1000;
+    private final int SPLASH_DISPLAY_LENGTH = 2000;
 
     /** Creating database if first time */
     DatabaseHelper dbh = new DatabaseHelper(this, null);

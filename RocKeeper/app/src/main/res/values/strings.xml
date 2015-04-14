@@ -31,5 +31,8 @@
     <string name="title_activity_create">Create</string>
     <string name="missingFields">Uh Oh! Some fields we need are still blank!</string>
 
+    <!-- Fragments -->
+    <string name="dashboard_placeholder">This is the RocKeeper dashboard.</string>
+
 
 </resources>

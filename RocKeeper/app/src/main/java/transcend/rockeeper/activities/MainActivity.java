@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import activities.rockeeper.R;
+//import transcend.rockeeper.activities.DashboardFragment;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener
 {
@@ -50,7 +51,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        // Create the adapter that will return a fragment for each of the three
+
+        // Create the adapter that will return a fragment for each of the four
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
@@ -143,9 +145,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         @Override
         public Fragment getItem(int position)
         {
+            if( position == 1 )
+                return DashboardFragment.newInstance( );
+            else
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+                return PlaceholderFragment.newInstance(position + 1);
         }
 
         @Override
