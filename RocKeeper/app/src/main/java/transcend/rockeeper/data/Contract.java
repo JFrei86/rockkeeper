@@ -18,6 +18,7 @@ public abstract class Contract implements BaseColumns{
 	public static final String NUM = "NUM";
 	public static final String REAL = "REAL";
 	
+	public int id = 0;
 	
 	protected Map<String, String> colTypes = new TreeMap<String, String>();
 	
@@ -34,7 +35,7 @@ public abstract class Contract implements BaseColumns{
 	//Create table SQL Command String
 	public String createTable() {
 		String command = "CREATE TABLE " + tableName() + " (" +
-		Contract._ID + " " + INT + " PRIMARY KEY ";
+		Contract._ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL";
 		Iterator<String> i = colTypes.keySet().iterator();
 		while(i.hasNext()){
 			String key = i.next();
@@ -50,6 +51,8 @@ public abstract class Contract implements BaseColumns{
 	
 	//Put a new document in the database
 	public long insert(Unit d, SQLiteDatabase db){
+		d.put(CREATED_ON, new Date().toString());
+		d.put(MODIFIED_ON, new Date().toString());
 		ContentValues values = new ContentValues();
 		Iterator<String> i = d.keySet().iterator();
 		while(i.hasNext()){
@@ -78,6 +81,7 @@ public abstract class Contract implements BaseColumns{
 	}
 	
 	public int update(Unit d, String where, String[] args, SQLiteDatabase db){
+		d.put(Contract.MODIFIED_ON, new Date().toString());
 		ContentValues values = new ContentValues();
 		Iterator<String> i = d.keySet().iterator();
 		while(i.hasNext()){
@@ -102,12 +106,10 @@ public abstract class Contract implements BaseColumns{
 		public Set<String> keySet() { return data.keySet(); }
 		public String get(String key) { return data.get(key); }
 		public void put(String col, String val) { data.put(col, val); }
-		public void put(String col, int val){ put(col, "" + val); }
-		public void put(String col, double val){ put(col, "" + val); }
+		public void put(String col, int val) { put(col, "" + val); }
+		public void put(String col, double val) { put(col, "" + val); }
 		
 		public Unit(){
-			put(CREATED_ON, new Date().toString());
-			put(MODIFIED_ON, new Date().toString());
 		}
 	}
 }

@@ -13,20 +13,20 @@ import transcend.rockeeper.data.*;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 	public static final String DATABASE_NAME = "rockeeper.db";
-	public static final int DB_VERSION = 2;
+	public static final int DB_VERSION = 7;
 
-	public static final RouteContract routes = new RouteContract();
-	public static final GoalContract goals = new GoalContract();
-	public static final NoteContract notes = new NoteContract();
-	public static final LocationContract locations = new LocationContract();
-	public static final SettingsContract settings = new SettingsContract();
+	public final RouteContract routes = new RouteContract();
+	public final GoalContract goals = new GoalContract();
+	public final NoteContract notes = new NoteContract();
+	public final LocationContract locations = new LocationContract();
+	public final SettingsContract settings = new SettingsContract();
 	
 	
 	public DatabaseHelper(Context context, CursorFactory c){
 		super(context, DATABASE_NAME, c, DB_VERSION, new DatabaseErrorHandler(){
 			public void onCorruption(SQLiteDatabase dbObj) {
-				Log.e("Splash.java:29", "Corruption detected: " + dbObj.getPath());
-				Log.e("Splash.java:30", "Closing Database");
+				Log.e("DBH.java", "Corruption detected: " + dbObj.getPath());
+				Log.e("DBH.java", "Closing Database");
 				dbObj.close();
 			}
 		});

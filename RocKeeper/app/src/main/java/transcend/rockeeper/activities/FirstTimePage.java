@@ -1,5 +1,9 @@
 package transcend.rockeeper.activities;
 
+import transcend.rockeeper.data.LocationContract.Location;
+import transcend.rockeeper.data.SettingsContract.Settings;
+import transcend.rockeeper.sqlite.DatabaseHelper;
+import transcend.rockeeper.sqlite.Transaction;
 import activities.rockeeper.R;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -7,9 +11,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.TextView;
 import android.view.View;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 
 
 public class FirstTimePage extends ActionBarActivity {
@@ -48,7 +53,33 @@ public class FirstTimePage extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void onBackPressed(){}
+    
     public void launchMainPage(View view) {
+    	final DatabaseHelper dbh = new DatabaseHelper(this, null);
+    	SQLiteDatabase db = dbh.getWritableDatabase();
+    	
+    	final String location = ((TextView) this.findViewById(R.id.fav_location)).getText().toString();
+    	final String name = ((TextView) this.findViewById(R.id.user_name)).getText().toString();
+    	final Object level = ((Spinner) this.findViewById(R.id.experience_level)).getSelectedItem();
+    	
+    	if(location.equals("") || name.equals("") || level == null){
+    		this.findViewById(R.id.missingFirstFields).setVisibility(View.VISIBLE);
+    		return;
+    	}
+    	
+    	Transaction t = new Transaction(db){
+			public void task(SQLiteDatabase db) {
+				Settings s = dbh.settings.build(name, level.toString());
+		    	Location l = dbh.locations.build(location);
+		    	dbh.locations.insert(l, db);
+		    	dbh.settings.insert(s, db);
+			}
+			public void onComplete(){}
+    	};
+    	
+    	t.run(true, true);
+    	
         Intent mainIntent = new Intent(this, MainActivity.class);
         this.startActivity(mainIntent);
         this.finish();

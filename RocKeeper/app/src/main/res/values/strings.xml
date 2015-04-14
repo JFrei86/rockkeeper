@@ -29,6 +29,7 @@
     <string name="title_section4">Goals</string>
     <string name="title_activity_first_time_page">RocKeeper</string>
     <string name="title_activity_create">Create</string>
+    <string name="missingFields">Uh Oh! Some fields we need are still blank!</string>
 
 
 </resources>

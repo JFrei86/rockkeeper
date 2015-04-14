@@ -17,6 +17,18 @@
         android:text="@string/welcome"
         android:layout_centerHorizontal="true"
         android:textColor="#FFFFFF" />
+    
+    <TextView
+        android:id="@+id/missingFirstFields"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="25dp"
+        android:text="@string/missingFields"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#FFFFFF"
+        android:textSize="@dimen/abc_text_size_caption_material"
+        android:visibility="invisible" />
 
     <EditText
         android:id="@+id/user_name"

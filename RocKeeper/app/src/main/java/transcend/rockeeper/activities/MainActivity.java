@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
@@ -17,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import activities.rockeeper.R;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener
@@ -37,6 +37,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      * The {@link ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
+    
+    public void onBackPressed(){}
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
