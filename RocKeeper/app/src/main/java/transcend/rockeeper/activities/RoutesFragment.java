@@ -1,13 +1,23 @@
 package transcend.rockeeper.activities;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import transcend.rockeeper.data.Contract.Unit;
+import transcend.rockeeper.data.RouteContract;
+import transcend.rockeeper.data.RouteContract.Route;
+import transcend.rockeeper.sqlite.DatabaseHelper;
+import transcend.rockeeper.sqlite.Transaction;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import activities.rockeeper.R;
 
 /**
@@ -19,31 +29,30 @@ import activities.rockeeper.R;
  * create an instance of this fragment.
  */
 public class RoutesFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+	
+	private final int BATCH = 10;
+	private static final String ARG_PARAM1 = "locId";
+    
+	private String mParam1;
+    private List<Route> routes = new ArrayList<Route>();
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    private DatabaseHelper dbh = new DatabaseHelper(this.getActivity(), null);
+    private SQLiteDatabase db;
+    
     private OnFragmentInteractionListener mListener;
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param loc_id An INTEGER (long) id for a location in the database. 
+     * This is used to retrieve all routes for an specific location
      * @return A new instance of fragment RoutesFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static RoutesFragment newInstance(String param1, String param2) {
+    public static RoutesFragment newInstance(long loc_id) {
         RoutesFragment fragment = new RoutesFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM1, loc_id + "");
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,11 +66,30 @@ public class RoutesFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            long loc_id = Long.parseLong(mParam1);
+            db = dbh.getWritableDatabase();
+            getRoutes(loc_id);
         }
     }
 
-    @Override
+    private void getRoutes(final long loc_id) {
+		Transaction t = new Transaction(db){
+			public void task(SQLiteDatabase db) {
+				Cursor c = dbh.routes.query(null, RouteContract.LOCATION + "=" + loc_id, null, RouteContract.DIFFICULTY, true, null, db);
+				while(!c.isAfterLast()){
+					for(int i = 0; i < BATCH && !c.isAfterLast(); i++){
+						c.moveToNext();
+						routes.add(dbh.routes.build(c));
+					}
+				}
+			}
+			public void onComplete(){Log.i("RoutesFragment", "Routes Loaded.");}
+			public void onProgressUpdate(Unit... data) {}
+		};
+		t.run(true, true);
+	}
+
+	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment

@@ -72,8 +72,11 @@ public abstract class Contract implements BaseColumns{
 		return db.insert(tableName(), null, values);
 	}
 	
-	public Cursor query(String[] retrieve, String where, String[] args, String sortBy, boolean descending, int limit, SQLiteDatabase db){
-		return db.query(tableName(), retrieve, where, args, null, null, sortBy + ((descending)?" DESC":" ASC"), "" + limit);
+	public Cursor query(String[] retrieve, String where, String[] args, String sortBy, boolean descending, Integer limit, SQLiteDatabase db){
+		if(limit != null)
+			return db.query(tableName(), retrieve, where, args, null, null, sortBy + ((descending)?" DESC":" ASC"), limit.toString());
+		else
+			return db.query(tableName(), retrieve, where, args, null, null, sortBy + ((descending)?" DESC":" ASC"), null);
 	}
 	
 	public void delete(String where, String[] args, SQLiteDatabase db){
@@ -108,6 +111,7 @@ public abstract class Contract implements BaseColumns{
 		public void put(String col, String val) { data.put(col, val); }
 		public void put(String col, int val) { put(col, "" + val); }
 		public void put(String col, double val) { put(col, "" + val); }
+		public void remove(String col) { data.remove(col); }
 		
 		public Unit(){
 		}

@@ -1,9 +1,10 @@
 package transcend.rockeeper.sqlite;
 
+import transcend.rockeeper.data.Contract.Unit;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 
-public abstract class Transaction extends AsyncTask<Boolean, Void, Void>{
+public abstract class Transaction extends AsyncTask<Boolean, Unit, Void>{
 
 	private SQLiteDatabase db;
 	public Transaction(SQLiteDatabase db) {this.db = db;}
@@ -35,6 +36,7 @@ public abstract class Transaction extends AsyncTask<Boolean, Void, Void>{
 		runHelper(exclusive[0]);
 		return null;
 	}
+	public abstract void onProgressUpdate(Unit... data);
 	public void onPostExecute(Void foo){
 		onComplete();
 		return;

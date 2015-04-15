@@ -1,5 +1,6 @@
 package transcend.rockeeper.activities;
 
+import transcend.rockeeper.data.Contract.Unit;
 import transcend.rockeeper.data.LocationContract.Location;
 import transcend.rockeeper.data.SettingsContract.Settings;
 import transcend.rockeeper.sqlite.DatabaseHelper;
@@ -76,6 +77,7 @@ public class FirstTimePage extends ActionBarActivity {
 		    	dbh.settings.insert(s, db);
 			}
 			public void onComplete(){}
+			public void onProgressUpdate(Unit... data){}
     	};
     	
     	t.run(true, true);
