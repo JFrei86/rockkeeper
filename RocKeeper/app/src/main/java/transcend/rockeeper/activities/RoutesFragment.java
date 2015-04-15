@@ -26,14 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import activities.rockeeper.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link RoutesFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link RoutesFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class RoutesFragment extends Fragment {
 	
 	private final int BATCH = 10;
@@ -86,8 +79,10 @@ public class RoutesFragment extends Fragment {
         
         
     }
-    public void onResume(){
-    	super.onResume();
+
+    @Override
+    public void onActivityCreated( Bundle savedInstanceState ){
+    	super.onActivityCreated( savedInstanceState );
     	listview = (ListView) this.getActivity().findViewById(R.id.listview);
         listview.setAdapter( new RouteListAdapter( this.getActivity(), routes ));
     }
@@ -96,11 +91,12 @@ public class RoutesFragment extends Fragment {
 		Transaction t = new Transaction(db){
 			public void task(SQLiteDatabase db) {
 				Cursor c = dbh.routes.query(null, RouteContract.LOCATION + "=" + loc_id, null, RouteContract.DIFFICULTY, true, null, db);
-				while(!c.isLast()){
-					for(int i = 0; i < BATCH && !c.isAfterLast(); i++){
-						c.moveToNext();
+                c.moveToFirst();
+				while(!c.isAfterLast()){
+					//for(int i = 0; i < BATCH && !c.isAfterLast(); i++){
 						routes.add(dbh.routes.build(c));
-					}
+                        c.moveToNext();
+					//}
 				}
 			}
 			public void onComplete(){Log.i("RoutesFragment", "Routes Loaded.");}
@@ -212,19 +208,19 @@ public class RoutesFragment extends Fragment {
                 vi = inflater.inflate( R.layout.row, null );
 
             /* Handle displaying difficulty, color label, route name, location, etc. */
-            TextView diffLevel = (TextView)parent.findViewById( R.id.DifficultyLevel );
+            TextView diffLevel = (TextView)vi.findViewById( R.id.DifficultyLevel );
             diffLevel.setText(routes.get(position).get(RouteContract.DIFFICULTY));
 
-            View colorlabel = parent.findViewById( R.id.ColorLabel );
-            colorlabel.setBackgroundColor( getResources().getColor( R.color.bg ) );
+            View colorlabel = vi.findViewById( R.id.ColorLabel );
+            colorlabel.setBackgroundColor( Integer.parseInt( routes.get(position).get(RouteContract.COLOR) ) );
 
-            TextView routeName = (TextView)parent.findViewById( R.id.RouteName );
+            TextView routeName = (TextView)vi.findViewById( R.id.RouteName );
             routeName.setText(routes.get(position).get(RouteContract.NAME));
 
-            TextView routeLoc = (TextView)parent.findViewById( R.id.Location );
+            TextView routeLoc = (TextView)vi.findViewById( R.id.Location );
             routeLoc.setText(routes.get(position).get(RouteContract.LOCATION));
 
-            TextView timesClimbed = (TextView)parent.findViewById( R.id.TimesClimbed );
+            TextView timesClimbed = (TextView)vi.findViewById( R.id.TimesClimbed );
             timesClimbed.setText(routes.get(position).get(RouteContract.NUM_ATTEMPTS));
 
             return vi;
