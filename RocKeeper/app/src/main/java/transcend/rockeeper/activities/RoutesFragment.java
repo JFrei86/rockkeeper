@@ -20,6 +20,7 @@ import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,7 @@ public class RoutesFragment extends Fragment {
     
 	private String mParam1;
     private List<Route> routes = new ArrayList<Route>();
-    private HashMap<Long, Location> locations = new HashMap<Long, Location>();
+
 
     private DatabaseHelper dbh = new DatabaseHelper(this.getActivity(), null);
     private SQLiteDatabase db;
@@ -71,7 +72,7 @@ public class RoutesFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /*@Override
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -79,9 +80,9 @@ public class RoutesFragment extends Fragment {
             long loc_id = Long.parseLong(mParam1);
             db = dbh.getWritableDatabase();
             getRoutes(loc_id);
-            getLocation(loc_id);
+
         }
-    }*/
+    }
 
     private void getRoutes(final long loc_id) {
 		Transaction t = new Transaction(db){
@@ -100,7 +101,7 @@ public class RoutesFragment extends Fragment {
 		t.run(true, true);
 	}
 
-    private void getLocation(final long loc_id) {
+    /*private void getLocation(final long loc_id) {
     	Transaction t = new Transaction(db){
 			public void task(SQLiteDatabase db) {
     			if(loc_id == -1){
@@ -119,14 +120,14 @@ public class RoutesFragment extends Fragment {
 			public void onProgressUpdate(Unit... data) {}
     	};
     	
-    }
+    }*/
     
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         listview = (ListView) container.findViewById(R.id.listview);
-        listview.setAdapter( new RouteListAdapter( this.getActivity() ));
+        listview.setAdapter( new RouteListAdapter( this.getActivity(), routes ));
         return inflater.inflate(R.layout.fragment_routes, container, false);
     }
 
@@ -173,23 +174,23 @@ public class RoutesFragment extends Fragment {
     private class RouteListAdapter extends BaseAdapter {
 
         Context context;
-        // Data stored how?
+        List<Route> routes;
         LayoutInflater inflater = null;
 
-        public RouteListAdapter( Context context /* Data here */ ) {
+        public RouteListAdapter( Context context, List<Route> routes ) {
             this.context = context;
-            // data intialization
+            this.routes = routes;
             this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         }
 
         @Override
         public int getCount() {
-            return 0;   // data size
+            return routes.size();
         }
 
         @Override
         public Object getItem( int position ) {
-            return null;
+            return routes.get( position );
             // return routes[position];
         }
 
@@ -205,6 +206,20 @@ public class RoutesFragment extends Fragment {
                 vi = inflater.inflate( R.layout.row, null );
 
             /* Handle displaying difficulty, color label, route name, location, etc. */
+            TextView diffLevel = (TextView)parent.findViewById( R.id.DifficultyLevel );
+            diffLevel.setText(routes.get(position).get(RouteContract.DIFFICULTY));
+
+            View colorlabel = parent.findViewById( R.id.ColorLabel );
+            colorlabel.setBackgroundColor( getResources().getColor( R.color.bg ) );
+
+            TextView routeName = (TextView)parent.findViewById( R.id.RouteName );
+            routeName.setText(routes.get(position).get(RouteContract.NAME));
+
+            TextView routeLoc = (TextView)parent.findViewById( R.id.Location );
+            routeLoc.setText(routes.get(position).get(RouteContract.LOCATION));
+
+            TextView timesClimbed = (TextView)parent.findViewById( R.id.TimesClimbed );
+            timesClimbed.setText(routes.get(position).get(RouteContract.NUM_ATTEMPTS));
 
             return vi;
         }

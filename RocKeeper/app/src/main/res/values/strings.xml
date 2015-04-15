@@ -14,6 +14,7 @@
     <string name="name_hint">Name</string>
     <string name="fav_location_hint">Favorite climbing location</string>
     <string name="submit">Submit</string>
+    <string name="missingFields">Uh Oh! Some fields we need are still blank!</string>
     <string-array name="experience_array">
         <item>Beginner</item>
         <item>Intermediate</item>
@@ -29,7 +30,6 @@
     <string name="title_section4">Goals</string>
     <string name="title_activity_first_time_page">RocKeeper</string>
     <string name="title_activity_create">Create</string>
-    <string name="missingFields">Uh Oh! Some fields we need are still blank!</string>
 
     <!-- Fragments -->
     <string name="dashboard_placeholder">This is the RocKeeper dashboard.</string>

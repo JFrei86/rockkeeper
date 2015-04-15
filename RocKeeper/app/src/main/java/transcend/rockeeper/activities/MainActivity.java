@@ -1,7 +1,10 @@
 package transcend.rockeeper.activities;
 
+import java.util.HashMap;
 import java.util.Locale;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -11,6 +14,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +23,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import activities.rockeeper.R;
+import transcend.rockeeper.data.Contract;
+import transcend.rockeeper.data.LocationContract;
+import transcend.rockeeper.sqlite.DatabaseHelper;
+import transcend.rockeeper.sqlite.Transaction;
 //import transcend.rockeeper.activities.DashboardFragment;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener
@@ -38,7 +46,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      * The {@link ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
-    
+
+    private HashMap<Long, LocationContract.Location> locations = new HashMap<Long, LocationContract.Location>();
+
+    private DatabaseHelper dbh = new DatabaseHelper(this, null);
+    private SQLiteDatabase db;
+
     public void onBackPressed(){}
 
     @Override
@@ -84,6 +97,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
+
+        db = dbh.getReadableDatabase();
+
+        getLocation( -1 );
     }
 
 
@@ -130,6 +147,28 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     {
     }
 
+    private void getLocation(final long loc_id) {
+        Transaction t = new Transaction(db){
+            public void task(SQLiteDatabase db) {
+                if(loc_id == -1){
+                    Cursor c = dbh.locations.query(new String[] { LocationContract.NAME }, null, null, LocationContract._ID, true, null, db);
+                    for(int i = 0; i < c.getCount(); i++){
+                        c.moveToNext();
+                        locations.put(c.getLong(c.getColumnIndex(LocationContract._ID)), dbh.locations.build(c));
+                    }
+                } else {
+                    Cursor c = dbh.locations.query(new String[] { LocationContract.NAME }, LocationContract._ID + "=" + loc_id, null, LocationContract._ID, true, null, db);
+                    c.moveToLast();
+                    locations.put(c.getLong(c.getColumnIndex(LocationContract._ID)), dbh.locations.build(c));
+                }
+            }
+            public void onComplete() {
+                Log.i("RoutesFragment", "Locations Loaded.");}
+            public void onProgressUpdate(Contract.Unit... data) {}
+        };
+
+    }
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -146,7 +185,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public Fragment getItem(int position)
         {
             if( position == 0 )
-                return RoutesFragment.newInstance();
+                return RoutesFragment.newInstance( 1 );  //TODO: make this the actual loc_id
             if( position == 1 )
                 return DashboardFragment.newInstance( );
             else
