@@ -1,6 +1,5 @@
 package transcend.rockeeper.data;
 
-import transcend.rockeeper.data.RouteContract.Route;
 import android.database.Cursor;
 import android.provider.BaseColumns;
 
@@ -19,7 +18,7 @@ public class RouteContract extends Contract implements BaseColumns {
 		colTypes.put(DIFFICULTY, TEXT);
 		colTypes.put(NUM_ATTEMPTS, INT);
 		colTypes.put(LOCATION, INT);
-		colTypes.put(COLOR, TEXT);
+		colTypes.put(COLOR, INT);
 		colTypes.put(NAME, TEXT);
 	}
 	
@@ -27,13 +26,13 @@ public class RouteContract extends Contract implements BaseColumns {
 	@Override
 	public String tableName() {return "routes";}
 
-	public Route build(String difficulty, int attempts, long loc_id, String color, String name){
+	public Route build(String difficulty, int attempts, long loc_id, int color, String name){
 		return this.new Route(difficulty, attempts, loc_id, color, name);
 	}
 	
 	//Default values for schema
 	public class Route extends Unit{
-		public Route(String difficulty, int attempts, long loc_id, String color, String name){
+		public Route(String difficulty, int attempts, long loc_id, int color, String name){
 			put(DIFFICULTY, difficulty);
 			put(NUM_ATTEMPTS, attempts);
 			put(LOCATION, loc_id);
@@ -47,7 +46,7 @@ public class RouteContract extends Contract implements BaseColumns {
 				c.getString(c.getColumnIndex(DIFFICULTY)),
 				c.getInt(c.getColumnIndex(NUM_ATTEMPTS)),
 				c.getLong(c.getColumnIndex(LOCATION)),
-				c.getString(c.getColumnIndex(COLOR)),
+				c.getInt(c.getColumnIndex(COLOR)),
 				c.getString(c.getColumnIndex(NAME)));
 	}
 }

@@ -1,5 +1,7 @@
 package transcend.rockeeper.data;
 
+import android.database.Cursor;
+
 public class SettingsContract extends Contract {
 
 	public static String USER = "username";
@@ -24,5 +26,10 @@ public class SettingsContract extends Contract {
 
 	public Settings build(String name, String level) {
 		return this.new Settings(name, level);
+	}
+	public Settings build(Cursor c){
+		return this.new Settings(
+				c.getString(c.getColumnIndex(USER)),
+				c.getString(c.getColumnIndex(LEVEL)));
 	}
 }

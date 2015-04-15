@@ -2,6 +2,7 @@ package transcend.rockeeper.activities;
 
 import transcend.rockeeper.data.Contract.Unit;
 import transcend.rockeeper.data.LocationContract.Location;
+import transcend.rockeeper.data.RouteContract.Route;
 import transcend.rockeeper.data.SettingsContract.Settings;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 import transcend.rockeeper.sqlite.Transaction;
@@ -73,8 +74,20 @@ public class FirstTimePage extends ActionBarActivity {
 			public void task(SQLiteDatabase db) {
 				Settings s = dbh.settings.build(name, level.toString());
 		    	Location l = dbh.locations.build(location);
+		    	
+		    	//TODO: REMOVE AFTER TESTING
+		    	Route r1 = dbh.routes.build("v0", 2, 1, 0x0000FF00, "Rainbow Road");
+		    	Route r2 = dbh.routes.build("v3", 0, 1, 0x00FF0000, "Death Drop");
+		    	Route r3 = dbh.routes.build("v2", 1, 1, 0x000000FF, "Inner Peaks");
+		    	
+		    	
 		    	dbh.locations.insert(l, db);
 		    	dbh.settings.insert(s, db);
+		    	
+		    	//TODO: REMOVE AFTER TESTING
+		    	dbh.routes.insert(r1, db);
+		    	dbh.routes.insert(r2, db);
+		    	dbh.routes.insert(r3, db);
 			}
 			public void onComplete(){}
 			public void onProgressUpdate(Unit... data){}

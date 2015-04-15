@@ -1,5 +1,7 @@
 package transcend.rockeeper.data;
 
+import android.database.Cursor;
+
 public class LocationContract extends Contract {
 
 	public static String NAME = "name";
@@ -27,6 +29,10 @@ public class LocationContract extends Contract {
 
 	public Location build(String string) {
 		return this.new Location(string);
+	}
+	public Location build(Cursor c){
+		return this.new Location(
+				c.getString(c.getColumnIndex(NAME)));
 	}
 
 }

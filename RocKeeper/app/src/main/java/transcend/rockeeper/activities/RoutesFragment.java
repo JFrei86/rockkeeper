@@ -1,15 +1,16 @@
 package transcend.rockeeper.activities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import transcend.rockeeper.data.Contract.Unit;
+import transcend.rockeeper.data.LocationContract.Location;
+import transcend.rockeeper.data.LocationContract;
 import transcend.rockeeper.data.RouteContract;
 import transcend.rockeeper.data.RouteContract.Route;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 import transcend.rockeeper.sqlite.Transaction;
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 //import android.app.Fragment;
 import android.database.Cursor;
@@ -17,9 +18,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.support.v4.app.Fragment;
 import android.content.Context;
-import android.app.Activity;
-import android.net.Uri;
-import android.os.Bundle;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.view.LayoutInflater;
@@ -42,6 +40,7 @@ public class RoutesFragment extends Fragment {
     
 	private String mParam1;
     private List<Route> routes = new ArrayList<Route>();
+    private HashMap<Long, Location> locations = new HashMap<Long, Location>();
 
     private DatabaseHelper dbh = new DatabaseHelper(this.getActivity(), null);
     private SQLiteDatabase db;
@@ -80,6 +79,7 @@ public class RoutesFragment extends Fragment {
             long loc_id = Long.parseLong(mParam1);
             db = dbh.getWritableDatabase();
             getRoutes(loc_id);
+            getLocation(loc_id);
         }
     }*/
 
@@ -100,6 +100,27 @@ public class RoutesFragment extends Fragment {
 		t.run(true, true);
 	}
 
+    private void getLocation(final long loc_id) {
+    	Transaction t = new Transaction(db){
+			public void task(SQLiteDatabase db) {
+    			if(loc_id == -1){
+    	    		Cursor c = dbh.locations.query(new String[] { LocationContract.NAME }, null, null, LocationContract._ID, true, null, db);
+    	    		for(int i = 0; i < c.getCount(); i++){
+    	    			c.moveToNext();
+    	    			locations.put(c.getLong(c.getColumnIndex(LocationContract._ID)), dbh.locations.build(c));
+    	    		}
+    	    	} else {
+    	    		Cursor c = dbh.locations.query(new String[] { LocationContract.NAME }, LocationContract._ID + "=" + loc_id, null, LocationContract._ID, true, null, db);
+    	    		c.moveToLast();
+    	    		locations.put(c.getLong(c.getColumnIndex(LocationContract._ID)), dbh.locations.build(c));
+    	    	}
+			}
+			public void onComplete() {Log.i("RoutesFragment", "Locations Loaded.");}
+			public void onProgressUpdate(Unit... data) {}
+    	};
+    	
+    }
+    
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
