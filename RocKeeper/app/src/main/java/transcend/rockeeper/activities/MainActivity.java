@@ -145,6 +145,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         @Override
         public Fragment getItem(int position)
         {
+            if( position == 0 )
+                return RoutesFragment.newInstance();
             if( position == 1 )
                 return DashboardFragment.newInstance( );
             else

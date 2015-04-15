@@ -11,10 +11,17 @@ import transcend.rockeeper.sqlite.Transaction;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+//import android.app.Fragment;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.support.v4.app.Fragment;
+import android.content.Context;
+import android.app.Activity;
+import android.net.Uri;
+import android.os.Bundle;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,8 +45,10 @@ public class RoutesFragment extends Fragment {
 
     private DatabaseHelper dbh = new DatabaseHelper(this.getActivity(), null);
     private SQLiteDatabase db;
-    
-    private OnFragmentInteractionListener mListener;
+
+    private ListView listview;
+
+    //private OnFragmentInteractionListener mListener;
 
     /**
      * Use this factory method to create a new instance of
@@ -49,7 +58,9 @@ public class RoutesFragment extends Fragment {
      * This is used to retrieve all routes for an specific location
      * @return A new instance of fragment RoutesFragment.
      */
-    public static RoutesFragment newInstance(long loc_id) {
+
+    // TODO: Rename and change types and number of parameters
+    public static RoutesFragment newInstance( long loc_id ) {
         RoutesFragment fragment = new RoutesFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, loc_id + "");
@@ -61,7 +72,7 @@ public class RoutesFragment extends Fragment {
         // Required empty public constructor
     }
 
-    @Override
+    /*@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -70,7 +81,7 @@ public class RoutesFragment extends Fragment {
             db = dbh.getWritableDatabase();
             getRoutes(loc_id);
         }
-    }
+    }*/
 
     private void getRoutes(final long loc_id) {
 		Transaction t = new Transaction(db){
@@ -93,17 +104,19 @@ public class RoutesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        listview = (ListView) container.findViewById(R.id.listview);
+        listview.setAdapter( new RouteListAdapter( this.getActivity() ));
         return inflater.inflate(R.layout.fragment_routes, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+   /* public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
@@ -118,7 +131,7 @@ public class RoutesFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
+    }*/
 
     /**
      * This interface must be implemented by activities that contain this
@@ -130,9 +143,50 @@ public class RoutesFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    /*public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }*/
+
+
+    private class RouteListAdapter extends BaseAdapter {
+
+        Context context;
+        // Data stored how?
+        LayoutInflater inflater = null;
+
+        public RouteListAdapter( Context context /* Data here */ ) {
+            this.context = context;
+            // data intialization
+            this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        }
+
+        @Override
+        public int getCount() {
+            return 0;   // data size
+        }
+
+        @Override
+        public Object getItem( int position ) {
+            return null;
+            // return routes[position];
+        }
+
+        @Override
+        public long getItemId( int position ) {
+            return position;
+        }
+
+        @Override
+        public View getView( int position, View convertView, ViewGroup parent ) {
+            View vi = convertView;
+            if( vi == null )
+                vi = inflater.inflate( R.layout.row, null );
+
+            /* Handle displaying difficulty, color label, route name, location, etc. */
+
+            return vi;
+        }
     }
 
 }
