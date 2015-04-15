@@ -83,7 +83,7 @@ public abstract class Contract implements BaseColumns{
 		db.delete(tableName(), where, args);
 	}
 	
-	public int update(Unit d, String where, String[] args, SQLiteDatabase db){
+	public long update(Unit d, String where, String[] args, SQLiteDatabase db){
 		d.put(Contract.MODIFIED_ON, new Date().toString());
 		ContentValues values = new ContentValues();
 		Iterator<String> i = d.keySet().iterator();
@@ -91,7 +91,7 @@ public abstract class Contract implements BaseColumns{
 			String key = i.next();
 			if(colTypes.containsKey(key)){
 				if(colTypes.get(key) == INT){
-					values.put(key, Integer.parseInt(d.get(key)));
+					values.put(key, Long.parseLong(d.get(key)));
 				}
 				if(colTypes.get(key) == NUM){
 					values.put(key, Double.parseDouble(d.get(key)));
@@ -110,6 +110,7 @@ public abstract class Contract implements BaseColumns{
 		public String get(String key) { return data.get(key); }
 		public void put(String col, String val) { data.put(col, val); }
 		public void put(String col, int val) { put(col, "" + val); }
+		public void put(String col, long val) { put(col, "" + val); }
 		public void put(String col, double val) { put(col, "" + val); }
 		public void remove(String col) { data.remove(col); }
 		

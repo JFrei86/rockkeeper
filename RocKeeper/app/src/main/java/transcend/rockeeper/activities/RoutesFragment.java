@@ -43,7 +43,7 @@ public class RoutesFragment extends Fragment {
     private List<Route> routes = new ArrayList<Route>();
 
 
-    private DatabaseHelper dbh = new DatabaseHelper(this.getActivity(), null);
+    private DatabaseHelper dbh;
     private SQLiteDatabase db;
 
     private ListView listview;
@@ -78,17 +78,25 @@ public class RoutesFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             long loc_id = Long.parseLong(mParam1);
+            dbh = new DatabaseHelper(this.getActivity(), null);
             db = dbh.getWritableDatabase();
             getRoutes(loc_id);
 
         }
+        
+        
     }
-
+    public void onResume(){
+    	super.onResume();
+    	listview = (ListView) this.getActivity().findViewById(R.id.listview);
+        listview.setAdapter( new RouteListAdapter( this.getActivity(), routes ));
+    }
+    
     private void getRoutes(final long loc_id) {
 		Transaction t = new Transaction(db){
 			public void task(SQLiteDatabase db) {
 				Cursor c = dbh.routes.query(null, RouteContract.LOCATION + "=" + loc_id, null, RouteContract.DIFFICULTY, true, null, db);
-				while(!c.isAfterLast()){
+				while(!c.isLast()){
 					for(int i = 0; i < BATCH && !c.isAfterLast(); i++){
 						c.moveToNext();
 						routes.add(dbh.routes.build(c));
@@ -126,8 +134,6 @@ public class RoutesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        listview = (ListView) container.findViewById(R.id.listview);
-        listview.setAdapter( new RouteListAdapter( this.getActivity(), routes ));
         return inflater.inflate(R.layout.fragment_routes, container, false);
     }
 
