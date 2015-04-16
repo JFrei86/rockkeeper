@@ -11,6 +11,7 @@ public class RouteContract extends Contract implements BaseColumns {
 	public static String COLOR = "color";
 	public static String NAME = "name";
 	public static String LOCATION = "location";
+	public static String COMPLETED = "complete";
 	
 	//Define Column Types
 	public RouteContract() {
@@ -20,19 +21,20 @@ public class RouteContract extends Contract implements BaseColumns {
 		colTypes.put(LOCATION, INT);
 		colTypes.put(COLOR, INT);
 		colTypes.put(NAME, TEXT);
+		colTypes.put(COMPLETED, INT);
 	}
 	
 	//Table name for contract
 	@Override
 	public String tableName() {return "routes";}
 
-	public Route build(String difficulty, int attempts, long loc_id, int color, String name){
-		return this.new Route(null, difficulty, attempts, loc_id, color, name);
+	public Route build(String difficulty, int attempts, long loc_id, int color, String name, int completed){
+		return this.new Route(null, difficulty, attempts, loc_id, color, name, completed);
 	}
 	
 	//Default values for schema
 	public class Route extends Unit{
-		public Route(Long _id, String difficulty, int attempts, long loc_id, int color, String name){
+		public Route(Long _id, String difficulty, int attempts, long loc_id, int color, String name, int completed){
 			if(_id != null)
 				put(_ID, _id);
 			put(DIFFICULTY, difficulty);
@@ -40,6 +42,7 @@ public class RouteContract extends Contract implements BaseColumns {
 			put(LOCATION, loc_id);
 			put(COLOR, color);
 			put(NAME, name);
+			put(COMPLETED, completed);
 		}
 	}
 
@@ -50,6 +53,7 @@ public class RouteContract extends Contract implements BaseColumns {
 				c.getInt(c.getColumnIndex(NUM_ATTEMPTS)),
 				c.getLong(c.getColumnIndex(LOCATION)),
 				c.getInt(c.getColumnIndex(COLOR)),
-				c.getString(c.getColumnIndex(NAME)));
+				c.getString(c.getColumnIndex(NAME)),
+				c.getInt(c.getColumnIndex(COMPLETED)));
 	}
 }

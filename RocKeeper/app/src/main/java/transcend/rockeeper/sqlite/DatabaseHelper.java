@@ -13,7 +13,7 @@ import transcend.rockeeper.data.*;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 	public static final String DATABASE_NAME = "rockeeper.db";
-	public static final int DB_VERSION = 8;
+	public static final int DB_VERSION = 9;
 
 	public final RouteContract routes = new RouteContract();
 	public final GoalContract goals = new GoalContract();
