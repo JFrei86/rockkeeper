@@ -109,12 +109,11 @@ public abstract class Contract implements BaseColumns{
 		public Set<String> keySet() { return data.keySet(); }
 		public String get(String key) { return data.get(key); }
 		public void put(String col, String val) { data.put(col, val); }
-		public void put(String col, int val) { put(col, "" + val); }
-		public void put(String col, long val) { put(col, "" + val); }
-		public void put(String col, double val) { put(col, "" + val); }
+		public void put(String col, Integer val) { put(col, "" + val); }
+		public void put(String col, Long val) { put(col, "" + val); }
+		public void put(String col, Double val) { put(col, "" + val); }
 		public void remove(String col) { data.remove(col); }
-		
-		public Unit(){
-		}
+		public String toString(){return data.toString();}
+		public Unit(){}
 	}
 }

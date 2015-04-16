@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.AdapterView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import activities.rockeeper.R;
 
@@ -104,10 +105,8 @@ public class RoutesFragment extends Fragment {
 				Cursor c = dbh.routes.query(null, RouteContract.LOCATION + "=" + loc_id, null, RouteContract.DIFFICULTY, true, null, db);
                 c.moveToFirst();
 				while(!c.isAfterLast()){
-					//for(int i = 0; i < BATCH && !c.isAfterLast(); i++){
-						routes.add(dbh.routes.build(c));
-                        c.moveToNext();
-					//}
+					routes.add(dbh.routes.build(c));
+                    c.moveToNext();
 				}
 			}
 			public void onComplete(){Log.i("RoutesFragment", "Routes Loaded.");}
@@ -213,7 +212,7 @@ public class RoutesFragment extends Fragment {
         }
 
         @Override
-        public View getView( int position, View convertView, ViewGroup parent ) {
+        public View getView( final int position, View convertView, ViewGroup parent ) {
             View vi = convertView;
             if( vi == null )
                 vi = inflater.inflate( R.layout.row, null );
@@ -231,11 +230,30 @@ public class RoutesFragment extends Fragment {
             TextView routeLoc = (TextView)vi.findViewById( R.id.Location );
             routeLoc.setText(routes.get(position).get(RouteContract.LOCATION));
 
-            TextView timesClimbed = (TextView)vi.findViewById( R.id.TimesClimbed );
+            final TextView timesClimbed = (TextView)vi.findViewById( R.id.TimesClimbed );
             timesClimbed.setText(routes.get(position).get(RouteContract.NUM_ATTEMPTS));
-
+            
+            Button inc = (Button)vi.findViewById(R.id.TimesClimbedIncrementor);
+            inc.setOnClickListener(new OnClickListener(){
+				public void onClick(View v) {
+					Transaction t = new Transaction(db){
+						public void task(SQLiteDatabase db) {
+							routes.get(position).put(RouteContract.NUM_ATTEMPTS, 
+									Long.parseLong(routes.get(position).get(RouteContract.NUM_ATTEMPTS)) + 1);
+							dbh.routes.update(routes.get(position), 
+									RouteContract._ID + "=" + routes.get(position).get(RouteContract._ID), null, db);
+							//Log.i("DEBUG", "Route update attempted. " + routes.get(position).toString());
+						}
+						public void onComplete() {
+							timesClimbed.setText(routes.get(position).get(RouteContract.NUM_ATTEMPTS));
+						}
+						public void onProgressUpdate(Unit... data) {}
+					};
+					t.run(false, false);
+				}
+            });
+            
             return vi;
         }
     }
-
 }
