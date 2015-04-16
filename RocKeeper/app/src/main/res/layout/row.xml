@@ -1,74 +1,80 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tracker_id"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:padding="10dp">
+    android:layout_height="wrap_content"
+    android:padding="5dp">
 
-
-        <TextView
-            android:id="@+id/DifficultyLevel"
-            android:textSize="25sp"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_height="wrap_content"
-            android:text="1"
-            android:textColor="#000"
-            android:layout_marginRight="25dp"  />
+    <TextView
+        android:id="@+id/DifficultyLevel"
+        android:textSize="20sp"
+        android:layout_width="25dp"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:text="v1"
+        android:textColor="#000"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="10dp"  />
 
     <View
-            android:id="@+id/ColorLabel"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/color_label_square"
-            android:layout_marginRight="20dp" />
+        android:id="@+id/ColorLabel"
+        android:background="#000"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"/>
 
-        <LinearLayout
-            android:layout_width="220dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/RouteName"
+            android:textSize="18sp"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_weight="1"
+            android:layout_marginTop="5dp"
+            android:text="Death Drop"
+            android:textColor="#000"/>
 
-            <TextView
-                android:id="@+id/RouteName"
-                android:textSize="20sp"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.62"
-                android:text="Death Drop"
-                android:layout_marginRight="25dp"
-                android:layout_gravity="center_vertical|left"
-                android:textColor="#000"/>
+        <TextView
+            android:id="@+id/Location"
+            android:textSize="12sp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="Hawaii"
+            android:textColor="#000"/>
 
-            <TextView
-                android:id="@+id/Location"
-                android:textSize="16sp"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|left"
-                android:text="Hawaii"
-                android:textColor="#000"/>
+    </LinearLayout>
 
-        </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <Button
+            android:id="@+id/TimesClimbedIncrementor"
+            android:layout_width="30dp"
+            android:layout_height="35dp"
+            android:textSize="12sp"
+            android:text="+" />
+
+        <TextView
+            android:id="@+id/TimesClimbed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:textSize="14sp"
+            android:text="12"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#000" />
 
-            <Button
-                android:id="@+id/TimesClimbedIncrementor"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:text="+"
-                />
-            <TextView
-                android:id="@+id/TimesClimbed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:text="12"
-                android:layout_gravity="center_horizontal"
-                android:textColor="#000"
-/>
-        </LinearLayout>
+    </LinearLayout>
+
+
 
 </LinearLayout>
