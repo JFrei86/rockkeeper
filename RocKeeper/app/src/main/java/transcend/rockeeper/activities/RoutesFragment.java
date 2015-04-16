@@ -19,8 +19,10 @@ import android.util.Log;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,10 +83,19 @@ public class RoutesFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated( Bundle savedInstanceState ){
+    public void onActivityCreated( Bundle savedInstanceState ) {
     	super.onActivityCreated( savedInstanceState );
     	listview = (ListView) this.getActivity().findViewById(R.id.listview);
         listview.setAdapter( new RouteListAdapter( this.getActivity(), routes ));
+        listview.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+            public void onItemClick( AdapterView<?> parent, View view, int position, long arg3 ) {
+                view.setSelected( true );
+                Button editB = (Button) parent.findViewById( R.id.editRouteButton );
+                editB.setEnabled( true );
+                Button deleteB = (Button) parent.findViewById( R.id.deleteRouteButton );
+                deleteB.setEnabled( true );
+            }
+        });
     }
     
     private void getRoutes(final long loc_id) {
