@@ -113,8 +113,7 @@ public abstract class Contract implements BaseColumns{
 		public void put(String col, long val) { put(col, "" + val); }
 		public void put(String col, double val) { put(col, "" + val); }
 		public void remove(String col) { data.remove(col); }
-		
-		public Unit(){
-		}
+		public String toString(){return data.toString();}
+		public Unit(){}
 	}
 }

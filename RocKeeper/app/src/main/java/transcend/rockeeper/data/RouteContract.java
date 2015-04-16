@@ -27,12 +27,13 @@ public class RouteContract extends Contract implements BaseColumns {
 	public String tableName() {return "routes";}
 
 	public Route build(String difficulty, int attempts, long loc_id, int color, String name){
-		return this.new Route(difficulty, attempts, loc_id, color, name);
+		return this.new Route(null, difficulty, attempts, loc_id, color, name);
 	}
 	
 	//Default values for schema
 	public class Route extends Unit{
-		public Route(String difficulty, int attempts, long loc_id, int color, String name){
+		public Route(Long _id, String difficulty, int attempts, long loc_id, int color, String name){
+			put(_ID, _id);
 			put(DIFFICULTY, difficulty);
 			put(NUM_ATTEMPTS, attempts);
 			put(LOCATION, loc_id);
@@ -43,6 +44,7 @@ public class RouteContract extends Contract implements BaseColumns {
 
 	public Route build(Cursor c) {
 		return this.new Route(
+				c.getLong(c.getColumnIndex(_ID)),
 				c.getString(c.getColumnIndex(DIFFICULTY)),
 				c.getInt(c.getColumnIndex(NUM_ATTEMPTS)),
 				c.getLong(c.getColumnIndex(LOCATION)),
