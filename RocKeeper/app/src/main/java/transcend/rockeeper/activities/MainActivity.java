@@ -21,10 +21,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 import activities.rockeeper.R;
 import transcend.rockeeper.data.Contract;
 import transcend.rockeeper.data.LocationContract;
+import transcend.rockeeper.data.RouteContract;
+import transcend.rockeeper.data.Contract.Unit;
+import transcend.rockeeper.data.RouteContract.Route;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 import transcend.rockeeper.sqlite.Transaction;
 //import transcend.rockeeper.activities.DashboardFragment;
@@ -42,6 +46,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      */
     SectionsPagerAdapter mSectionsPagerAdapter;
 
+    RoutesFragment routes;
+    DashboardFragment dash;
+    
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -85,6 +92,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             }
         });
 
+        routes = RoutesFragment.newInstance( 1 );
+        dash = DashboardFragment.newInstance();
+        
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++)
         {
@@ -99,10 +109,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
 
         db = dbh.getReadableDatabase();
-
+        
         getLocation( -1 );
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -168,6 +177,18 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         };
 
     }
+    
+    public void addRoute(View v){
+		this.routes.addRoute(v);
+	}
+	
+	public void editRoute(View v){
+		this.routes.editRoute(v);
+	}
+	
+	public void deleteRoute(View v){
+		this.routes.deleteRoute(v);
+	}
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -184,10 +205,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         @Override
         public Fragment getItem(int position)
         {
-            if( position == 0 )
-                return RoutesFragment.newInstance( 1 );  //TODO: make this the actual loc_id
-            if( position == 1 )
-                return DashboardFragment.newInstance( );
+            if( position == 0 ){	
+            	return routes;
+            }//TODO: make this the actual loc_id
+            if( position == 1 ){
+            	return dash;
+            }
             else
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).

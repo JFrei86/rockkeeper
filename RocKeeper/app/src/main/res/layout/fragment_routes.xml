@@ -22,7 +22,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Add" />
+            android:text="Add" 
+            android:onClick="addRoute"/>
 
         <Button
             android:id="@+id/editRouteButton"
@@ -30,7 +31,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Edit"
-            android:enabled="false"/>
+            android:enabled="false"
+            android:onClick="editRoute"/>
 
         <Button
             android:id="@+id/deleteRouteButton"
@@ -38,7 +40,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Delete"
-            android:enabled="false"/>
+            android:enabled="false"
+            android:onClick="deleteRoute"/>
     </LinearLayout>
 
 </LinearLayout>

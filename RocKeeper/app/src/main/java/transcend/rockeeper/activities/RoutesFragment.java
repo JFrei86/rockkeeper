@@ -18,6 +18,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.support.v4.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -28,12 +29,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import activities.rockeeper.R;
 
 
 public class RoutesFragment extends Fragment implements AdapterView.OnItemClickListener {
 	
-	private final int BATCH = 10;
 	private static final String ARG_PARAM1 = "locId";
     
 	private String mParam1;
@@ -79,11 +81,64 @@ public class RoutesFragment extends Fragment implements AdapterView.OnItemClickL
             dbh = new DatabaseHelper(this.getActivity(), null);
             db = dbh.getWritableDatabase();
             getRoutes(loc_id);
-
         }
         
         
     }
+   
+    public Dialog createDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        // Get the layout inflater
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        builder.setView(inflater.inflate(R.layout.fragment_create_route, null))
+        // Add action buttons
+               .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                   @Override
+                   public void onClick(DialogInterface dialog, int id) {
+                       // sign in the user ...
+                   }
+               })
+               .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                   public void onClick(DialogInterface dialog, int id) {
+                       dialog.cancel();
+                   }
+               });      
+        return builder.create();
+    }
+    
+    public void addRoute(View v){
+		
+	}
+	
+	public void editRoute(View v){
+		
+	}
+	
+	public void deleteRoute(View v){
+		final ListView lv = (ListView) this.getActivity().findViewById(R.id.listview);
+		final Route delete = (Route) lv.getAdapter().getItem(selectedItem);
+		routes.remove(delete);
+		lv.invalidateViews();
+		Transaction t = new Transaction(db){
+			public void task(SQLiteDatabase db) {
+				 dbh.routes.delete(RouteContract._ID + "=" + delete.get(RouteContract._ID), null, db);
+			}
+			public void onComplete() {
+//				lv.post(new Runnable(){
+//					public void run() {
+//						
+//					}
+//				});`		
+				Log.i("DEBUG", "ROUTE DELETED");
+			}
+			public void onProgressUpdate(Unit... data) {}
+		};
+		t.run(true, true);
+	}
+
 
     @Override
     public void onActivityCreated( Bundle savedInstanceState ) {
@@ -157,11 +212,11 @@ public class RoutesFragment extends Fragment implements AdapterView.OnItemClickL
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_routes, container, false);
     }
-
+	
     // TODO: Rename method, update argument and hook method into UI event
    /* public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onFragmentInteraction(uri);														
         }
     }*/
 
