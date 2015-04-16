@@ -33,7 +33,8 @@ public class RouteContract extends Contract implements BaseColumns {
 	//Default values for schema
 	public class Route extends Unit{
 		public Route(Long _id, String difficulty, int attempts, long loc_id, int color, String name){
-			put(_ID, _id);
+			if(_id != null)
+				put(_ID, _id);
 			put(DIFFICULTY, difficulty);
 			put(NUM_ATTEMPTS, attempts);
 			put(LOCATION, loc_id);
