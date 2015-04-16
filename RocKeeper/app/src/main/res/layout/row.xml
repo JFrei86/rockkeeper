@@ -2,7 +2,8 @@
     android:id="@+id/tracker_id"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="5dp">
+    android:padding="5dp"
+    android:background="@drawable/route_list_selector">
 
     <TextView
         android:id="@+id/DifficultyLevel"
@@ -13,7 +14,9 @@
         android:text="v1"
         android:textColor="#000"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="10dp"  />
+        android:layout_marginRight="10dp"
+        android:focusable="false"
+        android:clickable="false" />
 
     <View
         android:id="@+id/ColorLabel"
@@ -23,7 +26,9 @@
         android:layout_gravity="center_vertical"
         android:layout_marginRight="15dp"
         android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"/>
+        android:layout_marginBottom="15dp"
+        android:focusable="false"
+        android:clickable="false"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -39,7 +44,9 @@
             android:layout_weight="1"
             android:layout_marginTop="5dp"
             android:text="Death Drop"
-            android:textColor="#000"/>
+            android:textColor="#000"
+            android:focusable="false"
+            android:clickable="false"/>
 
         <TextView
             android:id="@+id/Location"
@@ -48,7 +55,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:text="Hawaii"
-            android:textColor="#000"/>
+            android:textColor="#000"
+            android:focusable="false"
+            android:clickable="false"/>
 
     </LinearLayout>
 
@@ -62,7 +71,8 @@
             android:layout_width="30dp"
             android:layout_height="35dp"
             android:textSize="12sp"
-            android:text="+" />
+            android:text="+"
+            android:focusable="false" />
 
         <TextView
             android:id="@+id/TimesClimbed"
@@ -71,7 +81,9 @@
             android:textSize="14sp"
             android:text="12"
             android:layout_gravity="center_horizontal"
-            android:textColor="#000" />
+            android:textColor="#000"
+            android:focusable="false"
+            android:clickable="false" />
 
     </LinearLayout>
 
@@ -80,6 +92,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="10dp"/>
+        android:layout_marginLeft="10dp"
+        android:focusable="false"/>
 
 </LinearLayout>

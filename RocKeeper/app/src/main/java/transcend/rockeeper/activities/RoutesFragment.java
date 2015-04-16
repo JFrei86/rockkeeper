@@ -27,10 +27,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.app.Activity;
 import activities.rockeeper.R;
 
 
-public class RoutesFragment extends Fragment {
+public class RoutesFragment extends Fragment implements AdapterView.OnItemClickListener {
 	
 	private final int BATCH = 10;
 	private static final String ARG_PARAM1 = "locId";
@@ -43,6 +44,7 @@ public class RoutesFragment extends Fragment {
     private SQLiteDatabase db;
 
     private ListView listview;
+    private int selectedItem = -1;
 
     //private OnFragmentInteractionListener mListener;
 
@@ -85,18 +87,31 @@ public class RoutesFragment extends Fragment {
 
     @Override
     public void onActivityCreated( Bundle savedInstanceState ) {
-    	super.onActivityCreated( savedInstanceState );
-    	listview = (ListView) this.getActivity().findViewById(R.id.listview);
+    	super.onActivityCreated(savedInstanceState);
+        Activity thisActivity = this.getActivity();
+    	listview = (ListView) thisActivity.findViewById(R.id.listview);
         listview.setAdapter( new RouteListAdapter( this.getActivity(), routes ));
-        listview.setOnItemClickListener( new AdapterView.OnItemClickListener() {
-            public void onItemClick( AdapterView<?> parent, View view, int position, long arg3 ) {
-                view.setSelected( true );
-                Button editB = (Button) parent.findViewById( R.id.editRouteButton );
-                editB.setEnabled( true );
-                Button deleteB = (Button) parent.findViewById( R.id.deleteRouteButton );
-                deleteB.setEnabled( true );
-            }
-        });
+        listview.setOnItemClickListener( this );
+    }
+
+    public void onItemClick( AdapterView<?> parent, View view, int position, long id ) {
+        if( position == selectedItem ) {
+            view.setSelected(false);
+            view.setActivated(false);
+            Button editB = (Button) getActivity().findViewById(R.id.editRouteButton);
+            editB.setEnabled(false);
+            Button deleteB = (Button) getActivity().findViewById(R.id.deleteRouteButton);
+            deleteB.setEnabled(false);
+            selectedItem = -1;
+        } else {
+            view.setSelected( true );
+            view.setActivated( true );
+            Button editB = (Button) getActivity().findViewById( R.id.editRouteButton );
+            editB.setEnabled( true );
+            Button deleteB = (Button) getActivity().findViewById( R.id.deleteRouteButton );
+            deleteB.setEnabled( true );
+            selectedItem = position;
+        }
     }
     
     private void getRoutes(final long loc_id) {
@@ -218,11 +233,11 @@ public class RoutesFragment extends Fragment {
                 vi = inflater.inflate( R.layout.row, null );
 
             /* Handle displaying difficulty, color label, route name, location, etc. */
-            TextView diffLevel = (TextView)vi.findViewById( R.id.DifficultyLevel );
+            TextView diffLevel = (TextView)vi.findViewById(R.id.DifficultyLevel);
             diffLevel.setText(routes.get(position).get(RouteContract.DIFFICULTY));
 
             View colorlabel = vi.findViewById( R.id.ColorLabel );
-            colorlabel.setBackgroundColor( Integer.parseInt( routes.get(position).get(RouteContract.COLOR) ) );
+            colorlabel.setBackgroundColor( Integer.parseInt(routes.get(position).get(RouteContract.COLOR)) );
 
             TextView routeName = (TextView)vi.findViewById( R.id.RouteName );
             routeName.setText(routes.get(position).get(RouteContract.NAME));
