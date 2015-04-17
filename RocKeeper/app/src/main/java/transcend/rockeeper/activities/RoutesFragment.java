@@ -22,6 +22,9 @@ import android.content.DialogInterface;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioGroup;
@@ -36,7 +39,6 @@ import android.view.ViewGroup;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-
 import activities.rockeeper.R;
 
 
@@ -147,34 +149,39 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
          	   final Route r = dbh.routes.build(diff, 0, Long.parseLong(mParam1), color, name, 0);
          	   Transaction t = new Transaction(db){
 						public void task(SQLiteDatabase db) {
-							if(edit != null)
+							if(edit == null){
 								dbh.routes.insert(r, db);
-							else
-								dbh.routes.update(r, RouteContract._ID + "=" 
-										+ edit.get(RouteContract._ID), null, db);
+							}
+							else{
+								dbh.routes.update(r, RouteContract._ID + "=" + edit.get(RouteContract._ID), null, db);
+							}
 						}
 						public void onComplete() {
 							if(edit != null){
-								int i = routes.indexOf(edit);
-								if(i == -1)
+								if(selectedItem == -1)
 									return;
-								routes.set(i, edit);
+								routes.set(selectedItem, edit);
 							}
-							else
+							else{
+								selectedItem = routes.size();
 								routes.add(r);
+							}
 							lv.invalidateViews();
+							
 						}
 						public void onProgressUpdate(Unit... data) {}
          	   };
+         	   t.run(true,true);
             }
         });
-        builder.setNegativeButton(positiveButtonText, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();
             }
         });
         Dialog d = builder.create();
-        
+        d.setCanceledOnTouchOutside(true);
+        d.setCancelable(true);
 		return d;
     }
     
@@ -199,13 +206,9 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
 				 dbh.routes.delete(RouteContract._ID + "=" + delete.get(RouteContract._ID), null, db);
 			}
 			public void onComplete() {
-				listview.post(new Runnable(){
-					public void run() {
-						routes.remove(delete);
-						listview.invalidateViews();
-					}
-				});	
-				Log.i("DEBUG", "ROUTE DELETED");
+				routes.remove(delete);
+				selectedItem = -1;
+				listview.invalidateViews();
 			}
 			public void onProgressUpdate(Unit... data) {}
 		};
@@ -389,6 +392,27 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
 
             final TextView timesClimbed = (TextView)vi.findViewById( R.id.TimesClimbed );
             timesClimbed.setText(routes.get(position).get(RouteContract.NUM_ATTEMPTS));
+            
+            final CheckBox completed = (CheckBox)vi.findViewById( R.id.checkboxComplete );
+            int comp = Integer.parseInt(routes.get(position).get(RouteContract.COMPLETED));
+            completed.setChecked(comp != 0);
+            completed.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+				public void onCheckedChanged(CompoundButton buttonView,
+						boolean isChecked) {
+					Transaction t = new Transaction(db){
+						public void task(SQLiteDatabase db) {
+							routes.get(position).put(RouteContract.COMPLETED, (completed.isChecked())?1:0);
+							dbh.routes.update(routes.get(position), 
+									RouteContract._ID + "=" + routes.get(position).get(RouteContract._ID), null, db);
+						}
+						public void onComplete() {
+							listview.invalidateViews();
+						}
+						public void onProgressUpdate(Unit... data) {}
+					};
+					t.run(true, true);
+				}
+            });
             
             Button inc = (Button)vi.findViewById(R.id.TimesClimbedIncrementor);
             inc.setOnClickListener(new OnClickListener(){
