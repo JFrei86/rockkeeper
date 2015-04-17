@@ -21,7 +21,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView;
 import android.view.LayoutInflater;
@@ -86,7 +89,7 @@ public class RoutesFragment extends Fragment implements AdapterView.OnItemClickL
         
     }
    
-    public Dialog createDialog(Bundle savedInstanceState) {
+    public Dialog createDialog(Route edit) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -97,41 +100,54 @@ public class RoutesFragment extends Fragment implements AdapterView.OnItemClickL
         // Add action buttons
                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                    @Override
-                   public void onClick(DialogInterface dialog, int id) {
-                       // sign in the user ...
+                   public void onClick(DialogInterface d, int id) {
+                	   final int color = 0;
+                	   final String diff = "v0";
+                	   final String name = "Rainbow Road";
+                	   Transaction t = new Transaction(db){
+							public void task(SQLiteDatabase db) {
+								dbh.routes.insert(dbh.routes.build(diff, 0, Long.parseLong(mParam1), color, name, 0), db);
+							}
+							public void onComplete() {}
+							public void onProgressUpdate(Unit... data) {}
+                	   };
                    }
                })
                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
                        dialog.cancel();
                    }
-               });      
-        return builder.create();
+               });
+        Dialog d = builder.create();
+		return d;
     }
     
     public void addRoute(View v){
-		
+    	Dialog d = createDialog(null);
+		d.show();
 	}
 	
 	public void editRoute(View v){
-		
+		final ListView lv = (ListView) this.getActivity().findViewById(R.id.listview);
+		final Route edit = (Route) lv.getAdapter().getItem(selectedItem);
+		Dialog d = createDialog(edit);
+		d.show();
 	}
 	
 	public void deleteRoute(View v){
 		final ListView lv = (ListView) this.getActivity().findViewById(R.id.listview);
 		final Route delete = (Route) lv.getAdapter().getItem(selectedItem);
-		routes.remove(delete);
-		lv.invalidateViews();
 		Transaction t = new Transaction(db){
 			public void task(SQLiteDatabase db) {
 				 dbh.routes.delete(RouteContract._ID + "=" + delete.get(RouteContract._ID), null, db);
 			}
 			public void onComplete() {
-//				lv.post(new Runnable(){
-//					public void run() {
-//						
-//					}
-//				});`		
+				lv.post(new Runnable(){
+					public void run() {
+						routes.remove(delete);
+						lv.invalidateViews();
+					}
+				});	
 				Log.i("DEBUG", "ROUTE DELETED");
 			}
 			public void onProgressUpdate(Unit... data) {}
