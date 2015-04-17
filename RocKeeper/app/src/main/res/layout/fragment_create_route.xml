@@ -44,7 +44,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="16sp"
-            android:text="Boulder"/>
+            android:text="Boulder"
+            android:checked="true"/>
     </RadioGroup>
 
     <LinearLayout
@@ -59,7 +60,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="16sp"
-            android:text="Difficulty:"/>
+            android:text="Difficulty:"
+            android:enabled="true"/>
 
         <TextView
             android:layout_width="0dp"

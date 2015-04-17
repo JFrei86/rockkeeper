@@ -27,6 +27,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
@@ -119,34 +120,57 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
         ArrayAdapter<CharSequence> locAdapter = new ArrayAdapter<CharSequence>(this.getActivity(), android.R.layout.simple_spinner_item, locs);
         location.setAdapter( locAdapter );*/
 
-        NumberPicker difficulty = (NumberPicker) dialogView.findViewById(R.id.routeDifficultyPicker);
-        String[] diffs = new String[13];
-        for( int i=0; i<13; ++i )
-            diffs[i] = "v"+i;
-        difficulty.setDisplayedValues( diffs );
+        final NumberPicker difficulty = (NumberPicker) dialogView.findViewById(R.id.routeDifficultyPicker);
+        difficulty.setDisplayedValues( getResources().getStringArray(R.array.boulder_levels) );
 
+        final EditText name = (EditText) dialogView.findViewById(R.id.routeDialogName);
+        
         NumberPicker color = (NumberPicker) dialogView.findViewById(R.id.routeColorPicker);
         String[] colors = colorMap.keySet().toArray( new String[colorMap.size()] );
         color.setDisplayedValues( colors );
-
+        
         // If opened in edit mode, populate the fields with existing values
         if( selectedItem != -1 ) {
             Route routeToEdit = (Route) listview.getAdapter().getItem(selectedItem);
-            EditText name = (EditText) dialogView.findViewById(R.id.routeDialogName);
             name.setText( routeToEdit.get( RouteContract.NAME ));
             //NumberPicker difficulty...
             //NumberPicker color...
         }
+        
+        final RadioButton rope = (RadioButton) dialogView.findViewById(R.id.topropeRB);
+        final RadioButton boulder = (RadioButton) dialogView.findViewById(R.id.topropeRB);
+        rope.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				if(isChecked){
+					difficulty.setDisplayedValues( getResources().getStringArray(R.array.rope_levels) );
+					//difficulty.setValue(0);
+					difficulty.invalidate();
+				}
+			}
+        });
+        boulder.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				if(isChecked){
+					difficulty.setDisplayedValues( getResources().getStringArray(R.array.boulder_levels) );
+					//difficulty.setValue(0);
+					difficulty.invalidate();
+				}
+			}
+        });
 
-        String positiveButtonText = (selectedItem == -1)?"Add":"Edit";
+        String positiveButtonText = (edit == null)?"Add":"Edit";
         // Add action buttons
         builder.setPositiveButton(positiveButtonText, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface d, int id) {
          	   final int color = 0;
-         	   final String diff = "v0";
-         	   final String name = "Rainbow Road";
-         	   final Route r = dbh.routes.build(diff, 0, Long.parseLong(mParam1), color, name, 0);
+         	   String diff = getResources().getStringArray(R.array.boulder_levels)[difficulty.getValue()];
+         	   if(rope.isChecked())
+         		  diff = getResources().getStringArray(R.array.rope_levels)[difficulty.getValue()];
+         	   final String val = name.getText().toString();
+         	   final Route r = dbh.routes.build(diff, 0, Long.parseLong(mParam1), color, val, 0);
          	   Transaction t = new Transaction(db){
 						public void task(SQLiteDatabase db) {
 							if(edit == null){
@@ -163,8 +187,8 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
 								routes.set(selectedItem, edit);
 							}
 							else{
-								selectedItem = routes.size();
 								routes.add(r);
+								click(listview, selectedItem);
 							}
 							lv.invalidateViews();
 							
@@ -207,7 +231,7 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
 			}
 			public void onComplete() {
 				routes.remove(delete);
-				selectedItem = -1;
+				click(listview, selectedItem);
 				listview.invalidateViews();
 			}
 			public void onProgressUpdate(Unit... data) {}
@@ -227,13 +251,18 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
 
     @Override
     public void onItemClick( AdapterView<?> parent, View view, int position, long id ) {
-        Button editB = (Button) getActivity().findViewById(R.id.editRouteButton);
+        click(view, position);
+    }
+    
+    private void click(View view, int position){
+    	Button editB = (Button) getActivity().findViewById(R.id.editRouteButton);
         Button deleteB = (Button) getActivity().findViewById(R.id.deleteRouteButton);
         if( position == selectedItem ) {
             view.setSelected(false);
             view.setActivated(false);
             editB.setEnabled(false);
             deleteB.setEnabled(false);
+            listview.clearChoices();
             selectedItem = -1;
         } else {
             view.setSelected( true );
@@ -426,7 +455,7 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
 							//Log.i("DEBUG", "Route update attempted. " + routes.get(position).toString());
 						}
 						public void onComplete() {
-							timesClimbed.setText(routes.get(position).get(RouteContract.NUM_ATTEMPTS));
+							listview.invalidateViews();
 						}
 						public void onProgressUpdate(Unit... data) {}
 					};
