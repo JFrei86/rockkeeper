@@ -89,7 +89,7 @@ public class RoutesFragment extends Fragment implements AdapterView.OnItemClickL
         
     }
    
-    public Dialog createDialog(final Route edit) {
+    public Dialog createDialog(final Route edit, final ListView lv) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -104,15 +104,26 @@ public class RoutesFragment extends Fragment implements AdapterView.OnItemClickL
                 	   final int color = 0;
                 	   final String diff = "v0";
                 	   final String name = "Rainbow Road";
+                	   final Route r = dbh.routes.build(diff, 0, Long.parseLong(mParam1), color, name, 0);
                 	   Transaction t = new Transaction(db){
 							public void task(SQLiteDatabase db) {
 								if(edit != null)
-									dbh.routes.insert(dbh.routes.build(diff, 0, Long.parseLong(mParam1), color, name, 0), db);
+									dbh.routes.insert(r, db);
 								else
-									dbh.routes.update(dbh.routes.build(diff, 0, Long.parseLong(mParam1),
-											color, name, 0), RouteContract._ID + "=" + edit.get(RouteContract._ID), null, db);
+									dbh.routes.update(r, RouteContract._ID + "=" 
+											+ edit.get(RouteContract._ID), null, db);
 							}
-							public void onComplete() {}
+							public void onComplete() {
+								if(edit != null){
+									int i = routes.indexOf(edit);
+									if(i == -1)
+										return;
+									routes.set(i, edit);
+								}
+								else
+									routes.add(r);
+								lv.invalidateViews();
+							}
 							public void onProgressUpdate(Unit... data) {}
                 	   };
                    }
@@ -127,14 +138,15 @@ public class RoutesFragment extends Fragment implements AdapterView.OnItemClickL
     }
     
     public void addRoute(View v){
-    	Dialog d = createDialog(null);
+    	final ListView lv = (ListView) this.getActivity().findViewById(R.id.listview);
+    	Dialog d = createDialog(null, lv);
 		d.show();
 	}
 	
 	public void editRoute(View v){
 		final ListView lv = (ListView) this.getActivity().findViewById(R.id.listview);
 		final Route edit = (Route) lv.getAdapter().getItem(selectedItem);
-		Dialog d = createDialog(edit);
+		Dialog d = createDialog(edit, lv);
 		d.show();
 	}
 	
