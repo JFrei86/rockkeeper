@@ -89,7 +89,7 @@ public class RoutesFragment extends Fragment implements AdapterView.OnItemClickL
         
     }
    
-    public Dialog createDialog(Route edit) {
+    public Dialog createDialog(final Route edit) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -106,7 +106,11 @@ public class RoutesFragment extends Fragment implements AdapterView.OnItemClickL
                 	   final String name = "Rainbow Road";
                 	   Transaction t = new Transaction(db){
 							public void task(SQLiteDatabase db) {
-								dbh.routes.insert(dbh.routes.build(diff, 0, Long.parseLong(mParam1), color, name, 0), db);
+								if(edit != null)
+									dbh.routes.insert(dbh.routes.build(diff, 0, Long.parseLong(mParam1), color, name, 0), db);
+								else
+									dbh.routes.update(dbh.routes.build(diff, 0, Long.parseLong(mParam1),
+											color, name, 0), RouteContract._ID + "=" + edit.get(RouteContract._ID), null, db);
 							}
 							public void onComplete() {}
 							public void onProgressUpdate(Unit... data) {}
