@@ -9,7 +9,86 @@
     tools:context="activities.rockeeper.CreateActivity$PlaceholderFragment" >
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:id="@+id/topMessage"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="Create route for: " />
+
+    <EditText
+        android:id="@+id/routeDialogName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topMessage"
+        android:layout_marginTop="20dp"
+        android:hint="Route name" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/routeDialogName"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+        
+        <RadioButton
+            android:id="@+id/topropeRB"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:text="Top Rope"/>
+        <RadioButton
+            android:id="@+id/boulderRB"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:text="Boulder"/>
+    </RadioGroup>
+
+    <LinearLayout
+        android:id="@+id/labelRow"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/radioGroup"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:text="Difficulty:"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="30dp"
+            android:textSize="16sp"
+            android:text="Color:"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/labelRow"
+        android:layout_marginTop="10dp">
+
+        <NumberPicker
+            android:id="@+id/routeDifficultyPicker"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="30dp"/>
+
+        <NumberPicker
+            android:id="@+id/routeColorPicker"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
 
 </RelativeLayout>

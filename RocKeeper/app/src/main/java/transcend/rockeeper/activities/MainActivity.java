@@ -59,6 +59,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     private DatabaseHelper dbh = new DatabaseHelper(this, null);
     private SQLiteDatabase db;
 
+    private long currentLocId = 1;
+
     public void onBackPressed(){}
 
     @Override
@@ -71,6 +73,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
+        db = dbh.getReadableDatabase();
+        getLocation( -1 );
 
         // Create the adapter that will return a fragment for each of the four
         // primary sections of the activity.
@@ -111,6 +115,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         db = dbh.getReadableDatabase();
         
         getLocation( -1 );
+
     }
 
     @Override
@@ -175,7 +180,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 Log.i("RoutesFragment", "Locations Loaded.");}
             public void onProgressUpdate(Contract.Unit... data) {}
         };
-
     }
     
     public void addRoute(View v){

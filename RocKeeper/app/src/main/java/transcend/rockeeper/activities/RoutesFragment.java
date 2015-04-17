@@ -19,11 +19,13 @@ import android.util.Log;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioGroup;
+import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView;
@@ -34,22 +36,27 @@ import android.view.ViewGroup;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+
 import activities.rockeeper.R;
 
 
-public class RoutesFragment extends Fragment implements AdapterView.OnItemClickListener {
-	
+public class RoutesFragment extends Fragment implements OnClickListener, AdapterView.OnItemClickListener {
+
+	private final int BATCH = 10;       // buffer size for grabbing items from database
+
 	private static final String ARG_PARAM1 = "locId";
     
 	private String mParam1;
-    private List<Route> routes = new ArrayList<Route>();
+    private List<Route> routes = new ArrayList<Route>();    // routes stored here after database retrieval
 
 
     private DatabaseHelper dbh;
     private SQLiteDatabase db;
 
     private ListView listview;
-    private int selectedItem = -1;
+    private int selectedItem = -1;      // the index of the list item selected
+
+    HashMap<String, Integer> colorMap = new HashMap<String, Integer>();
 
     //private OnFragmentInteractionListener mListener;
 
@@ -61,7 +68,6 @@ public class RoutesFragment extends Fragment implements AdapterView.OnItemClickL
      * This is used to retrieve all routes for an specific location
      * @return A new instance of fragment RoutesFragment.
      */
-
     // TODO: Rename and change types and number of parameters
     public static RoutesFragment newInstance( long loc_id ) {
         RoutesFragment fragment = new RoutesFragment();
@@ -85,8 +91,15 @@ public class RoutesFragment extends Fragment implements AdapterView.OnItemClickL
             db = dbh.getWritableDatabase();
             getRoutes(loc_id);
         }
-        
-        
+
+        colorMap.put("Red", 0xFFFF0000);
+        colorMap.put("Orange", 0xFFFF8800);
+        colorMap.put("Yellow", 0xFFFFFF00);
+        colorMap.put("Green", 0xFF00FF00);
+        colorMap.put("Blue", 0xFF0000FF);
+        colorMap.put("Purple", 0xFFFF00FF);
+        colorMap.put("White", 0xFFFFFFFF);
+        colorMap.put("Black", 0xFF000000);
     }
    
     public Dialog createDialog(final Route edit, final ListView lv) {
@@ -96,44 +109,72 @@ public class RoutesFragment extends Fragment implements AdapterView.OnItemClickL
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        builder.setView(inflater.inflate(R.layout.fragment_create_route, null))
+        View dialogView = inflater.inflate(R.layout.fragment_create_route, null);
+        builder.setView( dialogView );
+
+        /*Spinner location = (Spinner) dialogView.findViewById(R.id.routeLocationSpinner);
+        String[] locs = {"1", "2", "3"};
+        ArrayAdapter<CharSequence> locAdapter = new ArrayAdapter<CharSequence>(this.getActivity(), android.R.layout.simple_spinner_item, locs);
+        location.setAdapter( locAdapter );*/
+
+        NumberPicker difficulty = (NumberPicker) dialogView.findViewById(R.id.routeDifficultyPicker);
+        String[] diffs = new String[13];
+        for( int i=0; i<13; ++i )
+            diffs[i] = "v"+i;
+        difficulty.setDisplayedValues( diffs );
+
+        NumberPicker color = (NumberPicker) dialogView.findViewById(R.id.routeColorPicker);
+        String[] colors = colorMap.keySet().toArray( new String[colorMap.size()] );
+        color.setDisplayedValues( colors );
+
+        // If opened in edit mode, populate the fields with existing values
+        if( selectedItem != -1 ) {
+            Route routeToEdit = (Route) listview.getAdapter().getItem(selectedItem);
+            EditText name = (EditText) dialogView.findViewById(R.id.routeDialogName);
+            name.setText( routeToEdit.get( RouteContract.NAME ));
+            //NumberPicker difficulty...
+            //NumberPicker color...
+        }
+
+        String positiveButtonText = (selectedItem == -1)?"Add":"Edit";
         // Add action buttons
-               .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                   @Override
-                   public void onClick(DialogInterface d, int id) {
-                	   final int color = 0;
-                	   final String diff = "v0";
-                	   final String name = "Rainbow Road";
-                	   final Route r = dbh.routes.build(diff, 0, Long.parseLong(mParam1), color, name, 0);
-                	   Transaction t = new Transaction(db){
-							public void task(SQLiteDatabase db) {
-								if(edit != null)
-									dbh.routes.insert(r, db);
-								else
-									dbh.routes.update(r, RouteContract._ID + "=" 
-											+ edit.get(RouteContract._ID), null, db);
+        builder.setPositiveButton(positiveButtonText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface d, int id) {
+         	   final int color = 0;
+         	   final String diff = "v0";
+         	   final String name = "Rainbow Road";
+         	   final Route r = dbh.routes.build(diff, 0, Long.parseLong(mParam1), color, name, 0);
+         	   Transaction t = new Transaction(db){
+						public void task(SQLiteDatabase db) {
+							if(edit != null)
+								dbh.routes.insert(r, db);
+							else
+								dbh.routes.update(r, RouteContract._ID + "=" 
+										+ edit.get(RouteContract._ID), null, db);
+						}
+						public void onComplete() {
+							if(edit != null){
+								int i = routes.indexOf(edit);
+								if(i == -1)
+									return;
+								routes.set(i, edit);
 							}
-							public void onComplete() {
-								if(edit != null){
-									int i = routes.indexOf(edit);
-									if(i == -1)
-										return;
-									routes.set(i, edit);
-								}
-								else
-									routes.add(r);
-								lv.invalidateViews();
-							}
-							public void onProgressUpdate(Unit... data) {}
-                	   };
-                   }
-               })
-               .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                   public void onClick(DialogInterface dialog, int id) {
-                       dialog.cancel();
-                   }
-               });
+							else
+								routes.add(r);
+							lv.invalidateViews();
+						}
+						public void onProgressUpdate(Unit... data) {}
+         	   };
+            }
+        });
+        builder.setNegativeButton(positiveButtonText, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
         Dialog d = builder.create();
+        
 		return d;
     }
     
@@ -151,17 +192,17 @@ public class RoutesFragment extends Fragment implements AdapterView.OnItemClickL
 	}
 	
 	public void deleteRoute(View v){
-		final ListView lv = (ListView) this.getActivity().findViewById(R.id.listview);
-		final Route delete = (Route) lv.getAdapter().getItem(selectedItem);
+		final Route delete = (Route) listview.getAdapter().getItem(selectedItem);
+		routes.remove(delete);
 		Transaction t = new Transaction(db){
 			public void task(SQLiteDatabase db) {
 				 dbh.routes.delete(RouteContract._ID + "=" + delete.get(RouteContract._ID), null, db);
 			}
 			public void onComplete() {
-				lv.post(new Runnable(){
+				listview.post(new Runnable(){
 					public void run() {
 						routes.remove(delete);
-						lv.invalidateViews();
+						listview.invalidateViews();
 					}
 				});	
 				Log.i("DEBUG", "ROUTE DELETED");
@@ -181,23 +222,37 @@ public class RoutesFragment extends Fragment implements AdapterView.OnItemClickL
         listview.setOnItemClickListener( this );
     }
 
+    @Override
     public void onItemClick( AdapterView<?> parent, View view, int position, long id ) {
+        Button editB = (Button) getActivity().findViewById(R.id.editRouteButton);
+        Button deleteB = (Button) getActivity().findViewById(R.id.deleteRouteButton);
         if( position == selectedItem ) {
             view.setSelected(false);
             view.setActivated(false);
-            Button editB = (Button) getActivity().findViewById(R.id.editRouteButton);
             editB.setEnabled(false);
-            Button deleteB = (Button) getActivity().findViewById(R.id.deleteRouteButton);
             deleteB.setEnabled(false);
             selectedItem = -1;
         } else {
             view.setSelected( true );
             view.setActivated( true );
-            Button editB = (Button) getActivity().findViewById( R.id.editRouteButton );
             editB.setEnabled( true );
-            Button deleteB = (Button) getActivity().findViewById( R.id.deleteRouteButton );
             deleteB.setEnabled( true );
             selectedItem = position;
+        }
+    }
+
+    @Override
+    public void onClick( View view ) {
+        switch( view.getId() ) {
+            case R.id.addRouteButton:
+                // open dialog with blank fields
+                break;
+            case R.id.editRouteButton:
+                // open dialog with filled-in fields
+                break;
+            case R.id.deleteRouteButton:
+                // delete the route
+                break;
         }
     }
     
@@ -284,7 +339,7 @@ public class RoutesFragment extends Fragment implements AdapterView.OnItemClickL
         public void onFragmentInteraction(Uri uri);
     }*/
 
-
+    /* Custom adapter for the list of routes */
     private class RouteListAdapter extends BaseAdapter {
 
         Context context;
