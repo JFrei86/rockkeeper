@@ -69,7 +69,9 @@ public abstract class Contract implements BaseColumns{
 				}
 			}
 		}
-		return db.insert(tableName(), null, values);
+		long id =  db.insert(tableName(), null, values);
+		d.put(_ID, id);
+		return id;
 	}
 	
 	public Cursor query(String[] retrieve, String where, String[] args, String sortBy, boolean descending, Integer limit, SQLiteDatabase db){
@@ -114,7 +116,11 @@ public abstract class Contract implements BaseColumns{
 		public void put(String col, Double val) { put(col, "" + val); }
 		public void remove(String col) { data.remove(col); }
 		public String toString(){return data.toString();}
-		public boolean equals(Object a){ return ((Unit)a).get(_ID).equals(this.get(_ID));}
+		public boolean equals(Object a){ 
+			if(a != null && ((Unit) a).get(_ID) != null)
+				return ((Unit)a).get(_ID).equals(this.get(_ID));
+			else return false;
+		}
 		public Unit(){}
 	}
 }
