@@ -1,6 +1,7 @@
 package transcend.rockeeper.activities;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
@@ -56,7 +58,7 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
     private ListView listview;
     private int selectedItem = -1;      // the index of the list item selected
 
-    HashMap<String, Integer> colorMap = new HashMap<String, Integer>();
+    HashMap<Integer, String> colorMap = new HashMap<Integer, String>();
 
     //private OnFragmentInteractionListener mListener;
 
@@ -92,14 +94,14 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
             getRoutes(loc_id);
         }
 
-        colorMap.put("Red", 0xFFFF0000);
-        colorMap.put("Orange", 0xFFFF8800);
-        colorMap.put("Yellow", 0xFFFFFF00);
-        colorMap.put("Green", 0xFF00FF00);
-        colorMap.put("Blue", 0xFF0000FF);
-        colorMap.put("Purple", 0xFFFF00FF);
-        colorMap.put("White", 0xFFFFFFFF);
-        colorMap.put("Black", 0xFF000000);
+        colorMap.put(0xFFFF0000, "Red");
+        colorMap.put(0xFFFF8800, "Orange");
+        colorMap.put(0xFFFFFF00, "Yellow");
+        colorMap.put(0xFF00FF00, "Green");
+        colorMap.put(0xFF0000FF, "Blue");
+        colorMap.put(0xFFFF00FF, "Purple");
+        colorMap.put(0xFFFFFFFF, "White");
+        colorMap.put(0xFF000000, "Black");
     }
    
     public Dialog createDialog(final Route edit, final ListView lv) {
@@ -112,31 +114,44 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
         View dialogView = inflater.inflate(R.layout.fragment_create_route, null);
         builder.setView( dialogView );
 
-        /*Spinner location = (Spinner) dialogView.findViewById(R.id.routeLocationSpinner);
-        String[] locs = {"1", "2", "3"};
-        ArrayAdapter<CharSequence> locAdapter = new ArrayAdapter<CharSequence>(this.getActivity(), android.R.layout.simple_spinner_item, locs);
-        location.setAdapter( locAdapter );*/
+        RadioButton toprope = (RadioButton) dialogView.findViewById(R.id.topropeRB);
+        toprope.setSelected(true);
+        RadioButton boulder = (RadioButton) dialogView.findViewById(R.id.boulderRB);
 
         NumberPicker difficulty = (NumberPicker) dialogView.findViewById(R.id.routeDifficultyPicker);
-        String[] diffs = new String[13];
-        for( int i=0; i<13; ++i )
-            diffs[i] = "v"+i;
-        difficulty.setDisplayedValues( diffs );
+        ArrayList<String> diffs = new ArrayList<>();
+        for( int i=0; i<=13; ++i )
+            diffs.add( "v"+i );
+        ArrayList<String> diffsBouldering = new ArrayList<>();
+        for( int i=5; i<=15; ++i )
+            diffsBouldering.add( "5."+i );
+        difficulty.setDisplayedValues(diffs.toArray(new String[diffs.size()]));
+        difficulty.setMinValue(0);
+        difficulty.setMaxValue(diffs.size()-1);
 
         NumberPicker color = (NumberPicker) dialogView.findViewById(R.id.routeColorPicker);
-        String[] colors = colorMap.keySet().toArray( new String[colorMap.size()] );
-        color.setDisplayedValues( colors );
+        ArrayList<String> colors = new ArrayList<>( colorMap.values() );
+        color.setDisplayedValues( colors.toArray( new String[colorMap.size()]) );
+        color.setMinValue(0);
+        color.setMaxValue(colors.size()-1);
 
         // If opened in edit mode, populate the fields with existing values
-        if( selectedItem != -1 ) {
-            Route routeToEdit = (Route) listview.getAdapter().getItem(selectedItem);
+        if( edit != null ) {
+            //Route routeToEdit = (Route) listview.getAdapter().getItem(selectedItem);
             EditText name = (EditText) dialogView.findViewById(R.id.routeDialogName);
-            name.setText( routeToEdit.get( RouteContract.NAME ));
-            //NumberPicker difficulty...
-            //NumberPicker color...
+            name.setText( edit.get( RouteContract.NAME ));
+            String routeDiff = edit.get( RouteContract.DIFFICULTY );
+            if( routeDiff.charAt(0) != 'v' ) {
+                difficulty.setDisplayedValues(diffsBouldering.toArray(new String[diffsBouldering.size()]));
+                difficulty.setMaxValue(diffsBouldering.size()-1);
+                difficulty.setValue( diffsBouldering.indexOf( routeDiff ));
+            }
+            else
+                difficulty.setValue( diffs.indexOf( routeDiff ));
+            color.setValue( colors.indexOf(colorMap.get(Integer.parseInt(edit.get(RouteContract.COLOR)))));
         }
 
-        String positiveButtonText = (selectedItem == -1)?"Add":"Edit";
+        String positiveButtonText = (edit == null)?"Add":"Edit";
         // Add action buttons
         builder.setPositiveButton(positiveButtonText, new DialogInterface.OnClickListener() {
             @Override
@@ -168,7 +183,7 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
          	   };
             }
         });
-        builder.setNegativeButton(positiveButtonText, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();
             }

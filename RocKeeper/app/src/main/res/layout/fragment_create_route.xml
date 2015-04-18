@@ -13,6 +13,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textSize="20dp"
+        android:textColor="#000"
         android:text="Create route for: " />
 
     <EditText
@@ -52,7 +53,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/radioGroup"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="20dp">
 
         <TextView
             android:layout_width="0dp"
@@ -74,7 +75,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/labelRow"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="5dp">
 
         <NumberPicker
             android:id="@+id/routeDifficultyPicker"
