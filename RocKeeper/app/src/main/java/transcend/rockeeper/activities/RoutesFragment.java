@@ -60,7 +60,7 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
     private ListView listview;
     private int selectedItem = -1;      // the index of the list item selected
 
-    HashMap<Integer, String> colorMap = new HashMap<Integer, String>();
+    HashMap<String, String> colorMap = new HashMap<>();
 
     //private OnFragmentInteractionListener mListener;
 
@@ -96,14 +96,14 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
             getRoutes(loc_id);
         }
 
-        colorMap.put(0xFFFF0000, "Red");
-        colorMap.put(0xFFFF8800, "Orange");
-        colorMap.put(0xFFFFFF00, "Yellow");
-        colorMap.put(0xFF00FF00, "Green");
-        colorMap.put(0xFF0000FF, "Blue");
-        colorMap.put(0xFFFF00FF, "Purple");
-        colorMap.put(0xFFFFFFFF, "White");
-        colorMap.put(0xFF000000, "Black");
+        colorMap.put("0xFFFF0000", "Red");
+        colorMap.put("0xFFFF8800", "Orange");
+        colorMap.put("0xFFFFFF00", "Yellow");
+        colorMap.put("0xFF00FF00", "Green");
+        colorMap.put("0xFF0000FF", "Blue");
+        colorMap.put("0xFFFF00FF", "Purple");
+        colorMap.put("0xFFFFFFFF", "White");
+        colorMap.put("0xFF000000", "Black");
     }
    
     public Dialog createDialog(final Route edit, final ListView lv) {
@@ -119,12 +119,12 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
         final NumberPicker difficulty = (NumberPicker) dialogView.findViewById(R.id.routeDifficultyPicker);
         difficulty.setDisplayedValues( getResources().getStringArray(R.array.boulder_levels) );
         difficulty.setMinValue(0);
-        difficulty.setMaxValue(15);
+        difficulty.setMaxValue(14);
 
         final EditText name = (EditText) dialogView.findViewById(R.id.routeDialogName);
         
         NumberPicker color = (NumberPicker) dialogView.findViewById(R.id.routeColorPicker);
-        String[] colors = colorMap.keySet().toArray( new String[colorMap.size()] );
+        String[] colors = colorMap.values().toArray( new String[colorMap.size()] );
         color.setDisplayedValues( colors );
         color.setMinValue(0);
         color.setMaxValue(colors.length-1);
@@ -136,8 +136,9 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
             String routeDiff = edit.get( RouteContract.DIFFICULTY );
             if( routeDiff.charAt(0) == '5' ) {
                 difficulty.setDisplayedValues( getResources().getStringArray(R.array.rope_levels));
-                difficulty.setMaxValue(12);
+                difficulty.setMaxValue(11);
                 // TODO: actually set value here
+                difficulty.invalidate();
             }
             //else
                 // TODO: actually set value here
@@ -147,11 +148,13 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
         }
         
         final RadioButton rope = (RadioButton) dialogView.findViewById(R.id.topropeRB);
-        final RadioButton boulder = (RadioButton) dialogView.findViewById(R.id.topropeRB);
+        final RadioButton boulder = (RadioButton) dialogView.findViewById(R.id.boulderRB);
         rope.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
 				if(isChecked){
+                    difficulty.setMinValue(0);
+                    difficulty.setMaxValue(11);
 					difficulty.setDisplayedValues( getResources().getStringArray(R.array.rope_levels) );
 					//difficulty.setValue(0);
 					difficulty.invalidate();
@@ -163,6 +166,8 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
 					boolean isChecked) {
 				if(isChecked){
 					difficulty.setDisplayedValues( getResources().getStringArray(R.array.boulder_levels) );
+                    difficulty.setMinValue(0);
+                    difficulty.setMaxValue(14);
 					//difficulty.setValue(0);
 					difficulty.invalidate();
 				}
