@@ -1,13 +1,9 @@
 package transcend.rockeeper.activities;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-
 import transcend.rockeeper.data.Contract.Unit;
-import transcend.rockeeper.data.LocationContract.Location;
-import transcend.rockeeper.data.LocationContract;
 import transcend.rockeeper.data.RouteContract;
 import transcend.rockeeper.data.RouteContract.Route;
 import transcend.rockeeper.sqlite.DatabaseHelper;
@@ -20,7 +16,6 @@ import android.util.Log;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -29,15 +24,14 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.NumberPicker;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -45,9 +39,7 @@ import activities.rockeeper.R;
 
 
 public class RoutesFragment extends Fragment implements OnClickListener, AdapterView.OnItemClickListener {
-
-	private final int BATCH = 10;       // buffer size for grabbing items from database
-
+	
 	private static final String ARG_PARAM1 = "locId";
     
 	private String mParam1;
@@ -60,7 +52,7 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
     private ListView listview;
     private int selectedItem = -1;      // the index of the list item selected
 
-    HashMap<String, String> colorMap = new HashMap<>();
+    HashMap<String, String> colorMap = new HashMap<String, String>();
 
     //private OnFragmentInteractionListener mListener;
 
@@ -106,7 +98,8 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
         colorMap.put("0xFF000000", "Black");
     }
    
-    public Dialog createDialog(final Route edit, final ListView lv) {
+    @SuppressLint("InflateParams")
+	public Dialog createDialog(final Route edit, final ListView lv) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -123,7 +116,7 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
 
         final EditText name = (EditText) dialogView.findViewById(R.id.routeDialogName);
         
-        NumberPicker color = (NumberPicker) dialogView.findViewById(R.id.routeColorPicker);
+        final NumberPicker color = (NumberPicker) dialogView.findViewById(R.id.routeColorPicker);
         String[] colors = colorMap.values().toArray( new String[colorMap.size()] );
         color.setDisplayedValues( colors );
         color.setMinValue(0);
@@ -179,12 +172,12 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
         builder.setPositiveButton(positiveButtonText, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface d, int id) {
-         	   final int color = 0;
+         	   final int col_val = 0;// colors[color.getValue()];
          	   String diff = getResources().getStringArray(R.array.boulder_levels)[difficulty.getValue()];
          	   if(rope.isChecked())
          		  diff = getResources().getStringArray(R.array.rope_levels)[difficulty.getValue()];
          	   final String val = name.getText().toString();
-         	   final Route r = dbh.routes.build(diff, 0, Long.parseLong(mParam1), color, val, 0);
+         	   final Route r = dbh.routes.build(diff, 0, Long.parseLong(mParam1), col_val, val, 0);
          	   Transaction t = new Transaction(db){
 						public void task(SQLiteDatabase db) {
 							if(edit == null){
@@ -196,8 +189,6 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
 						}
 						public void onComplete() {
 							if(edit != null){
-								if(selectedItem == -1)
-									return;
 								routes.set(selectedItem, edit);
 							}
 							else{
@@ -205,7 +196,6 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
 								click(listview, selectedItem);
 							}
 							lv.invalidateViews();
-							
 						}
 						public void onProgressUpdate(Unit... data) {}
          	   };
@@ -388,12 +378,10 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
     /* Custom adapter for the list of routes */
     private class RouteListAdapter extends BaseAdapter {
 
-        Context context;
         List<Route> routes;
         LayoutInflater inflater = null;
 
         public RouteListAdapter( Context context, List<Route> routes ) {
-            this.context = context;
             this.routes = routes;
             this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         }
@@ -414,7 +402,8 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
             return position;
         }
 
-        @Override
+        @SuppressLint("InflateParams")
+		@Override
         public View getView( final int position, View convertView, ViewGroup parent ) {
             View vi = convertView;
             if( vi == null )

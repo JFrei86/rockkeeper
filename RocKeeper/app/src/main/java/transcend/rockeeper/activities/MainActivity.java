@@ -2,7 +2,7 @@ package transcend.rockeeper.activities;
 
 import java.util.HashMap;
 import java.util.Locale;
-
+import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
@@ -11,28 +11,22 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.TextView;
 import activities.rockeeper.R;
 import transcend.rockeeper.data.Contract;
 import transcend.rockeeper.data.LocationContract;
-import transcend.rockeeper.data.RouteContract;
-import transcend.rockeeper.data.Contract.Unit;
-import transcend.rockeeper.data.RouteContract.Route;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 import transcend.rockeeper.sqlite.Transaction;
 //import transcend.rockeeper.activities.DashboardFragment;
 
+@SuppressWarnings("deprecation")
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener
 {
 
@@ -54,7 +48,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      */
     ViewPager mViewPager;
 
-    private HashMap<Long, LocationContract.Location> locations = new HashMap<Long, LocationContract.Location>();
+    @SuppressLint("UseSparseArrays")
+	private HashMap<Long, LocationContract.Location> locations = new HashMap<Long, LocationContract.Location>();
 
     private DatabaseHelper dbh = new DatabaseHelper(this, null);
     private SQLiteDatabase db;
@@ -74,7 +69,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         db = dbh.getReadableDatabase();
-        getLocation( -1 );
+        getLocation( currentLocId );
 
         // Create the adapter that will return a fragment for each of the four
         // primary sections of the activity.
@@ -96,7 +91,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             }
         });
 
-        routes = RoutesFragment.newInstance( 1 );
+        routes = RoutesFragment.newInstance( currentLocId );
         dash = DashboardFragment.newInstance();
         
         // For each of the sections in the app, add a tab to the action bar.
@@ -180,6 +175,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 Log.i("RoutesFragment", "Locations Loaded.");}
             public void onProgressUpdate(Contract.Unit... data) {}
         };
+        t.run(true, true);
     }
     
     public void addRoute(View v){
