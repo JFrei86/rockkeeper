@@ -179,7 +179,7 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
          	   if(rope.isChecked())
          		  diff = getResources().getStringArray(R.array.rope_levels)[difficulty.getValue()];
          	   final String val = name.getText().toString();
-         	   final Route r = dbh.routes.build(diff, 0, Long.parseLong(mParam1), color, val, 0);
+         	   final Route r = dbh.routes.build(diff, 0, Long.parseLong(mParam1), color, val, 0, 0);
          	   Transaction t = new Transaction(db){
 						public void task(SQLiteDatabase db) {
 							if(edit == null){

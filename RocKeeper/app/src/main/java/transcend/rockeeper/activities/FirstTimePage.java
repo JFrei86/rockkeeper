@@ -76,9 +76,9 @@ public class FirstTimePage extends ActionBarActivity {
 		    	Location l = dbh.locations.build(location);
 		    	
 		    	//TODO: REMOVE AFTER TESTING
-		    	Route r1 = dbh.routes.build("v0", 2, 1, 0xFF00FF00, "Rainbow Road", 0);
-		    	Route r2 = dbh.routes.build("v3", 0, 1, 0xFFFF0000, "Death Drop", 0);
-		    	Route r3 = dbh.routes.build("v2", 1, 1, 0xFF0000FF, "Inner Peaks", 0);
+		    	Route r1 = dbh.routes.build("v0", 2, 1, 0xFF00FF00, "Rainbow Road", 0, 0);
+		    	Route r2 = dbh.routes.build("v3", 0, 1, 0xFFFF0000, "Death Drop", 0, 0);
+		    	Route r3 = dbh.routes.build("v2", 1, 1, 0xFF0000FF, "Inner Peaks", 0, 0);
 		    	
 		    	dbh.locations.insert(l, db);
 		    	dbh.settings.insert(s, db);
