@@ -51,7 +51,7 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
 	private static final String ARG_PARAM1 = "locId";
     
 	private String mParam1;
-    private List<Route> routes = new ArrayList<Route>();    // routes stored here after database retrieval
+    private ArrayList<Route> routes = new ArrayList<Route>();    // routes stored here after database retrieval
 
 
     private DatabaseHelper dbh;
@@ -60,7 +60,7 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
     private ListView listview;
     private int selectedItem = -1;      // the index of the list item selected
 
-    HashMap<String, String> colorMap = new HashMap<>();
+    HashMap<String, String> colorMap = new HashMap<String, String>();
 
     //private OnFragmentInteractionListener mListener;
 
@@ -129,16 +129,21 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
         color.setMinValue(0);
         color.setMaxValue(colors.length-1);
 
+        final RadioButton rope = (RadioButton) dialogView.findViewById(R.id.topropeRB);
+        final RadioButton boulder = (RadioButton) dialogView.findViewById(R.id.boulderRB);
+
         // If opened in edit mode, populate the fields with existing values
         if( edit != null ) {
             //Route routeToEdit = (Route) listview.getAdapter().getItem(selectedItem);
             name.setText( edit.get( RouteContract.NAME ));
             String routeDiff = edit.get( RouteContract.DIFFICULTY );
             if( routeDiff.charAt(0) == '5' ) {
-                difficulty.setDisplayedValues( getResources().getStringArray(R.array.rope_levels));
                 difficulty.setMaxValue(11);
+                difficulty.setDisplayedValues( getResources().getStringArray(R.array.rope_levels));
                 // TODO: actually set value here
                 difficulty.invalidate();
+
+                rope.setSelected( true );
             }
             //else
                 // TODO: actually set value here
@@ -147,8 +152,7 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
             //color.setValue( colors.indexOf(colorMap.get(Integer.parseInt(edit.get(RouteContract.COLOR)))));
         }
         
-        final RadioButton rope = (RadioButton) dialogView.findViewById(R.id.topropeRB);
-        final RadioButton boulder = (RadioButton) dialogView.findViewById(R.id.boulderRB);
+
         rope.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
@@ -198,14 +202,14 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
 							if(edit != null){
 								if(selectedItem == -1)
 									return;
-								routes.set(selectedItem, edit);
+								routes.set(selectedItem, r);
 							}
 							else{
 								routes.add(r);
 								click(listview, selectedItem);
 							}
-							lv.invalidateViews();
-							
+
+                            ((RouteListAdapter)listview.getAdapter()).notifyDataSetChanged();
 						}
 						public void onProgressUpdate(Unit... data) {}
          	   };
@@ -386,13 +390,14 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
     }*/
 
     /* Custom adapter for the list of routes */
-    private class RouteListAdapter extends BaseAdapter {
+    private class RouteListAdapter extends ArrayAdapter<Route> {
 
         Context context;
         List<Route> routes;
         LayoutInflater inflater = null;
 
-        public RouteListAdapter( Context context, List<Route> routes ) {
+        public RouteListAdapter( Context context, ArrayList<Route> routes ) {
+            super( context, 0, routes );
             this.context = context;
             this.routes = routes;
             this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
@@ -404,7 +409,7 @@ public class RoutesFragment extends Fragment implements OnClickListener, Adapter
         }
 
         @Override
-        public Object getItem( int position ) {
+        public Route getItem( int position ) {
             return routes.get( position );
             // return routes[position];
         }
