@@ -1,11 +1,15 @@
 package transcend.rockeeper.activities;
 
+import java.util.ArrayList;
+
+import transcend.rockeeper.data.StatContract.Stat;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 //import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import activities.rockeeper.R;
 
 /**
@@ -18,7 +22,12 @@ import activities.rockeeper.R;
  */
 public class DashboardFragment extends Fragment {
     
+	private final static String RANGE = "RANGE";
 
+	private static final String WEEK = "WEEK";
+	private static final String MONTH = "MONTH";
+	private static final String YEAR = "YEAR";
+	
     //private OnFragmentInteractionListener mListener;
 
     /**
@@ -29,13 +38,15 @@ public class DashboardFragment extends Fragment {
      * @return A new instance of fragment DashboardFragment.
      */
     // TODO: Rename and change types and number of parameters
+	
+	public StatsGraph sg;
+
+	private ProgressBar prog;
+	
     public static DashboardFragment newInstance( ) {
         DashboardFragment fragment = new DashboardFragment();
-        //Bundle args = new Bundle();
-        //args.putString(ARG_PARAM1, param1);
-        //args.putString(ARG_PARAM2, param2);
-        //args.putInt( ARG_PARAM1, arg1 );
-        //fragment.setArguments(args);
+        Bundle b = new Bundle();
+        fragment.setArguments(b);
         return fragment;
     }
 
@@ -61,9 +72,24 @@ public class DashboardFragment extends Fragment {
 
     public void onActivityCreated(Bundle b){
     	super.onActivityCreated(b);
-    	new StatsGraph(this, null);
+    	prog = (ProgressBar)this.getActivity().findViewById(R.id.progress);
+    	prog.setVisibility(View.VISIBLE);
+    	
+    	getWeek();
+    	
+    	sg = new StatsGraph(this, null, WEEK);
+    	prog.setVisibility(View.INVISIBLE);
     	
     }
+
+	private void getWeek() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
- 
+	private void getMonth() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }

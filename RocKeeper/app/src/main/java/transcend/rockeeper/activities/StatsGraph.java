@@ -2,6 +2,10 @@ package transcend.rockeeper.activities;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import transcend.rockeeper.data.StatContract.Stat;
 import activities.rockeeper.R;
@@ -27,11 +31,9 @@ public class StatsGraph {
 	private Paint mLineGridPaint;
 	private LineChartView mLineChart;
 	
-	private final static int LINE_MAX = 10;
-	private final static int LINE_MIN = -10;
-	private final static String[] lineLabels = {"", "ANT", "GNU", "OWL", "APE", "JAY", ""};
-	private final static float[][] lineValues = { {-5f, 6f, 2f, 9f, 0f, 1f, 5f},
-												  {-9f, -2f, -4f, -3f, -7f, -5f, -3f}};
+	private static final String WEEK = "WEEK";
+	private static final String MONTH = "MONTH";
+	private static final String YEAR = "YEAR";
 	
 	private float mCurrOverlapFactor = 1;
 	private QuintEase mCurrEasing = new QuintEase();
@@ -48,14 +50,8 @@ public class StatsGraph {
 	private static int[] mCurrOverlapOrder;
 	private static int[] mOldOverlapOrder;
 	
-	private final static int[] beginOrder = {0, 1, 2, 3, 4, 5, 6};
-	private final static int[] middleOrder = {3, 2, 4, 1, 5, 0, 6};
-	private final static int[] endOrder = {6, 5, 4, 3, 2, 1, 0};
-	private static final int DOT_COLOR = 0x0063B0FF * 1/2 + 0xFF000000;
-	private static final int FOREGROUND = 0xFF63B0FF;
+	private static final int DOT_COLOR = 0xFF63B0FF;
 	private static final int LINES = 0x10000000;
-	
-	private final Fragment f;
 	
 	private final OnEntryClickListener lineEntryListener = new OnEntryClickListener(){
 		@Override
@@ -87,8 +83,7 @@ public class StatsGraph {
 		
 	}
 	
-	public StatsGraph(Fragment f, ArrayList<Stat> stats) {
-		this.f = f;
+	public StatsGraph(Fragment f, ArrayList<Stat> stats, String range) {
 		mLineChart = (LineChartView)f.getActivity().findViewById(R.id.rockStats);
 		mLineChart.setOnEntryClickListener(lineEntryListener);
 		mLineChart.setOnClickListener(lineClickListener);
@@ -100,27 +95,32 @@ public class StatsGraph {
 		mLineGridPaint.setAntiAlias(true);
 		mLineGridPaint.setStrokeWidth(Tools.fromDpToPx(.75f));
 		
-		updateView();
+		updateView(range);
 	}
 	
-	public void updateView(){
+	public void updateView(String range){
+		
 		mLineChart.reset();
 		
+		Date now = new Date();
+		
+		String[] lineLabels = getLineLabels(now, range);
+		
 		LineSet dataSet = new LineSet(lineLabels, lineValues[0]);
-		dataSet.setDotsColor(DOT_COLOR)
+		dataSet.setDotsColor(Color.WHITE)
 			.setDotsRadius(Tools.fromDpToPx(5))
 			.setDotsStrokeThickness(Tools.fromDpToPx(2))
 			.setDotsStrokeColor(DOT_COLOR)
-			.setColor(FOREGROUND)
+			.setColor(DOT_COLOR)
 			.setThickness(Tools.fromDpToPx(3))
-			.beginAt(1).endAt(lineLabels.length - 1);
+			.beginAt(0).endAt(lineLabels.length);
 		mLineChart.addData(dataSet);
 		
 		dataSet = new LineSet(lineLabels, lineValues[1]);
-		dataSet.setColor(FOREGROUND)
+		dataSet.setColor(DOT_COLOR)
 			.setThickness(Tools.fromDpToPx(3))
-			.setSmooth(true)
-			.setDashed(new float[]{10, 10});
+			.setSmooth(true);
+			//.setDashed(new float[]{10, 10});
 		mLineChart.addData(dataSet);
 		
 		mLineChart.setBorderSpacing(Tools.fromDpToPx(4))
@@ -131,13 +131,43 @@ public class StatsGraph {
 			.setYLabels(YController.LabelPosition.OUTSIDE)
 			.setAxisBorderValues(LINE_MIN, LINE_MAX, 5)
 			.setLabelsFormat(new DecimalFormat("##'u'"))
-			.show(getAnimation(true))
-			//.show()
+			//.show(getAnimation(true))
+			.show()
 			;
 		
 		mLineChart.animateSet(1, new DashAnimation());
 	}
 	
+	private String[] getLineLabels(Date now, String range) {
+		String[] labels = null;
+		if(range.equals(WEEK)){
+			labels = new String[7];
+			Calendar c = new GregorianCalendar();
+			c.setTime(now);
+			for(int i = 6; i <= 0; i++){
+				labels[i] = c.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault());
+				c.add(Calendar.DATE, -1);
+			}
+		} else if(range.equals(MONTH)){
+			labels = new String[30];
+			Calendar c = new GregorianCalendar();
+			c.setTime(now);
+			for(int i = 29; i <= 0; i++){
+				labels[i] = c.getDisplayName(Calendar.DATE, Calendar.SHORT, Locale.getDefault());
+				c.add(Calendar.DATE, -1);
+			}
+		} else if(range.equals(YEAR)){
+			labels = new String[12];
+			Calendar c = new GregorianCalendar();
+			c.setTime(now);
+			for(int i = 11; i <= 0; i++){
+				labels[i] = c.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault());
+				c.add(Calendar.MONTH, -1);
+			}
+		}
+		return labels;
+	}
+
 	private Animation getAnimation(boolean newAnim){
 		if(newAnim)
 			return new Animation()

@@ -3,12 +3,26 @@
     android:layout_height="match_parent"
     tools:context="transcend.rockeeper.activities.DashboardFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <ProgressBar
+        android:id="@+id/progress"
+        android:indeterminateOnly="true"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="80dp"/>
+    
     <com.db.chart.view.LineChartView
         xmlns:chart="http://schemas.android.com/apk/res-auto"
         android:id="@+id/rockStats"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_margin="10dp"/>
+        android:background="@color/white"
+        android:layout_marginTop="27dp"
+	    android:layout_marginLeft="7dp"
+	    android:layout_marginRight="7dp"
+	    android:layout_marginBottom="2dp"
+	    android:paddingTop="10dp"
+	    android:paddingBottom="10dp"
+	    android:paddingLeft="10dp"
+	    android:paddingRight="10dp"/>
     
 </FrameLayout>
