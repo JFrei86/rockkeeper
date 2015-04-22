@@ -26,8 +26,7 @@
     <string name="title_activity_main">RocKeeper</string>
     <string name="title_section1">Routes</string>
     <string name="title_section2">Dashboard</string>
-    <string name="title_section3">Stats</string>
-    <string name="title_section4">Goals</string>
+    <string name="title_section3">Goals</string>
     <string name="title_activity_first_time_page">RocKeeper</string>
     <string name="title_activity_create">Create</string>
 

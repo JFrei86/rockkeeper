@@ -107,6 +107,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             .setTabListener(this));
         }
 
+        mViewPager.setCurrentItem( 1 );
+
         db = dbh.getReadableDatabase();
         
         getLocation( -1 );
@@ -220,8 +222,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         @Override
         public int getCount()
         {
-            // Show 4 total pages.
-            return 4;
+            // Show 3 total pages.
+            return 3;
         }
 
         @Override
@@ -236,8 +238,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     return getString(R.string.title_section2).toUpperCase(l);
                 case 2:
                     return getString(R.string.title_section3).toUpperCase(l);
-                case 3:
-                    return getString(R.string.title_section4).toUpperCase(l);
             }
             return null;
         }
