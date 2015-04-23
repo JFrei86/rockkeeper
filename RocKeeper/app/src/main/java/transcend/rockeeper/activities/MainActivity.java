@@ -29,23 +29,11 @@ import transcend.rockeeper.sqlite.Transaction;
 @SuppressWarnings("deprecation")
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener
 {
-
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     SectionsPagerAdapter mSectionsPagerAdapter;
 
     RoutesFragment routes;
     DashboardFragment dash;
     
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     ViewPager mViewPager;
 
     @SuppressLint("UseSparseArrays")
@@ -55,6 +43,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     private SQLiteDatabase db;
 
     private long currentLocId = 1;
+    private LocationContract.Location currentLoc;
 
     public void onBackPressed(){}
 
@@ -69,7 +58,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         db = dbh.getReadableDatabase();
-        getLocation( currentLocId );
+        //getLocation( currentLocId );
 
         // Create the adapter that will return a fragment for each of the four
         // primary sections of the activity.
@@ -111,9 +100,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         db = dbh.getReadableDatabase();
         
-        getLocation( -1 );
+        //getLocation( -1 );
+
+        updateCurrentLocation( currentLocId );
 
     }
+
+/****************************** MENU METHODS *****************************/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -140,6 +133,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         return super.onOptionsItemSelected(item);
     }
 
+/****************************** TAB METHODS *********************************/
+
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction)
     {
@@ -158,28 +153,28 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     {
     }
 
-    private void getLocation(final long loc_id) {
-        Transaction t = new Transaction(db){
+/****************************** LOCATION METHODS ********************************/
+
+    public LocationContract.Location getCurrentLocation() {
+        return currentLoc;
+    }
+
+    public void updateCurrentLocation( final long loc_id ) {
+        Transaction t = new Transaction(db) {
             public void task(SQLiteDatabase db) {
-                if(loc_id == -1){
-                    Cursor c = dbh.locations.query(new String[] { LocationContract.NAME }, null, null, LocationContract._ID, true, null, db);
-                    for(int i = 0; i < c.getCount(); i++){
-                        c.moveToNext();
-                        locations.put(c.getLong(c.getColumnIndex(LocationContract._ID)), dbh.locations.build(c));
-                    }
-                } else {
-                    Cursor c = dbh.locations.query(new String[] { LocationContract.NAME }, LocationContract._ID + "=" + loc_id, null, LocationContract._ID, true, null, db);
-                    c.moveToLast();
-                    locations.put(c.getLong(c.getColumnIndex(LocationContract._ID)), dbh.locations.build(c));
-                }
+                Cursor c = dbh.locations.query(new String[] { LocationContract._ID, LocationContract.NAME }, LocationContract._ID + "=" + loc_id, null, LocationContract._ID, true, null, db);
+                c.moveToLast();
+                currentLoc = dbh.locations.build(c);
             }
             public void onComplete() {
-                Log.i("RoutesFragment", "Locations Loaded.");}
+                Log.i("UpdateLocation", "Location Updated.");}
             public void onProgressUpdate(Contract.Unit... data) {}
         };
-        //t.run(true, true);
+        t.run(true, true);
     }
-    
+
+/************************** BUTTON LISTENER METHODS **************************/
+
     public void addRoute(View v){
 		this.routes.addRoute(v);
 	}
@@ -192,13 +187,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 		this.routes.deleteRoute(v);
 	}
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
+/********************************** ADAPTERS *********************************/
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter
     {
-
         public SectionsPagerAdapter(FragmentManager fm)
         {
             super(fm);

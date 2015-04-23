@@ -3,6 +3,7 @@ package transcend.rockeeper.activities;
 import java.util.ArrayList;
 import java.util.List;
 import transcend.rockeeper.data.Contract.Unit;
+import transcend.rockeeper.data.LocationContract;
 import transcend.rockeeper.data.RouteContract;
 import transcend.rockeeper.data.RouteContract.Route;
 import transcend.rockeeper.sqlite.DatabaseHelper;
@@ -45,6 +46,8 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
     private DatabaseHelper dbh;
     private SQLiteDatabase db;
 
+    private Activity mainActivity;
+
     private ListView listview;
     private int selectedItem = -1;      // the index of the list item selected
 
@@ -78,8 +81,8 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
     @Override
     public void onActivityCreated( Bundle savedInstanceState ) {
         super.onActivityCreated(savedInstanceState);
-        Activity thisActivity = this.getActivity();
-        listview = (ListView) thisActivity.findViewById(R.id.listview);
+        mainActivity = this.getActivity();
+        listview = (ListView) mainActivity.findViewById(R.id.listview);
         listview.setAdapter( new RouteListAdapter( this.getActivity(), routes ));
         listview.setOnItemClickListener( this );
     }
@@ -100,13 +103,15 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         //final RadioButton boulder = (RadioButton) dialog.getDialog().findViewById(R.id.boulderRB);
         final NumberPicker difficulty = (NumberPicker) dialog.getDialog().findViewById(R.id.routeDifficultyPicker);
         final Spinner color = (Spinner) dialog.getDialog().findViewById(R.id.routeColorPicker);
+        final EditText points = (EditText) dialog.getDialog().findViewById(R.id.routePoints);
 
         final int col_val = (Integer)color.getSelectedItem();// colors[color.getValue()];
         String diff = getResources().getStringArray(R.array.boulder_levels)[difficulty.getValue()];
         if(rope.isChecked())
             diff = getResources().getStringArray(R.array.rope_levels)[difficulty.getValue()];
-        final String val = name.getText().toString();
-        final Route r = dbh.routes.build(diff, 0, Long.parseLong(mParam1), col_val, val, 0, 0);
+        final String name_val = name.getText().toString();
+        final int pts = Integer.parseInt( points.getText().toString() );
+        final Route r = dbh.routes.build(diff, 0, Long.parseLong(mParam1), col_val, name_val, 0, pts);
         Transaction t = new Transaction(db){
             public void task(SQLiteDatabase db) {
                 if(edit == null){
@@ -271,6 +276,9 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
             TextView diffLevel = (TextView)vi.findViewById(R.id.DifficultyLevel);
             diffLevel.setText(routes.get(position).get(RouteContract.DIFFICULTY));
 
+            TextView points = (TextView)vi.findViewById(R.id.Points);
+            points.setText(routes.get(position).get(RouteContract.POINTS));
+
             View colorlabel = vi.findViewById( R.id.ColorLabel );
             colorlabel.setBackgroundColor( Integer.parseInt(routes.get(position).get(RouteContract.COLOR)) );
 
@@ -278,7 +286,10 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
             routeName.setText(routes.get(position).get(RouteContract.NAME));
 
             TextView routeLoc = (TextView)vi.findViewById( R.id.Location );
-            routeLoc.setText(routes.get(position).get(RouteContract.LOCATION));
+            long locID = Long.parseLong(routes.get(position).get(RouteContract.LOCATION));
+            //Log.d( "RouteLocation", ""+locID );
+            LocationContract.Location curLoc = ((MainActivity)mainActivity).getCurrentLocation();
+            routeLoc.setText( curLoc.get( LocationContract.NAME ));
 
             final TextView timesClimbed = (TextView)vi.findViewById( R.id.TimesClimbed );
             timesClimbed.setText(routes.get(position).get(RouteContract.NUM_ATTEMPTS));

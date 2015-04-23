@@ -12,7 +12,8 @@ public class RouteContract extends Contract implements BaseColumns {
 	public static String NAME = "name";
 	public static String LOCATION = "location";
 	public static String COMPLETED = "complete";
-	public static String POINTS = "points";
+    public static String POINTS = "points";
+
 	
 	//Define Column Types
 	public RouteContract() {
@@ -23,7 +24,7 @@ public class RouteContract extends Contract implements BaseColumns {
 		colTypes.put(COLOR, INT);
 		colTypes.put(NAME, TEXT);
 		colTypes.put(COMPLETED, INT);
-		colTypes.put(POINTS, INT);
+        colTypes.put(POINTS, INT);
 	}
 	
 	//Table name for contract
@@ -45,7 +46,7 @@ public class RouteContract extends Contract implements BaseColumns {
 			put(COLOR, color);
 			put(NAME, name);
 			put(COMPLETED, completed);
-			put(POINTS, points);
+            put(POINTS, points);
 		}
 	}
 
@@ -58,6 +59,6 @@ public class RouteContract extends Contract implements BaseColumns {
 				c.getInt(c.getColumnIndex(COLOR)),
 				c.getString(c.getColumnIndex(NAME)),
 				c.getInt(c.getColumnIndex(COMPLETED)),
-				c.getInt(c.getColumnIndex(POINTS)));
+                c.getInt(c.getColumnIndex(POINTS)));
 	}
 }

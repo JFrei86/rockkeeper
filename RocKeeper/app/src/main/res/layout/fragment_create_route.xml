@@ -50,47 +50,69 @@
     </RadioGroup>
 
     <LinearLayout
-        android:id="@+id/labelRow"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:layout_below="@id/radioGroup"
-        android:layout_marginTop="20dp">
+        android:orientation="horizontal">
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/DifficultyGroup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="16sp"
-            android:text="Difficulty:"
-            android:enabled="true"/>
+            android:orientation="vertical">
 
-        <TextView
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:text="Difficulty:"
+                android:enabled="true"/>
+
+            <NumberPicker
+                android:id="@+id/routeDifficultyPicker"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="30dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/PointsColorGroup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginLeft="30dp"
-            android:textSize="16sp"
-            android:text="Color:"/>
-    </LinearLayout>
+            android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/labelRow"
-        android:layout_marginTop="5dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:text="Color:"/>
 
-        <NumberPicker
-            android:id="@+id/routeDifficultyPicker"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginRight="30dp"/>
+            <Spinner
+                android:id="@+id/routeColorPicker"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"/>
 
-        <Spinner
-            android:id="@+id/routeColorPicker"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textSize="16sp"
+                android:text="Points:"/>
+
+            <EditText
+                android:id="@+id/routePoints"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:inputType="number"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
