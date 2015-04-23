@@ -29,7 +29,9 @@ import transcend.rockeeper.sqlite.Transaction;
 @SuppressWarnings("deprecation")
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener
 {
-    SectionsPagerAdapter mSectionsPagerAdapter;
+    private static final int DASHBOARD_POS = 1;
+
+	SectionsPagerAdapter mSectionsPagerAdapter;
 
     RoutesFragment routes;
     DashboardFragment dash;
@@ -141,6 +143,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // When the given tab is selected, switch to the corresponding page in
         // the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
+        if( tab.getPosition() == DASHBOARD_POS ){
+        	dash.refreshChart();
+        }
     }
 
     @Override

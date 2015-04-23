@@ -7,16 +7,15 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
-
 import transcend.rockeeper.data.Contract.Unit;
 import transcend.rockeeper.data.StatContract;
 import transcend.rockeeper.data.StatContract.Stat;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 import transcend.rockeeper.sqlite.Transaction;
 import activities.rockeeper.R;
+import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -25,15 +24,14 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
-
 import com.db.chart.Tools;
 import com.db.chart.listener.OnEntryClickListener;
 import com.db.chart.model.*;
 import com.db.chart.view.*;
 import com.db.chart.view.animation.Animation;
 import com.db.chart.view.animation.easing.QuintEase;
-import com.db.chart.view.animation.style.DashAnimation;
 
+@SuppressLint("UseSparseArrays")
 public class StatsGraph {
 	
 	public static final String WEEK = "WEEK";
@@ -163,6 +161,15 @@ public class StatsGraph {
 		mLineChart.addData(dataSet);
 		
 		int max = getMax();
+		int i = 2;
+		if(max > 10);
+			i = 5;
+		if(max > 50)
+			i = 10;
+		if(max > 100)
+			i = 50;
+		if(max > 500)
+			i = 100;
 		
 		mLineChart.setBorderSpacing(Tools.fromDpToPx(4))
 			.setGrid(LineChartView.GridType.HORIZONTAL, mLineGridPaint)
@@ -170,7 +177,7 @@ public class StatsGraph {
 			.setXLabels(XController.LabelPosition.OUTSIDE)
 			.setYAxis(false)
 			.setYLabels(YController.LabelPosition.OUTSIDE)
-			.setAxisBorderValues(0, max, max / 4)
+			.setAxisBorderValues(0, max, i)
 			.setLabelsFormat(new DecimalFormat("##"))
 			.show(getAnimation(true));
 		
@@ -187,7 +194,7 @@ public class StatsGraph {
 		}
 		if(max < 8)
 			return 8;
-		return (int) (max * 1.5);
+		return (int) max;
 	}
 	
 	private String[] getLineLabels(Date now, String range) {
@@ -197,7 +204,7 @@ public class StatsGraph {
 			Calendar c = new GregorianCalendar();
 			c.setTime(now);
 			for(int i = 6; i >= 0; i--){
-				labels[i] = c.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault()).toUpperCase();
+				labels[i] = c.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault()).toUpperCase(Locale.US);
 				c.add(Calendar.DATE, -1);
 			}
 		} else if(range.equals(MONTH)){
@@ -207,7 +214,7 @@ public class StatsGraph {
 			for(int i = 29; i >= 0; i--){
 				labels[i] = "";
 				if(c.get(Calendar.DATE) == 1)
-					labels[i] += c.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault()).toUpperCase() + " " + c.get(Calendar.DATE);
+					labels[i] += c.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault()).toUpperCase(Locale.US) + " " + c.get(Calendar.DATE);
 				if(c.get(Calendar.DATE) % 5 == 0 && c.get(Calendar.DATE) != 30)
 					labels[i] += c.get(Calendar.DATE);
 				c.add(Calendar.DATE, -1);
@@ -217,7 +224,7 @@ public class StatsGraph {
 			Calendar c = new GregorianCalendar();
 			c.setTime(now);
 			for(int i = 11; i >= 0; i--){
-				labels[i] = "" + c.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault()).toUpperCase();
+				labels[i] = "" + c.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault()).toUpperCase(Locale.US);
 				c.add(Calendar.MONTH, -1);
 			}
 		}
@@ -226,13 +233,12 @@ public class StatsGraph {
 	
 	public void refresh() {
 		stats.clear();
-		updateView();
 		prog.setVisibility(View.VISIBLE);
 		Transaction t = new Transaction(db){
 			private Date then;
 			public void task(SQLiteDatabase db) {
 				then = when();
-				Cursor c = dbh.stats.query(null, StatContract.DATE + ">=" + then.getTime(), null, StatContract.DATE, false, null, db);
+				Cursor c = dbh.stats.query(null, StatContract.DATE + ">" + then.getTime(), null, StatContract.DATE, false, null, db);
 				c.moveToFirst();
 				while(!c.isAfterLast()){
 					Stat s = dbh.stats.build(c);
@@ -266,8 +272,12 @@ public class StatsGraph {
 	}
 	
 	private float[] inflateStats(Date then){
+		
 		GregorianCalendar c = new GregorianCalendar();
-		c.setTime(then);
+		c.set(Calendar.HOUR, 0);
+		c.set(Calendar.MINUTE, 0);
+		c.set(Calendar.SECOND, 0);
+		c.set(Calendar.MILLISECOND, 0);
 		float[] inflatedStats = new float[0];
 		int size = 0;
 		if(range == WEEK){
@@ -280,7 +290,7 @@ public class StatsGraph {
 			inflatedStats = new float[12];
 			size = 365;
 		}
-		for(int i = 0; i < size; i++){
+		for(int i = size - 1; i >= 0; i--){
 			Stat s = stats.get(c.getTimeInMillis());
 			if(s == null)
 				s = dbh.stats.build(c.getTime(), 0, 0, 0);
@@ -298,7 +308,7 @@ public class StatsGraph {
 				c.setTime(tmp);
 				inflatedStats[index] += Long.parseLong(s.get(column));
 			}
-			c.add(Calendar.DATE, 1);
+			c.add(Calendar.DATE, -1);
 		}
 		return inflatedStats;
 	}

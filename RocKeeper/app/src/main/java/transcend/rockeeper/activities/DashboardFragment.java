@@ -74,4 +74,9 @@ public class DashboardFragment extends Fragment {
     	
     	sg = new StatsGraph(this, prog);
     }
+
+	public void refreshChart() {
+		if(sg != null)
+			sg.refresh();
+	}
 }
