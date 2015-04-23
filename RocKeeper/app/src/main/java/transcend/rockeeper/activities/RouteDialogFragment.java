@@ -33,8 +33,8 @@ public class RouteDialogFragment extends DialogFragment {
         public void onRouteDialogPositiveClick( DialogFragment dialog, Route edit );
     }
 
-    DatabaseHelper dbh;
-    SQLiteDatabase db;
+    //DatabaseHelper dbh;
+    //SQLiteDatabase db;
 
     ArrayList<Integer> colorsArray = new ArrayList<Integer>();
 
@@ -55,8 +55,8 @@ public class RouteDialogFragment extends DialogFragment {
             edit = (Route) lv.getAdapter().getItem(listIndex);
         }
 
-        dbh = new DatabaseHelper(this.getActivity(), null);
-        db = dbh.getWritableDatabase();
+        //dbh = new DatabaseHelper(this.getActivity(), null);
+        //db = dbh.getWritableDatabase();
 
         colorsArray.add( 0xFFFF0000 );
         colorsArray.add( 0xFFFF8800 );
@@ -83,6 +83,8 @@ public class RouteDialogFragment extends DialogFragment {
         final Spinner color = (Spinner) dialogView.findViewById(R.id.routeColorPicker);
         color.setAdapter( new ColorSpinnerAdapter( getActivity(), R.id.colorSpinner, colorsArray ) );
 
+        final EditText points = (EditText) dialogView.findViewById(R.id.routePoints);
+
         final RadioButton rope = (RadioButton) dialogView.findViewById(R.id.topropeRB);
         final RadioButton boulder = (RadioButton) dialogView.findViewById(R.id.boulderRB);
 
@@ -101,6 +103,7 @@ public class RouteDialogFragment extends DialogFragment {
                 difficulty.setValue( Integer.parseInt( routeDiff.substring( 1, routeDiff.length() ) ) );
 
             color.setSelection( colorsArray.indexOf( Integer.parseInt(edit.get(RouteContract.COLOR))));
+            points.setText( edit.get( RouteContract.POINTS ));
         }
 
         rope.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){

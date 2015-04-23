@@ -5,18 +5,41 @@
     android:padding="5dp"
     android:background="@drawable/route_list_selector">
 
-    <TextView
-        android:id="@+id/DifficultyLevel"
-        android:textSize="20sp"
-        android:layout_width="40dp"
-        android:layout_gravity="center"
-        android:layout_height="wrap_content"
-        android:text="v1"
-        android:textColor="#000"
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.25"
+        android:orientation="vertical"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="10dp"
-        android:focusable="false"
-        android:clickable="false" />
+        android:divider="?android:listDivider"
+        android:showDividers="middle">
+
+        <TextView
+            android:id="@+id/DifficultyLevel"
+            android:textSize="20sp"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="v1"
+            android:textColor="#000"
+            android:focusable="false"
+            android:clickable="false" />
+
+        <TextView
+            android:id="@+id/Points"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="1000"
+            android:textColor="#000"
+            android:focusable="false"
+            android:clickable="false" />
+
+    </LinearLayout>
 
     <View
         android:id="@+id/ColorLabel"
