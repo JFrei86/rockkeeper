@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
@@ -63,8 +64,9 @@ public class FirstTimePage extends ActionBarActivity {
     	final DatabaseHelper dbh = new DatabaseHelper(this, null);
     	SQLiteDatabase db = dbh.getWritableDatabase();
     	
-    	final String location = ((TextView) this.findViewById(R.id.fav_location)).getText().toString();
-    	final String name = ((TextView) this.findViewById(R.id.user_name)).getText().toString();
+    	final String location = ((EditText) this.findViewById(R.id.fav_location)).getText().toString();
+        final String city = ((EditText) this.findViewById(R.id.location_city)).getText().toString();
+    	final String name = ((EditText) this.findViewById(R.id.user_name)).getText().toString();
     	final Object level = ((Spinner) this.findViewById(R.id.experience_level)).getSelectedItem();
     	
     	if(location.equals("") || name.equals("") || level == null){
@@ -75,7 +77,7 @@ public class FirstTimePage extends ActionBarActivity {
     	Transaction t = new Transaction(db){
 			public void task(SQLiteDatabase db) {
 				Settings s = dbh.settings.build(name, level.toString());
-		    	Location l = dbh.locations.build(location);
+		    	Location l = dbh.locations.build(location, city);
 
                 dbh.locations.insert(l, db);
                 dbh.settings.insert(s, db);

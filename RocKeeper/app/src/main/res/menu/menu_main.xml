@@ -2,6 +2,12 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="transcend.rockeeper.activities.MainActivity">
+
+    <item android:id="@+id/action_place"
+          android:title="@string/action_location"
+          android:icon="@drawable/ic_action_place"
+          app:showAsAction="ifRoom"/>
+
     <item android:id="@+id/action_settings"
           android:title="@string/action_settings"
           android:orderInCategory="100"

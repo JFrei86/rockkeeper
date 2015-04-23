@@ -30,14 +30,24 @@
         android:textSize="@dimen/abc_text_size_caption_material"
         android:visibility="invisible" />
 
+    <TextView
+        android:id="@+id/instructions"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/missingFirstFields"
+        android:padding="10dp"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:text="@string/instructions_message"/>
+
     <EditText
         android:id="@+id/user_name"
         android:layout_width="match_parent"
         android:layout_height="@dimen/first_time_page_layout_height"
         android:layout_marginLeft="@dimen/first_time_page_margin"
         android:layout_marginRight="@dimen/first_time_page_margin"
-        android:layout_marginTop="40dp"
-        android:layout_below="@id/welcome"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/instructions"
         android:paddingLeft="5dp"
         android:background="#FFFFFF"
         android:inputType="textPersonName"
@@ -66,12 +76,25 @@
         android:layout_below="@id/experience_level"
         android:hint="@string/fav_location_hint" />
 
+    <EditText
+        android:id="@+id/location_city"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/first_time_page_layout_height"
+        android:layout_marginLeft="@dimen/first_time_page_margin"
+        android:layout_marginRight="@dimen/first_time_page_margin"
+        android:layout_marginTop="20dp"
+        android:paddingLeft="5dp"
+        android:background="#FFFFFF"
+        android:textSize="@dimen/first_time_page_text_size"
+        android:layout_below="@id/fav_location"
+        android:hint="@string/location_city_hint" />
+
     <Button
         android:id="@+id/submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:layout_below="@id/fav_location"
+        android:layout_below="@id/location_city"
         android:text="@string/submit"
         android:layout_centerHorizontal="true"
         android:onClick="launchMainPage"/>
