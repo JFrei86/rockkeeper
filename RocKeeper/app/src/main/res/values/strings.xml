@@ -1,3 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- App -->
     <string name="app_name">RocKeeper</string>
+    <string name="minVersion">11</string>
+    <string name="targetVersion">22</string>
+
+    <!-- Splash Screen -->
+    <string name="title_activity_splash">Splash</string>
+
+    <!-- First-time Page -->
+    <string name="welcome">Welcome to RocKeeper!</string>
+    <string name="name_hint">Name</string>
+    <string name="fav_location_hint">Favorite climbing location</string>
+    <string name="submit">Submit</string>
+    <string name="missingFields">Uh Oh! Some fields we need are still blank!</string>
+    <string-array name="experience_array">
+        <item>Beginner</item>
+        <item>Intermediate</item>
+        <item>Expert</item>
+    </string-array>
+
+    <!-- Main Activity -->
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_main">RocKeeper</string>
+    <string name="title_section1">Routes</string>
+    <string name="title_section2">Dashboard</string>
+    <string name="title_section3">Goals</string>
+    <string name="title_activity_first_time_page">RocKeeper</string>
+    <string name="title_activity_create">Create</string>
+
+    <!-- Fragments -->
+    <string name="dashboard_placeholder">This is the RocKeeper dashboard.</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="boulder_levels">
+        <item >v0</item>
+        <item >v1</item>
+        <item >v2</item>
+        <item >v3</item>
+        <item >v4</item>
+        <item >v5</item>
+        <item >v6</item>
+        <item >v7</item>
+        <item >v8</item>
+        <item >v9</item>
+        <item >v10</item>
+        <item >v11</item>
+        <item >v12</item>
+        <item >v13</item>
+        <item >v14</item>
+    </string-array>
+    <string-array name="rope_levels">
+        <item >5.5</item>
+        <item >5.6</item>
+        <item >5.7</item>
+        <item >5.8</item>
+        <item >5.9</item>
+        <item >5.10</item>
+        <item >5.11</item>
+        <item >5.12</item>
+        <item >5.13</item>
+        <item >5.14</item>
+        <item >5.15</item>
+        <item >5.16</item>
+    </string-array>
+
+
 </resources>

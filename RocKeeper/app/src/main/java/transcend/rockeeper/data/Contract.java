@@ -18,6 +18,7 @@ public abstract class Contract implements BaseColumns{
 	public static final String NUM = "NUM";
 	public static final String REAL = "REAL";
 	
+	public int id = 0;
 	
 	protected Map<String, String> colTypes = new TreeMap<String, String>();
 	
@@ -34,13 +35,13 @@ public abstract class Contract implements BaseColumns{
 	//Create table SQL Command String
 	public String createTable() {
 		String command = "CREATE TABLE " + tableName() + " (" +
-		Contract._ID + " INTEGER PRIMARY KEY,";
+		Contract._ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL";
 		Iterator<String> i = colTypes.keySet().iterator();
 		while(i.hasNext()){
 			String key = i.next();
-			command += key + " " + colTypes.get(key) + ", ";
+			command += ", " + key + " " + colTypes.get(key);
 		}
-		return command + ");";
+		return command + "); ";
 	}
 	
 	//Drop table SQL Command String
@@ -50,6 +51,8 @@ public abstract class Contract implements BaseColumns{
 	
 	//Put a new document in the database
 	public long insert(Unit d, SQLiteDatabase db){
+		d.put(CREATED_ON, new Date().toString());
+		d.put(MODIFIED_ON, new Date().toString());
 		ContentValues values = new ContentValues();
 		Iterator<String> i = d.keySet().iterator();
 		while(i.hasNext()){
@@ -66,25 +69,31 @@ public abstract class Contract implements BaseColumns{
 				}
 			}
 		}
-		return db.insert(tableName(), null, values);
+		long id =  db.insert(tableName(), null, values);
+		d.put(_ID, id);
+		return id;
 	}
 	
-	public Cursor query(String[] retrieve, String where, String[] args, String sortBy, boolean descending, int limit, SQLiteDatabase db){
-		return db.query(tableName(), retrieve, where, args, null, null, sortBy + ((descending)?" DESC":" ASC"), "" + limit);
+	public Cursor query(String[] retrieve, String where, String[] args, String sortBy, boolean descending, Integer limit, SQLiteDatabase db){
+		if(limit != null)
+			return db.query(tableName(), retrieve, where, args, null, null, sortBy + ((descending)?" DESC":" ASC"), limit.toString());
+		else
+			return db.query(tableName(), retrieve, where, args, null, null, sortBy + ((descending)?" DESC":" ASC"), null);
 	}
 	
 	public void delete(String where, String[] args, SQLiteDatabase db){
 		db.delete(tableName(), where, args);
 	}
 	
-	public int update(Unit d, String where, String[] args, SQLiteDatabase db){
+	public long update(Unit d, String where, String[] args, SQLiteDatabase db){
+		d.put(Contract.MODIFIED_ON, new Date().toString());
 		ContentValues values = new ContentValues();
 		Iterator<String> i = d.keySet().iterator();
 		while(i.hasNext()){
 			String key = i.next();
 			if(colTypes.containsKey(key)){
 				if(colTypes.get(key) == INT){
-					values.put(key, Integer.parseInt(d.get(key)));
+					values.put(key, Long.parseLong(d.get(key)));
 				}
 				if(colTypes.get(key) == NUM){
 					values.put(key, Double.parseDouble(d.get(key)));
@@ -102,12 +111,16 @@ public abstract class Contract implements BaseColumns{
 		public Set<String> keySet() { return data.keySet(); }
 		public String get(String key) { return data.get(key); }
 		public void put(String col, String val) { data.put(col, val); }
-		public void put(String col, int val){ put(col, "" + val); }
-		public void put(String col, double val){ put(col, "" + val); }
-		
-		public Unit(){
-			put(CREATED_ON, new Date().toString());
-			put(MODIFIED_ON, new Date().toString());
+		public void put(String col, Integer val) { put(col, "" + val); }
+		public void put(String col, Long val) { put(col, "" + val); }
+		public void put(String col, Double val) { put(col, "" + val); }
+		public void remove(String col) { data.remove(col); }
+		public String toString(){return data.toString();}
+		public boolean equals(Object a){ 
+			if(a != null && ((Unit) a).get(_ID) != null)
+				return ((Unit)a).get(_ID).equals(this.get(_ID));
+			else return false;
 		}
+		public Unit(){}
 	}
 }

@@ -1,4 +1,4 @@
-package transcend.rockeeper;
+package activities.rockeeper;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
