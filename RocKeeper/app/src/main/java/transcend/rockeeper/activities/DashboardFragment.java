@@ -1,12 +1,9 @@
 package transcend.rockeeper.activities;
 
-import transcend.rockeeper.data.Contract.Unit;
 import transcend.rockeeper.sqlite.DatabaseHelper;
-import transcend.rockeeper.sqlite.Transaction;
 import android.support.v4.app.Fragment;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-//import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +19,7 @@ import activities.rockeeper.R;
  * create an instance of this fragment.
  */
 public class DashboardFragment extends Fragment {
-	
+
     //private OnFragmentInteractionListener mListener;
 
     /**
@@ -77,18 +74,4 @@ public class DashboardFragment extends Fragment {
     	
     	sg = new StatsGraph(this, prog);
     }
-
-//	private void getData() {
-//		prog.setVisibility(View.VISIBLE);
-//		Transaction t = new Transaction(db){
-//			public void task(SQLiteDatabase db) {
-//				Cursor c = dbh.stats.query(null, where, args, sortBy, descending, limit, db)
-//			}
-//			public void onComplete() {
-//				prog.setVi
-//			}
-//			public void onProgressUpdate(Unit... data) {}
-//		};
-//		t.run(true, true);
-//	}
 }
