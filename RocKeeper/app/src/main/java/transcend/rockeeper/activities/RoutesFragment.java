@@ -325,6 +325,7 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
 							if(isChecked)
 								completed.setEnabled(false);
 							dbh.stats.incrementStat(routes.get(position), RouteContract.COMPLETED, db);
+							dbh.stats.incrementStat(routes.get(position), RouteContract.NUM_ATTEMPTS, db);
 							listview.invalidateViews();
 						}
 						public void onProgressUpdate(Unit... data) {}
@@ -337,6 +338,7 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
             inc.setOnClickListener(new OnClickListener(){
 				public void onClick(View v) {
 					incAttempts.run(true, true);
+					dbh.stats.incrementStat(routes.get(position), RouteContract.NUM_ATTEMPTS, db);
 				}
             });
             

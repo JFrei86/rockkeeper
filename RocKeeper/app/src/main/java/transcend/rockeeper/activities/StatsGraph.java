@@ -121,7 +121,7 @@ public class StatsGraph {
 		
 		this.prog = prog;
 		this.range = WEEK;
-		this.column = COMPLETED;
+		this.column = POINTS;
 		this.stats = new HashMap<Long, Stat>();
 		
 		this.dbh = new DatabaseHelper(f.getActivity(), null);
