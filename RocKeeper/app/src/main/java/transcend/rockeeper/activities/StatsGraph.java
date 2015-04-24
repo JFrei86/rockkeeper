@@ -166,15 +166,13 @@ public class StatsGraph {
 		mLineChart.addData(dataSet);
 		
 		int max = getMax();
-		int i = 2;
-		if(max > 10);
-			i = 5;
-		if(max > 50)
-			i = 10;
-		if(max > 100)
-			i = 50;
-		if(max > 500)
-			i = 100;
+		int k = (int) max;
+		int i = 0;
+		while(k > 1){
+			k /= 100;
+			i++;
+		}
+		i = (int) Math.pow(10, i);
 		
 		mLineChart.setBorderSpacing(Tools.fromDpToPx(4))
 			.setGrid(LineChartView.GridType.HORIZONTAL, mLineGridPaint)
@@ -186,7 +184,6 @@ public class StatsGraph {
 			.setLabelsFormat(new DecimalFormat("##"))
 			.show(getAnimation(true));
 		
-		//mLineChart.animateSet(1, new DashAnimation());
 	}
 
 	private int getMax(){
@@ -199,16 +196,13 @@ public class StatsGraph {
 		}
 		if(max < 10)
 			return 10;
-		int i = 2;
-		if(max >= 10);
-			i = 5;
-		if(max >= 50)
-			i = 10;
-		if(max >= 100)
-			i = 50;
-		if(max >= 500)
-			i = 100;
-		return (int)(Math.ceil(max / i) * i);
+		int k = (int) max;
+		int i = 0;
+		while(k > 1){
+			k /= 100;
+			i++;
+		}
+		return (int)(Math.ceil(max / Math.pow(10, i)) * Math.pow(10, i));
 	}
 	
 	private String[] getLineLabels(Date now, String range) {
