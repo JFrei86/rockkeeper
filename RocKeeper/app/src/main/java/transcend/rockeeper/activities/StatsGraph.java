@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
+
 import transcend.rockeeper.data.Contract.Unit;
 import transcend.rockeeper.data.StatContract;
 import transcend.rockeeper.data.StatContract.Stat;
@@ -16,6 +17,7 @@ import activities.rockeeper.R;
 import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -24,6 +26,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
+
 import com.db.chart.Tools;
 import com.db.chart.listener.OnEntryClickListener;
 import com.db.chart.model.*;
@@ -152,12 +155,14 @@ public class StatsGraph {
 		
 		LineSet dataSet = new LineSet(lineLabels, lineValues);
 		dataSet.setDotsColor(DOT_COLOR)
-			.setDotsRadius(Tools.fromDpToPx(3))
-			.setDotsStrokeThickness(Tools.fromDpToPx(1))
+			.setDotsRadius(Tools.fromDpToPx(5))
+			.setDotsStrokeThickness(Tools.fromDpToPx(3))
 			.setDotsStrokeColor(DOT_COLOR)
 			.setColor(DOT_COLOR)
+			.setDotsColor(Color.WHITE)
 			.setThickness(Tools.fromDpToPx(3))
 			.beginAt(0).endAt(lineLabels.length);
+		
 		mLineChart.addData(dataSet);
 		
 		int max = getMax();
@@ -192,9 +197,18 @@ public class StatsGraph {
 			if(max < lineValues[i])
 				max = lineValues[i];
 		}
-		if(max < 8)
-			return 8;
-		return (int) max;
+		if(max < 10)
+			return 10;
+		int i = 2;
+		if(max >= 10);
+			i = 5;
+		if(max >= 50)
+			i = 10;
+		if(max >= 100)
+			i = 50;
+		if(max >= 500)
+			i = 100;
+		return (int)(Math.ceil(max / i) * i);
 	}
 	
 	private String[] getLineLabels(Date now, String range) {
@@ -208,16 +222,16 @@ public class StatsGraph {
 				c.add(Calendar.DATE, -1);
 			}
 		} else if(range.equals(MONTH)){
-			labels = new String[30];
+			labels = new String[10];
 			Calendar c = new GregorianCalendar();
 			c.setTime(now);
-			for(int i = 29; i >= 0; i--){
-				labels[i] = "";
-				if(c.get(Calendar.DATE) == 1)
-					labels[i] += c.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault()).toUpperCase(Locale.US) + " " + c.get(Calendar.DATE);
-				if(c.get(Calendar.DATE) % 5 == 0 && c.get(Calendar.DATE) != 30)
-					labels[i] += c.get(Calendar.DATE);
-				c.add(Calendar.DATE, -1);
+			for(int i = 29; i >= 0; i-= 3){
+				labels[i / 3] = "";
+				if(c.get(Calendar.DATE) < 4)
+					labels[i / 3] += c.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault()).toUpperCase(Locale.US) + " " + c.get(Calendar.DATE);
+				else
+					labels[i / 3] += c.get(Calendar.DATE);
+				c.add(Calendar.DATE, -3);
 			}
 		} else if(range.equals(YEAR)){
 			labels = new String[12];
@@ -284,7 +298,7 @@ public class StatsGraph {
 			inflatedStats = new float[7];
 			size = 7;
 		} else if(range == MONTH){
-			inflatedStats = new float[30];
+			inflatedStats = new float[10];
 			size = 30;
 		} else if(range == YEAR){
 			inflatedStats = new float[12];
@@ -294,17 +308,16 @@ public class StatsGraph {
 			Stat s = stats.get(c.getTimeInMillis());
 			if(s == null)
 				s = dbh.stats.build(c.getTime(), 0, 0, 0);
-			if(range != YEAR)
+			if(range == WEEK)
 				inflatedStats[i] += Long.parseLong(s.get(column));
+			else if(range == MONTH)
+				inflatedStats[i / 3] += Long.parseLong(s.get(column));
 			else{
 				Date tmp = c.getTime();
-				c.setTime(then);
-				int offset = c.get(Calendar.MONTH);
-				if(c.get(Calendar.MONTH) - offset < 0)
-					offset = 12;
-				int index = c.get(Calendar.MONTH) - offset;
-				if(index < 0)
-					index += 12;
+				c.setTime(new Date());
+				int offset = 12 - c.get(Calendar.MONTH) - 1;
+				c.setTime(tmp);
+				int index = (c.get(Calendar.MONTH) + offset) % 12;
 				c.setTime(tmp);
 				inflatedStats[index] += Long.parseLong(s.get(column));
 			}

@@ -66,6 +66,16 @@
         <item >5.15</item>
         <item >5.16</item>
     </string-array>
+    <string-array name="ranges">
+        <item >WEEK</item>
+        <item >MONTH</item>
+        <item >YEAR</item>
+    </string-array>
+    <string-array name="columns">
+        <item >POINTS OVER TIME</item>
+        <item >ATTEMPTED ROUTES OVER TIME</item>
+        <item >COMPLETED ROUTES OVER TIME</item>
+    </string-array>
 
 
 </resources>

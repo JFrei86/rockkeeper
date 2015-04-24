@@ -311,6 +311,7 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
             final CheckBox completed = (CheckBox)vi.findViewById( R.id.checkboxComplete );
             int comp = Integer.parseInt(routes.get(position).get(RouteContract.COMPLETED));
             completed.setChecked(comp != 0);
+            if(comp != 0) completed.setEnabled(false);
             completed.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 				public void onCheckedChanged(CompoundButton buttonView,
 						final boolean isChecked) {
