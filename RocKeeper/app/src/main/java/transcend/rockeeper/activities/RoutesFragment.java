@@ -51,16 +51,17 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
     private ListView listview;
     private int selectedItem = -1;      // the index of the list item selected
 
-    private long locID;
+    private long initialLocID = 1;      // the ID of the location initially passed to the fragment (default 1)
 
 
-/******************** INITIALIZATION METHODS ************************/
+/******************** LIFECYCLE METHODS ************************/
 
     public static RoutesFragment newInstance( long loc_id ) {
         RoutesFragment fragment = new RoutesFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, loc_id + "");
         fragment.setArguments(args);
+        Log.d( "rockeeper", "RoutesFragment: newInstance()" );
         return fragment;
     }
 
@@ -73,10 +74,20 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
-            locID = Long.parseLong(mParam1);
-            dbh = new DatabaseHelper(this.getActivity(), null);
-            db = dbh.getWritableDatabase();
+            initialLocID = Long.parseLong(mParam1);
         }
+        dbh = new DatabaseHelper(this.getActivity(), null);
+        db = dbh.getWritableDatabase();
+        getRoutes( initialLocID );
+        Log.d( "rockeeper", "RoutesFragment: onCreate()" );
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        Log.d( "rockeeper", "RoutesFragment(): onCreateView()" );
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_routes, container, false);
     }
 
     @Override
@@ -86,16 +97,10 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         listview = (ListView) mainActivity.findViewById(R.id.listview);
         listview.setAdapter( new RouteListAdapter( mainActivity, routes ));
         listview.setOnItemClickListener( this );
-        LocationContract.Location curLoc = ((MainActivity)mainActivity).getCurrentLocation();
-        getRoutes( Long.parseLong( curLoc.get( LocationContract._ID ) ) );
-        ((RouteListAdapter)listview.getAdapter()).notifyDataSetChanged();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_routes, container, false);
+        //LocationContract.Location curLoc = ((MainActivity)mainActivity).getCurrentLocation();
+        //getRoutes( Long.parseLong( curLoc.get( LocationContract._ID ) ) );
+        //((RouteListAdapter)listview.getAdapter()).notifyDataSetChanged();
+        Log.d( "rockeeper", "RoutesFragment(): onActivityCreated()" );
     }
 
 /************************* DIALOG HANDLERS *****************************/

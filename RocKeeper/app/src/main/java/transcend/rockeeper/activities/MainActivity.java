@@ -8,8 +8,10 @@ import java.util.Locale;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -37,6 +39,10 @@ import transcend.rockeeper.sqlite.Transaction;
 @SuppressWarnings("deprecation")
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener
 {
+    //private static final String PREF_FILE = "rockeeper_preferences";
+    private static final String PREF_LOCATION = "location";
+    SharedPreferences sharedPrefs;
+
     ActionBar actionBar;
 
     SectionsPagerAdapter mSectionsPagerAdapter;
@@ -57,16 +63,22 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     public void onBackPressed(){}
 
+/*********************************** LIFECYCLE METHODS ********************************/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Retrieve any saved preferences
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences( this );
+        currentLocId = sharedPrefs.getLong( PREF_LOCATION, 1 );
+
         // Set up the action bar.
         actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        db = dbh.getReadableDatabase();
+        db = dbh.getWritableDatabase();
         refreshLocations(currentLocId);
     }
 
@@ -111,6 +123,17 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         //db = dbh.getReadableDatabase();
 
         mViewPager.setCurrentItem( 1 );
+
+        //routes.getRoutes( currentLocId );
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putLong( PREF_LOCATION, currentLocId );
+        editor.apply();
+        Log.i( "rockeeper", "Preferences saved" );
     }
 
 /****************************** MENU METHODS *****************************/
@@ -152,9 +175,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction)
     {
-        if( tab.getPosition() == 0 ) {
+        /*if( tab.getPosition() == 0 ) {
             routes.getRoutes( currentLocId );
-        }
+        }*/
 
         // When the given tab is selected, switch to the corresponding page in
         // the ViewPager.
