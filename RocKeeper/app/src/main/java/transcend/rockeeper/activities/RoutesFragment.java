@@ -51,6 +51,8 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
     private ListView listview;
     private int selectedItem = -1;      // the index of the list item selected
 
+    private long locID;
+
 
 /******************** INITIALIZATION METHODS ************************/
 
@@ -71,10 +73,9 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
-            long loc_id = Long.parseLong(mParam1);
+            locID = Long.parseLong(mParam1);
             dbh = new DatabaseHelper(this.getActivity(), null);
             db = dbh.getWritableDatabase();
-            getRoutes(loc_id);
         }
     }
 
@@ -83,8 +84,11 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         super.onActivityCreated(savedInstanceState);
         mainActivity = this.getActivity();
         listview = (ListView) mainActivity.findViewById(R.id.listview);
-        listview.setAdapter( new RouteListAdapter( this.getActivity(), routes ));
+        listview.setAdapter( new RouteListAdapter( mainActivity, routes ));
         listview.setOnItemClickListener( this );
+        LocationContract.Location curLoc = ((MainActivity)mainActivity).getCurrentLocation();
+        getRoutes( Long.parseLong( curLoc.get( LocationContract._ID ) ) );
+        ((RouteListAdapter)listview.getAdapter()).notifyDataSetChanged();
     }
 
     @Override
@@ -205,17 +209,21 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
     }
 
     /* Queries the database for the list of available routes */
-    private void getRoutes( final long loc_id ) {
+    public void getRoutes( final long loc_id ) {
 		Transaction t = new Transaction(db){
 			public void task(SQLiteDatabase db) {
-				Cursor c = dbh.routes.query(null, RouteContract.LOCATION + "=" + loc_id, null, RouteContract.DIFFICULTY, true, null, db);
+				routes.clear();
+                Cursor c = dbh.routes.query(null, RouteContract.LOCATION + "=" + loc_id, null, RouteContract.DIFFICULTY, true, null, db);
                 c.moveToFirst();
 				while(!c.isAfterLast()){
 					routes.add(dbh.routes.build(c));
                     c.moveToNext();
 				}
 			}
-			public void onComplete(){Log.i("RoutesFragment", "Routes Loaded.");}
+			public void onComplete(){
+                Log.i("RoutesFragment", "Routes Loaded.");
+                ((RouteListAdapter)listview.getAdapter()).notifyDataSetChanged();
+            }
 			public void onProgressUpdate(Unit... data) {}
 		};
 		t.run(true, true);
@@ -272,9 +280,8 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
 
             TextView routeLoc = (TextView)vi.findViewById( R.id.Location );
             long locID = Long.parseLong(routes.get(position).get(RouteContract.LOCATION));
-            //Log.d( "RouteLocation", ""+locID );
-            LocationContract.Location curLoc = ((MainActivity)mainActivity).getCurrentLocation();
-            routeLoc.setText( curLoc.get( LocationContract.NAME ));
+            LocationContract.Location loc = ((MainActivity)mainActivity).getLocationFromId( locID );
+            routeLoc.setText( loc.get( LocationContract.NAME ) );
 
             final TextView timesClimbed = (TextView)vi.findViewById( R.id.TimesClimbed );
             timesClimbed.setText(routes.get(position).get(RouteContract.NUM_ATTEMPTS));

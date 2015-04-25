@@ -26,12 +26,17 @@
     <!-- Main Activity -->
     <string name="action_settings">Settings</string>
     <string name="action_location">Location</string>
+    <string name="action_add_location">Add location</string>
     <string name="title_activity_main">RocKeeper</string>
     <string name="title_section1">Routes</string>
     <string name="title_section2">Dashboard</string>
     <string name="title_section3">Goals</string>
     <string name="title_activity_first_time_page">RocKeeper</string>
     <string name="title_activity_create">Create</string>
+    <string name="title_location_dialog">Choose a Location</string>
+    <string name="title_add_loc_dialog">Add a Location</string>
+    <string name="add_location_name_hint">Rock Gym</string>
+    <string name="add_location_city_hint">City</string>
 
     <!-- Fragments -->
     <string name="dashboard_placeholder">This is the RocKeeper dashboard.</string>

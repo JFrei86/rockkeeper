@@ -1,9 +1,13 @@
 package transcend.rockeeper.activities;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
@@ -20,6 +24,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.EditText;
+
 import activities.rockeeper.R;
 import transcend.rockeeper.data.Contract;
 import transcend.rockeeper.data.LocationContract;
@@ -40,7 +47,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     ViewPager mViewPager;
 
     @SuppressLint("UseSparseArrays")
-	private HashMap<Long, LocationContract.Location> locations = new HashMap<Long, LocationContract.Location>();
+	private HashMap<Long, LocationContract.Location> locationMap = new HashMap<Long, LocationContract.Location>();
 
     private DatabaseHelper dbh = new DatabaseHelper(this, null);
     private SQLiteDatabase db;
@@ -51,8 +58,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public void onBackPressed(){}
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -61,7 +67,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         db = dbh.getReadableDatabase();
-        //getLocation( currentLocId );
+        refreshLocations(currentLocId);
+    }
+
+    public void setupPager() {
+
+        routes = RoutesFragment.newInstance( currentLocId );
+        dash = DashboardFragment.newInstance();
 
         // Create the adapter that will return a fragment for each of the four
         // primary sections of the activity.
@@ -83,9 +95,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             }
         });
 
-        routes = RoutesFragment.newInstance( currentLocId );
-        dash = DashboardFragment.newInstance();
-        
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++)
         {
@@ -99,11 +108,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             .setTabListener(this));
         }
 
+        //db = dbh.getReadableDatabase();
+
         mViewPager.setCurrentItem( 1 );
-
-        db = dbh.getReadableDatabase();
-
-        updateCurrentLocation( currentLocId );
     }
 
 /****************************** MENU METHODS *****************************/
@@ -127,7 +134,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         //noinspection SimplifiableIfStatement
         switch( id ) {
             case R.id.action_place:
-                // change location
+                showChangeLocationDialog();
+                return true;
+            case R.id.action_add_place:
+                showAddLocationDialog();
                 return true;
             case R.id.action_settings:
                 // settings stuff
@@ -142,6 +152,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction)
     {
+        if( tab.getPosition() == 0 ) {
+            routes.getRoutes( currentLocId );
+        }
+
         // When the given tab is selected, switch to the corresponding page in
         // the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
@@ -163,27 +177,110 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         return currentLoc;
     }
 
+    public LocationContract.Location getLocationFromId( long loc_id ) {
+        return locationMap.get( loc_id );
+    }
+
     public void updateCurrentLocation( final long loc_id ) {
+        LocationContract.Location loc = locationMap.get( loc_id );
+        currentLocId = loc_id;
+        currentLoc = loc;
+        actionBar.setTitle( currentLoc.get( LocationContract.NAME ) );
+        actionBar.setSubtitle( currentLoc.get( LocationContract.CITY ) );
+        if( routes != null ) routes.getRoutes( loc_id );
+    }
+
+    public void refreshLocations( final long loc_id ) {
         Transaction t = new Transaction(db) {
             public void task(SQLiteDatabase db) {
-                Cursor c = dbh.locations.query(new String[] { LocationContract._ID, LocationContract.NAME, LocationContract.CITY }, LocationContract._ID + "=" + loc_id, null, LocationContract._ID, true, null, db);
-                c.moveToLast();
-                currentLoc = dbh.locations.build(c);
+                locationMap.clear();
+                Cursor c = dbh.locations.query(new String[] { LocationContract._ID, LocationContract.NAME, LocationContract.CITY }, null, null, LocationContract._ID, true, null, db);
+                c.moveToFirst();
+                while( !c.isAfterLast() ) {
+                    locationMap.put(c.getLong(c.getColumnIndex(LocationContract._ID)), dbh.locations.build(c));
+                    c.moveToNext();
+                }
             }
             public void onComplete() {
-                Log.i("UpdateLocation", "Location Updated.");
-                actionBar.setTitle( currentLoc.get( LocationContract.NAME ) );
-                actionBar.setSubtitle( currentLoc.get( LocationContract.CITY ) );
+                //Log.i("UpdateLocation", "Location Updated.");
+                updateCurrentLocation( loc_id );
+                if( mViewPager == null ) setupPager();
             }
             public void onProgressUpdate(Contract.Unit... data) {}
         };
         t.run(true, true);
     }
 
-    public void createLocationDialog() {
+    public void showChangeLocationDialog() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder( this );
+        AlertDialog.Builder builder = new AlertDialog.Builder( this, AlertDialog.THEME_HOLO_LIGHT );
+        builder.setTitle( R.string.title_location_dialog );
 
+        final ArrayList<LocationContract.Location> locations = new ArrayList<LocationContract.Location>( locationMap.values() );
+        Iterator<LocationContract.Location> iter = locations.iterator();
+        String[] locNames = new String[locations.size()];
+        int c = 0;
+        while( iter.hasNext() ) {
+            locNames[c] = (iter.next()).get( LocationContract.NAME );
+            ++c;
+        }
+
+        builder.setItems( locNames, new DialogInterface.OnClickListener() {
+            public void onClick( DialogInterface dialog, int which ) {
+                Log.d("LocationDialog", ""+locations.get(which).get( LocationContract.NAME ));
+                updateCurrentLocation(Long.parseLong(locations.get(which).get(LocationContract._ID)));
+            }
+        });
+        builder.show();
+    }
+
+    public void showAddLocationDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder( this, AlertDialog.THEME_HOLO_LIGHT );
+        builder.setTitle( R.string.title_add_loc_dialog );
+
+        LayoutInflater inflater = getLayoutInflater();
+        final View dialogView = inflater.inflate( R.layout.dialog_add_location, null );
+        builder.setView( dialogView );
+
+        builder.setPositiveButton( "Add", new DialogInterface.OnClickListener() {
+            public void onClick( DialogInterface dialog, int which ) {
+                final EditText locName = (EditText) dialogView.findViewById(R.id.add_location_name);
+                final EditText locCity = (EditText) dialogView.findViewById(R.id.add_location_city);
+                final CheckBox switchTo = (CheckBox) dialogView.findViewById(R.id.add_location_switch);
+
+                final String name = locName.getText().toString();
+                final String city = locCity.getText().toString();
+
+                if( name == null || city == null ) {
+                    // TODO: Toast or something else here?
+                    return;
+                }
+
+                final LocationContract.Location newLoc = dbh.locations.build( name, city );
+                Transaction t = new Transaction(db) {
+                    public void task( SQLiteDatabase db ) {
+                        dbh.locations.insert( newLoc, db );
+                    }
+                    public void onComplete() {
+                        if( switchTo.isChecked() ) {
+                            refreshLocations( Long.parseLong(newLoc.get(LocationContract._ID)) );
+                        } else {
+                            refreshLocations( currentLocId );
+                        }
+                    }
+                    public void onProgressUpdate( Contract.Unit... data ) {}
+                };
+                t.run(true, true);
+            }
+        });
+        builder.setNegativeButton( "Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
     }
 
 /************************** BUTTON LISTENER METHODS **************************/

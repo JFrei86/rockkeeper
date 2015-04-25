@@ -22,8 +22,10 @@ public class LocationContract extends Contract {
 	
 	//Default values for schema
 	public class Location extends Unit{
-		public Location(String name, String city){
-			put(NAME, name);
+		public Location(Long _id, String name, String city){
+			if( _id != null )
+                put(_ID, _id);
+            put(NAME, name);
             put(CITY, city);
 			put(LATITUDE, 0.0);
 			put(LONGITUDE, 0.0);
@@ -31,11 +33,12 @@ public class LocationContract extends Contract {
 	}
 
 	public Location build(String name, String city) {
-		return this.new Location(name, city);
+		return this.new Location(null, name, city);
 	}
 	public Location build(Cursor c){
 		return this.new Location(
-				c.getString(c.getColumnIndex(NAME)),
+				c.getLong(c.getColumnIndex(_ID)),
+                c.getString(c.getColumnIndex(NAME)),
                 c.getString(c.getColumnIndex(CITY)));
 	}
 

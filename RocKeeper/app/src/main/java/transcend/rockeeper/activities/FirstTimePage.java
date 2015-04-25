@@ -79,6 +79,12 @@ public class FirstTimePage extends ActionBarActivity {
 				Settings s = dbh.settings.build(name, level.toString());
 		    	Location l = dbh.locations.build(location, city);
 
+                // TODO: DUMMY LOCATIONS, REMOVE AFTER TESTING
+                Location dummy1 = dbh.locations.build("Location1", "City1");
+                Location dummy2 = dbh.locations.build("Location2", "City2");
+                dbh.locations.insert(dummy1, db);
+                dbh.locations.insert(dummy2, db);
+
                 dbh.locations.insert(l, db);
                 dbh.settings.insert(s, db);
 
