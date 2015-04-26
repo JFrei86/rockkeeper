@@ -38,8 +38,8 @@
             android:label="@string/title_activity_first_time_page">
         </activity>
         <activity
-            android:name="transcend.rockeeper.activities.CreateActivity"
-            android:label="@string/title_activity_create" >
+            android:name="transcend.rockeeper.activities.SettingsActivity"
+            android:label="@string/title_activity_settings" >
         </activity>
     </application>
 

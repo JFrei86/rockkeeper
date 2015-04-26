@@ -38,6 +38,15 @@
     <string name="add_location_name_hint">Rock Gym</string>
     <string name="add_location_city_hint">City</string>
 
+    <!-- Settings -->
+    <string name="title_activity_settings">Settings</string>
+    <string name="def_loc_pref_title">Default location</string>
+    <string name="def_loc_dialog_title">Choose default location</string>
+    <string name="def_graph_type_pref_title">Default graph type</string>
+    <string name="def_graph_type_dialog_title">Choose graph type</string>
+    <string name="def_graph_time_pref_title">Default graph time scale</string>
+    <string name="def_graph_time_dialog_title">Choose time scale</string>
+
     <!-- Fragments -->
     <string name="dashboard_placeholder">This is the RocKeeper dashboard.</string>
 

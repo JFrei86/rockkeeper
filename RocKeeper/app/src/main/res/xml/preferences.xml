@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="default_location"
+        android:title="@string/def_loc_pref_title"
+        android:dialogTitle="@string/def_loc_dialog_title" />
+
+    <ListPreference
+        android:key="default_graph_type"
+        android:title="@string/def_graph_type_pref_title"
+        android:dialogTitle="@string/def_graph_type_dialog_title" />
+
+    <ListPreference
+        android:key="default_graph_time"
+        android:title="@string/def_graph_time_pref_title"
+        android:dialogTitle="@string/def_graph_time_dialog_title" />
+</PreferenceScreen>

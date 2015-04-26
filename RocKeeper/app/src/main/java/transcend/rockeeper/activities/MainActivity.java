@@ -8,6 +8,7 @@ import java.util.Locale;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -163,7 +164,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 showAddLocationDialog();
                 return true;
             case R.id.action_settings:
-                // settings stuff
+                //Intent intent = new Intent( this, SettingsActivity.class );
+                //this.startActivity( intent );
                 return true;
         }
 
@@ -198,6 +200,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     public LocationContract.Location getCurrentLocation() {
         return currentLoc;
+    }
+
+    public HashMap<Long, LocationContract.Location> getLocations() {
+        return locationMap;
     }
 
     public LocationContract.Location getLocationFromId( long loc_id ) {
