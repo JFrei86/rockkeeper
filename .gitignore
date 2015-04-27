@@ -30,3 +30,4 @@ proguard/
 *.classpath
 RocKeeper/app/src/main/.project
 *.prefs
+.idea/workspace.xml
