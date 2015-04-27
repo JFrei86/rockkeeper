@@ -13,14 +13,14 @@ import transcend.rockeeper.data.*;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 	public static final String DATABASE_NAME = "rockeeper.db";
-	public static final int DB_VERSION = 9;
+	public static final int DB_VERSION = 11;
 
 	public final RouteContract routes = new RouteContract();
 	public final GoalContract goals = new GoalContract();
 	public final NoteContract notes = new NoteContract();
 	public final LocationContract locations = new LocationContract();
 	public final SettingsContract settings = new SettingsContract();
-	
+	public final StatContract stats = new StatContract();
 	
 	public DatabaseHelper(Context context, CursorFactory c){
 		super(context, DATABASE_NAME, c, DB_VERSION, new DatabaseErrorHandler(){
@@ -39,6 +39,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(notes.createTable());
 		db.execSQL(locations.createTable());
 		db.execSQL(settings.createTable());
+		db.execSQL(stats.createTable());
 	}
 
 	@Override
@@ -48,6 +49,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(notes.dropTable());
 		db.execSQL(locations.dropTable());
 		db.execSQL(settings.dropTable());
+		db.execSQL(stats.dropTable());
 		onCreate(db);
 	}
 	
@@ -57,6 +59,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(notes.dropTable());
 		db.execSQL(locations.dropTable());
 		db.execSQL(settings.dropTable());
+		db.execSQL(stats.dropTable());
 		onCreate(db);
 	}
 }

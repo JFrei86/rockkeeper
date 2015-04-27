@@ -59,7 +59,7 @@ public abstract class Contract implements BaseColumns{
 			String key = i.next();
 			if(colTypes.containsKey(key)){
 				if(colTypes.get(key) == INT){
-					values.put(key, Integer.parseInt(d.get(key)));
+					values.put(key, Long.parseLong(d.get(key)));
 				}
 				if(colTypes.get(key) == NUM){
 					values.put(key, Double.parseDouble(d.get(key)));

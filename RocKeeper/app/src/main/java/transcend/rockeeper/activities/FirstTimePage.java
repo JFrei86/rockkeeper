@@ -7,6 +7,7 @@ import transcend.rockeeper.data.RouteContract.Route;
 import transcend.rockeeper.data.SettingsContract.Settings;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 import transcend.rockeeper.sqlite.Transaction;
+import activities.rockeeper.BuildConfig;
 import activities.rockeeper.R;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -91,15 +92,15 @@ public class FirstTimePage extends ActionBarActivity {
                 long locID = Long.parseLong( l.get( LocationContract._ID ) );
                 Log.d( "FirstTimePage", "location ID is "+locID );
 		    	
-		    	//TODO: REMOVE AFTER TESTING
-		    	Route r1 = dbh.routes.build("v0", 2, locID, 0xFF00FF00, "Rainbow Road", 0, 50);
-		    	Route r2 = dbh.routes.build("v3", 0, locID, 0xFFFF0000, "Death Drop", 0, 200);
-		    	Route r3 = dbh.routes.build("v2", 1, locID, 0xFF0000FF, "Inner Peaks", 0, 100);
-		    	
-		    	//TODO: REMOVE AFTER TESTING
-		    	dbh.routes.insert(r1, db);
-		    	dbh.routes.insert(r2, db);
-		    	dbh.routes.insert(r3, db);
+                if(BuildConfig.DEBUG){
+			    	Route r1 = dbh.routes.build("v0", 2, locID, 0xFF00FF00, "Rainbow Road", 0, 50);
+			    	Route r2 = dbh.routes.build("v3", 0, locID, 0xFFFF0000, "Death Drop", 0, 200);
+			    	Route r3 = dbh.routes.build("v2", 1, locID, 0xFF0000FF, "Inner Peaks", 0, 100);
+         
+			    	dbh.routes.insert(r1, db);
+			    	dbh.routes.insert(r2, db);
+			    	dbh.routes.insert(r3, db);
+                }
 			}
 			public void onComplete(){}
 			public void onProgressUpdate(Unit... data){}

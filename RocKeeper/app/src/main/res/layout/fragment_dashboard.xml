@@ -1,10 +1,58 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="transcend.rockeeper.activities.DashboardFragment">
+    tools:context="transcend.rockeeper.activities.DashboardFragment"
+    android:orientation="vertical">
+    
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="35dp">
+        
+        <Spinner 
+            android:id="@+id/columnSelector"
+            android:entries="@array/columns"
+            android:layout_weight="1"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:textSize="12sp"
+            android:layout_margin="5dp"/>
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="@string/dashboard_placeholder" />
+        <Spinner
+            android:id="@+id/rangeSelector"
+            android:layout_weight="2"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:entries="@array/ranges"
+            android:textSize="12sp"
+            android:layout_margin="5dp"/>
 
-</FrameLayout>
+    </LinearLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+	    <com.db.chart.view.LineChartView
+	        xmlns:chart="http://schemas.android.com/apk/res-auto"
+	        android:id="@+id/rockStats"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:background="@color/white"
+	        android:layout_marginTop="2dp"
+		    android:layout_marginLeft="7dp"
+		    android:layout_marginRight="7dp"
+		    android:layout_marginBottom="2dp"
+		    android:paddingTop="10dp"
+		    android:paddingBottom="10dp"
+		    android:paddingLeft="10dp"
+		    android:paddingRight="10dp"/>
+	    
+	    <ProgressBar
+	        android:id="@+id/progress"
+	        android:indeterminateOnly="true"
+	        android:layout_width="match_parent"
+	        android:layout_height="40dp"
+	        android:layout_gravity="center"/>
+    
+    </FrameLayout>
+    
+</LinearLayout>

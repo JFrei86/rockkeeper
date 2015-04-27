@@ -13,6 +13,7 @@ public class RouteContract extends Contract implements BaseColumns {
 	public static String LOCATION = "location";
 	public static String COMPLETED = "complete";
     public static String POINTS = "points";
+
 	
 	//Define Column Types
 	public RouteContract() {
