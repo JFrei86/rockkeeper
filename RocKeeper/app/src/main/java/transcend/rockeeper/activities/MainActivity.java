@@ -36,6 +36,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     RoutesFragment routes;
     DashboardFragment dash;
+    GoalsFragment goals;
     
     ViewPager mViewPager;
 
@@ -85,6 +86,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         routes = RoutesFragment.newInstance( currentLocId );
         dash = DashboardFragment.newInstance();
+        goals = GoalsFragment.newInstance();
         
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++)
@@ -200,6 +202,18 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 		this.routes.deleteRoute(v);
 	}
 
+    public void addGoal(View v){
+		this.goals.addGoal(v);
+	}
+	
+	public void editGoal(View v){
+		this.goals.editGoal(v);
+	}
+	
+	public void deleteGoal(View v){
+		this.goals.deleteGoal(v);
+	}
+
 /********************************** ADAPTERS *********************************/
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter
@@ -217,6 +231,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             }//TODO: make this the actual loc_id
             if( position == 1 ){
             	return dash;
+            }
+            if( position == 2 ){
+            	return goals;
             }
             else
             // getItem is called to instantiate the fragment for the given page.

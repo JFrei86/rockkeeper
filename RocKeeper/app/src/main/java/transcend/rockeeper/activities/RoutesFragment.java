@@ -41,7 +41,7 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
 	private static final String ARG_PARAM1 = "locId";
     
 	private String mParam1;
-    private ArrayList<Route> routes = new ArrayList<>();    // routes stored here after database retrieval
+    private ArrayList<Route> routes = new ArrayList<Route>();    // routes stored here after database retrieval
 
     private DatabaseHelper dbh;
     private SQLiteDatabase db;
