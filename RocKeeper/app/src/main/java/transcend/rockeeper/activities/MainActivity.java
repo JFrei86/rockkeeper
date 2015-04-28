@@ -167,8 +167,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 showAddLocationDialog();
                 return true;
             case R.id.action_settings:
-                //Intent intent = new Intent( this, SettingsActivity.class );
-                //this.startActivity( intent );
+                Intent intent = new Intent( MainActivity.this, SettingsActivity.class );
+                MainActivity.this.startActivity( intent );
                 return true;
         }
 

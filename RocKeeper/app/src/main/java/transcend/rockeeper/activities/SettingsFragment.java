@@ -22,7 +22,14 @@ import transcend.rockeeper.data.LocationContract;
 
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener
 {
-    MainActivity mainActivity;
+    private static final int GRAPH_PREF_POINTS = 0;
+    private static final int GRAPH_PREF_ATTEMPTS = 1;
+    private static final int GRAPH_PREF_COMPLETED = 2;
+    private static final int GRAPH_PREF_WEEK = 0;
+    private static final int GRAPH_PREF_MONTH = 1;
+    private static final int GRAPH_PREF_YEAR = 2;
+
+    //MainActivity mainActivity;
 
     @Override
     public void onCreate( Bundle savedInstanceState ) {
@@ -64,11 +71,30 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     @Override
     public void onSharedPreferenceChanged( SharedPreferences sharedPreferences, String key ) {
-        if( key.equals( "default_location" ) ) {
+        /*if( key.equals( "default_location" ) ) {
             long loc_id = Long.parseLong( sharedPreferences.getString( key, "" ) );
             String locName = mainActivity.getLocationFromId( loc_id ).get( LocationContract.NAME );
             ListPreference defLoc = (ListPreference) findPreference( key );
             defLoc.setSummary( locName );
+        }*/
+        ListPreference defLoc = (ListPreference) findPreference( key );
+        int type = Integer.parseInt( sharedPreferences.getString( key, "" ) );
+
+        if( key.equals( "default_graph_type" ) ) {
+            if( type == GRAPH_PREF_POINTS )
+                defLoc.setSummary( "Points over time" );
+            else if( type == GRAPH_PREF_ATTEMPTS )
+                defLoc.setSummary( "Attempted routes over time" );
+            else if( type == GRAPH_PREF_COMPLETED )
+                defLoc.setSummary( "Completed routes over time" );
+        }
+        else if( key.equals( "default_graph_time" ) ) {
+            if( type == GRAPH_PREF_WEEK )
+                defLoc.setSummary( "Week" );
+            else if( type == GRAPH_PREF_MONTH )
+                defLoc.setSummary( "Month" );
+            else if( type == GRAPH_PREF_YEAR )
+                defLoc.setSummary( "Year" );
         }
     }
 }

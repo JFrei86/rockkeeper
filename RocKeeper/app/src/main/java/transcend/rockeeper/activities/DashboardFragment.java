@@ -1,6 +1,9 @@
 package transcend.rockeeper.activities;
 
 import transcend.rockeeper.sqlite.DatabaseHelper;
+
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -14,14 +17,6 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import activities.rockeeper.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link DashboardFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link DashboardFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class DashboardFragment extends Fragment {
 
     //private OnFragmentInteractionListener mListener;
@@ -34,6 +29,9 @@ public class DashboardFragment extends Fragment {
      * @return A new instance of fragment DashboardFragment.
      */
     // TODO: Rename and change types and number of parameters
+
+    private static final String PREF_GRAPH_TYPE = "default_graph_type";
+    private static final String PREF_GRAPH_TIME = "default_graph_time";
 	
 	public StatsGraph sg;
 
@@ -42,6 +40,8 @@ public class DashboardFragment extends Fragment {
 	private DatabaseHelper dbh;
 
 	private SQLiteDatabase db;
+
+    private SharedPreferences sharedPreferences;
 	
 	private int currentColumn = 0;
 	private int currentRange = 0;
@@ -71,6 +71,7 @@ public class DashboardFragment extends Fragment {
             //mParam1 = getArguments().getString(ARG_PARAM1);
             //mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences( getActivity() );
     }
 
     @Override
@@ -90,6 +91,27 @@ public class DashboardFragment extends Fragment {
     	ArrayAdapter<CharSequence> adapter1 = ArrayAdapter.createFromResource(this.getActivity(), R.array.columns, R.layout.spinner_small);
     	ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this.getActivity(), R.array.ranges, R.layout.spinner_small);
     	spinner1.setAdapter(adapter1);
+
+        sg = new StatsGraph(this, prog);
+
+        /* Get defaults from Preferences */
+        int defaultColumn = Integer.parseInt( sharedPreferences.getString( PREF_GRAPH_TYPE, "0" ) );
+        spinner1.setSelection( defaultColumn );
+        if( defaultColumn == POINTS )
+            sg.setColumn( StatsGraph.POINTS );
+        else if( defaultColumn == ATTEMPTS )
+            sg.setColumn( StatsGraph.ATTEMPTS );
+        else if( defaultColumn == COMPLETED )
+            sg.setColumn( StatsGraph.COMPLETED );
+        int defaultRange = Integer.parseInt( sharedPreferences.getString( PREF_GRAPH_TIME, "0" ) );
+        spinner2.setSelection( defaultRange );
+        if( defaultRange == WEEK )
+            sg.setRange( StatsGraph.WEEK );
+        else if( defaultRange == MONTH )
+            sg.setRange( StatsGraph.MONTH );
+        else if( defaultRange == YEAR )
+            sg.setRange( StatsGraph.YEAR );
+        sg.refresh();
     	
     	currentColumn = spinner1.getSelectedItemPosition();
     	currentRange = spinner2.getSelectedItemPosition();
@@ -130,7 +152,7 @@ public class DashboardFragment extends Fragment {
 			public void onNothingSelected(AdapterView<?> parent) {}
     	});
     	
-    	sg = new StatsGraph(this, prog);
+
     }
 
 	public void refreshChart() {
