@@ -3,6 +3,7 @@ package transcend.rockeeper.activities;
 import java.util.HashMap;
 import java.util.Locale;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
@@ -31,10 +32,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 {
     private static final int DASHBOARD_POS = 1;
 
+    ActionBar actionBar;
+    
 	SectionsPagerAdapter mSectionsPagerAdapter;
 
     RoutesFragment routes;
     DashboardFragment dash;
+    GoalsFragment goals;
     
     ViewPager mViewPager;
 
@@ -56,7 +60,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         setContentView(R.layout.activity_main);
 
         // Set up the action bar.
-        final ActionBar actionBar = getSupportActionBar();
+        actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         db = dbh.getReadableDatabase();
@@ -84,6 +88,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         routes = RoutesFragment.newInstance( currentLocId );
         dash = DashboardFragment.newInstance();
+        goals = GoalsFragment.newInstance();
         
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++)
@@ -101,11 +106,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         mViewPager.setCurrentItem( 1 );
 
         db = dbh.getReadableDatabase();
-        
-        //getLocation( -1 );
 
         updateCurrentLocation( currentLocId );
-
     }
 
 /****************************** MENU METHODS *****************************/
@@ -127,9 +129,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
-        {
-            return true;
+        switch( id ) {
+            case R.id.action_place:
+                // change location
+                return true;
+            case R.id.action_settings:
+                // settings stuff
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -167,15 +173,24 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public void updateCurrentLocation( final long loc_id ) {
         Transaction t = new Transaction(db) {
             public void task(SQLiteDatabase db) {
-                Cursor c = dbh.locations.query(new String[] { LocationContract._ID, LocationContract.NAME }, LocationContract._ID + "=" + loc_id, null, LocationContract._ID, true, null, db);
+                Cursor c = dbh.locations.query(new String[] { LocationContract._ID, LocationContract.NAME, LocationContract.CITY }, LocationContract._ID + "=" + loc_id, null, LocationContract._ID, true, null, db);
                 c.moveToLast();
                 currentLoc = dbh.locations.build(c);
             }
             public void onComplete() {
-                Log.i("UpdateLocation", "Location Updated.");}
+                Log.i("UpdateLocation", "Location Updated.");
+                actionBar.setTitle( currentLoc.get( LocationContract.NAME ) );
+                actionBar.setSubtitle( currentLoc.get( LocationContract.CITY ) );
+            }
             public void onProgressUpdate(Contract.Unit... data) {}
         };
         t.run(true, true);
+    }
+
+    public void createLocationDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder( this );
+
     }
 
 /************************** BUTTON LISTENER METHODS **************************/
@@ -190,6 +205,18 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 	
 	public void deleteRoute(View v){
 		this.routes.deleteRoute(v);
+	}
+
+    public void addGoal(View v){
+		this.goals.addGoal(v);
+	}
+	
+	public void editGoal(View v){
+		this.goals.editGoal(v);
+	}
+	
+	public void deleteGoal(View v){
+		this.goals.deleteGoal(v);
 	}
 
 /********************************** ADAPTERS *********************************/
@@ -209,6 +236,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             }//TODO: make this the actual loc_id
             if( position == 1 ){
             	return dash;
+            }
+            if( position == 2 ){
+            	return goals;
             }
             else
             // getItem is called to instantiate the fragment for the given page.

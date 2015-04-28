@@ -105,13 +105,14 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         final Spinner color = (Spinner) dialog.getDialog().findViewById(R.id.routeColorPicker);
         final EditText points = (EditText) dialog.getDialog().findViewById(R.id.routePoints);
 
-        final int col_val = (Integer)color.getSelectedItem();// colors[color.getValue()];
+        final int col_val = (Integer)color.getSelectedItem();
         String diff = getResources().getStringArray(R.array.boulder_levels)[difficulty.getValue()];
         if(rope.isChecked())
             diff = getResources().getStringArray(R.array.rope_levels)[difficulty.getValue()];
         final String name_val = name.getText().toString();
         final int pts = Integer.parseInt( points.getText().toString() );
         final Route r = dbh.routes.build(diff, 0, Long.parseLong(mParam1), col_val, name_val, 0, pts);
+
         Transaction t = new Transaction(db){
             public void task(SQLiteDatabase db) {
                 if(edit == null){
@@ -203,23 +204,8 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         }
     }
 
-    /*@Override
-    public void onClick( View view ) {
-        switch( view.getId() ) {
-            case R.id.addRouteButton:
-                // open dialog with blank fields
-                break;
-            case R.id.editRouteButton:
-                // open dialog with filled-in fields
-                break;
-            case R.id.deleteRouteButton:
-                // delete the route
-                break;
-        }
-    }*/
-
     /* Queries the database for the list of available routes */
-    private void getRoutes(final long loc_id) {
+    private void getRoutes( final long loc_id ) {
 		Transaction t = new Transaction(db){
 			public void task(SQLiteDatabase db) {
 				Cursor c = dbh.routes.query(null, RouteContract.LOCATION + "=" + loc_id, null, RouteContract.DIFFICULTY, true, null, db);
@@ -257,7 +243,6 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         @Override
         public Route getItem( int position ) {
             return routes.get( position );
-            // return routes[position];
         }
 
         @Override
