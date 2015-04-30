@@ -20,17 +20,6 @@ import activities.rockeeper.R;
 
 public class DashboardFragment extends Fragment {
 
-    //private OnFragmentInteractionListener mListener;
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     *
-     * @return A new instance of fragment DashboardFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-
     private static final String PREF_GRAPH_TYPE = "default_graph_type";
     private static final String PREF_GRAPH_TIME = "default_graph_time";
 	
@@ -68,10 +57,6 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            //mParam1 = getArguments().getString(ARG_PARAM1);
-            //mParam2 = getArguments().getString(ARG_PARAM2);
-        }
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences( getActivity() );
     }
 
