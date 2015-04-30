@@ -93,11 +93,11 @@ public class GoalDialogFragment extends DialogFragment {
         final Spinner verb = (Spinner) dialogView.findViewById( R.id.verbSpinner );
         ArrayAdapter<CharSequence> verbAdapter = ArrayAdapter.createFromResource( getActivity(), R.array.spinner_verbs, android.R.layout.simple_spinner_item );
         verb.setAdapter( verbAdapter );
-        verb.setOnItemClickListener( new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                if( position == 3 ) {
+        verb.setOnItemSelectedListener( new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				if( position == 3 ) {
                     value.setVisibility( View.GONE );
                     diff.setVisibility( View.VISIBLE );
                     radioGroup.setVisibility( View.VISIBLE );
@@ -111,7 +111,11 @@ public class GoalDialogFragment extends DialogFragment {
                     if( position == 0 || position == 1 ) noun.setText( "routes" );
                     else noun.setText( "points" );
                 }
-            }
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+			}
         });
 
         final DatePicker date = (DatePicker) dialogView.findViewById( R.id.goalDatePicker );
