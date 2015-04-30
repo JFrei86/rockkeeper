@@ -41,6 +41,8 @@
         android:layout_height="30dp"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="10dp"
-        android:focusable="false"/>
+        android:layout_marginStart="10dp"
+        android:focusable="false"
+        android:clickable="false"/>
 
 </LinearLayout>

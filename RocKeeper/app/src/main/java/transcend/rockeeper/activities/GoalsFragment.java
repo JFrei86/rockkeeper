@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -65,7 +66,10 @@ public class GoalsFragment extends Fragment implements AdapterView.OnItemClickLi
                     c.moveToNext();
 				}
 			}
-			public void onComplete(){Log.i("GoalsFragment", "Goals Loaded.");}
+			public void onComplete(){
+				Log.i("GoalsFragment", "Goals Loaded.");
+				getView().invalidate();
+			}
 			public void onProgressUpdate(Unit... data) {}
 		};
 		t.run(true, true);
@@ -177,6 +181,12 @@ public class GoalsFragment extends Fragment implements AdapterView.OnItemClickLi
         		Goal g = getItem(position);
                 TextView goalText = (TextView) convertView.findViewById(R.id.goalName);
                 TextView started = (TextView) convertView.findViewById(R.id.dueDate);
+                CheckBox completed = (CheckBox) convertView.findViewById(R.id.checkboxComplete);
+                if(g.get(GoalContract.TYPE) == GoalContract.DIFFICULTY){
+                	completed.setChecked(Long.parseLong(g.get(GoalContract.STATUS)) > 0); 
+                } else {
+                	completed.setChecked(Long.parseLong(g.get(GoalContract.STATUS)) >= Long.parseLong(g.get(g.get(GoalContract.TYPE))));
+                }
                 
                 String goal = dbh.goals.verbs.get(g.get(GoalContract.TYPE)) + 
                 		g.get(g.get(GoalContract.TYPE)) + 
@@ -188,5 +198,11 @@ public class GoalsFragment extends Fragment implements AdapterView.OnItemClickLi
             return convertView;
         }
     }
+
+	public void refresh() {
+		goals.clear();
+		getGoals(db);
+		this.getView().invalidate();
+	}
 
 }
