@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,6 +92,7 @@ public class DashboardFragment extends Fragment {
     	ArrayAdapter<CharSequence> adapter1 = ArrayAdapter.createFromResource(this.getActivity(), R.array.columns, R.layout.spinner_small);
     	ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this.getActivity(), R.array.ranges, R.layout.spinner_small);
     	spinner1.setAdapter(adapter1);
+        spinner2.setAdapter(adapter2);
 
         sg = new StatsGraph(this, prog);
 
@@ -104,6 +106,7 @@ public class DashboardFragment extends Fragment {
         else if( defaultColumn == COMPLETED )
             sg.setColumn( StatsGraph.COMPLETED );
         int defaultRange = Integer.parseInt( sharedPreferences.getString( PREF_GRAPH_TIME, "0" ) );
+        Log.d("DashboardFragment", ""+defaultRange);
         spinner2.setSelection( defaultRange );
         if( defaultRange == WEEK )
             sg.setRange( StatsGraph.WEEK );
@@ -133,7 +136,7 @@ public class DashboardFragment extends Fragment {
 			}
 			public void onNothingSelected(AdapterView<?> parent) {}
     	});
-    	spinner2.setAdapter(adapter2);
+    	//spinner2.setAdapter(adapter2);
     	spinner2.setOnItemSelectedListener(new OnItemSelectedListener(){
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long id) {
