@@ -86,7 +86,7 @@ public abstract class Contract implements BaseColumns{
 	}
 	
 	public long update(Unit d, String where, String[] args, SQLiteDatabase db){
-		d.put(Contract.MODIFIED_ON, new Date().toString());
+		d.put(Contract.MODIFIED_ON, new Date().getTime());
 		ContentValues values = new ContentValues();
 		Iterator<String> i = d.keySet().iterator();
 		while(i.hasNext()){

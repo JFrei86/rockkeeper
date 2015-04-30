@@ -1,17 +1,11 @@
 package transcend.rockeeper.activities;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.Locale;
 
 import transcend.rockeeper.data.GoalContract;
 import transcend.rockeeper.data.Contract.Unit;
 import transcend.rockeeper.data.GoalContract.Goal;
-import transcend.rockeeper.data.GoalContract;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 import transcend.rockeeper.sqlite.Transaction;
 import activities.rockeeper.R;
@@ -64,7 +58,7 @@ public class GoalsFragment extends Fragment implements AdapterView.OnItemClickLi
     private void getGoals(SQLiteDatabase db2) {
     	Transaction t = new Transaction(db){
 			public void task(SQLiteDatabase db) {
-				Cursor c = dbh.goals.query(null, null, null, GoalContract.DUE_DATE, true, null, db);
+				Cursor c = dbh.goals.query(null, null, null, GoalContract.DUE_DATE, false, null, db);
                 c.moveToFirst();
 				while(c.getCount() > 0 && !c.isAfterLast()){
 					goals.add(dbh.goals.build(c));

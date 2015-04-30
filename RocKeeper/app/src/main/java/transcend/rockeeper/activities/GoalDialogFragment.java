@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import java.util.List;
 import activities.rockeeper.R;
 import transcend.rockeeper.data.GoalContract;
 import transcend.rockeeper.data.GoalContract.Goal;
+import transcend.rockeeper.sqlite.DatabaseHelper;
 
 public class GoalDialogFragment extends DialogFragment {
 
@@ -41,6 +43,9 @@ public class GoalDialogFragment extends DialogFragment {
 
     GoalDialogListener mListener;
 
+	private DatabaseHelper dbh;
+	private SQLiteDatabase db;
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -53,8 +58,8 @@ public class GoalDialogFragment extends DialogFragment {
             edit = (Goal) lv.getAdapter().getItem(listIndex);
         }
 
-        //dbh = new DatabaseHelper(this.getActivity(), null);
-        //db = dbh.getWritableDatabase();
+        dbh = new DatabaseHelper(this.getActivity(), null);
+        db = dbh.getWritableDatabase();
 
         colorsArray.add( 0xFFFF0000 );
         colorsArray.add( 0xFFFF8800 );
@@ -67,81 +72,81 @@ public class GoalDialogFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder( getActivity() );
         LayoutInflater inflater = getActivity().getLayoutInflater();
-
-        View dialogView = inflater.inflate(R.layout.fragment_create_Goal, null);
-        builder.setView( dialogView );
-
-        final NumberPicker difficulty = (NumberPicker) dialogView.findViewById(R.id.GoalDifficultyPicker);
-        difficulty.setDisplayedValues( getResources().getStringArray(R.array.boulder_levels) );
-        difficulty.setMinValue(0);
-        difficulty.setMaxValue(14);
-
-        final EditText name = (EditText) dialogView.findViewById(R.id.GoalDialogName);
-
-        final Spinner color = (Spinner) dialogView.findViewById(R.id.GoalColorPicker);
-        color.setAdapter( new ColorSpinnerAdapter( getActivity(), R.id.colorSpinner, colorsArray ) );
-
-        final EditText points = (EditText) dialogView.findViewById(R.id.GoalPoints);
-
-        final RadioButton rope = (RadioButton) dialogView.findViewById(R.id.topropeRB);
-        final RadioButton boulder = (RadioButton) dialogView.findViewById(R.id.boulderRB);
-
-        // If opened in edit mode, populate the fields with existing values
-        if( edit != null ) {
-            name.setText( edit.get( GoalContract.NAME ));
-            String GoalDiff = edit.get( GoalContract.DIFFICULTY );
-            if( GoalDiff.charAt(0) == '5' ) {
-                difficulty.setMaxValue(11);
-                difficulty.setDisplayedValues(getResources().getStringArray(R.array.rope_levels));
-                difficulty.setValue( Integer.parseInt( GoalDiff.substring( 2, GoalDiff.length() )) - 5 );
-                difficulty.invalidate();
-                rope.toggle();
-            }
-            else
-                difficulty.setValue( Integer.parseInt( GoalDiff.substring( 1, GoalDiff.length() ) ) );
-
-            color.setSelection( colorsArray.indexOf( Integer.parseInt(edit.get(GoalContract.COLOR))));
-            points.setText( edit.get( GoalContract.POINTS ));
-        }
-
-        rope.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-            public void onCheckedChanged(CompoundButton buttonView,
-                                         boolean isChecked) {
-                if(isChecked){
-                    difficulty.setMinValue(0);
-                    difficulty.setMaxValue(11);
-                    difficulty.setDisplayedValues( getResources().getStringArray(R.array.rope_levels) );
-                    //difficulty.setValue(0);
-                    difficulty.invalidate();
-                }
-            }
-        });
-        boulder.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-            public void onCheckedChanged(CompoundButton buttonView,
-                                         boolean isChecked) {
-                if(isChecked){
-                    difficulty.setDisplayedValues( getResources().getStringArray(R.array.boulder_levels) );
-                    difficulty.setMinValue(0);
-                    difficulty.setMaxValue(14);
-                    //difficulty.setValue(0);
-                    difficulty.invalidate();
-                }
-            }
-        });
-
-        String positiveButtonText = (edit == null)?"Add":"Edit";
-        // Add action buttons
-        builder.setPositiveButton(positiveButtonText, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface d, int id) {
-                mListener.onGoalDialogPositiveClick( GoalDialogFragment.this, edit );
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
+//
+//        View dialogView = inflater.inflate(R.layout.fragment_create_goal, null);
+//        builder.setView( dialogView );
+//
+//        final NumberPicker difficulty = (NumberPicker) dialogView.findViewById(R.id.GoalDifficultyPicker);
+//        difficulty.setDisplayedValues( getResources().getStringArray(R.array.boulder_levels) );
+//        difficulty.setMinValue(0);
+//        difficulty.setMaxValue(14);
+//
+//        final EditText name = (EditText) dialogView.findViewById(R.id.GoalDialogName);
+//
+//        final Spinner color = (Spinner) dialogView.findViewById(R.id.GoalColorPicker);
+//        color.setAdapter( new ColorSpinnerAdapter( getActivity(), R.id.colorSpinner, colorsArray ) );
+//
+//        final EditText points = (EditText) dialogView.findViewById(R.id.GoalPoints);
+//
+//        final RadioButton rope = (RadioButton) dialogView.findViewById(R.id.topropeRB);
+//        final RadioButton boulder = (RadioButton) dialogView.findViewById(R.id.boulderRB);
+//
+//        // If opened in edit mode, populate the fields with existing values
+//        if( edit != null ) {
+//            name.setText( edit.get( GoalContract.NAME ));
+//            String GoalDiff = edit.get( GoalContract.DIFFICULTY );
+//            if( GoalDiff.charAt(0) == '5' ) {
+//                difficulty.setMaxValue(11);
+//                difficulty.setDisplayedValues(getResources().getStringArray(R.array.rope_levels));
+//                difficulty.setValue( Integer.parseInt( GoalDiff.substring( 2, GoalDiff.length() )) - 5 );
+//                difficulty.invalidate();
+//                rope.toggle();
+//            }
+//            else
+//                difficulty.setValue( Integer.parseInt( GoalDiff.substring( 1, GoalDiff.length() ) ) );
+//
+//            color.setSelection( colorsArray.indexOf( Integer.parseInt(edit.get(GoalContract.COLOR))));
+//            points.setText( edit.get( GoalContract.POINTS ));
+//        }
+//
+//        rope.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+//            public void onCheckedChanged(CompoundButton buttonView,
+//                                         boolean isChecked) {
+//                if(isChecked){
+//                    difficulty.setMinValue(0);
+//                    difficulty.setMaxValue(11);
+//                    difficulty.setDisplayedValues( getResources().getStringArray(R.array.rope_levels) );
+//                    //difficulty.setValue(0);
+//                    difficulty.invalidate();
+//                }
+//            }
+//        });
+//        boulder.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+//            public void onCheckedChanged(CompoundButton buttonView,
+//                                         boolean isChecked) {
+//                if(isChecked){
+//                    difficulty.setDisplayedValues( getResources().getStringArray(R.array.boulder_levels) );
+//                    difficulty.setMinValue(0);
+//                    difficulty.setMaxValue(14);
+//                    //difficulty.setValue(0);
+//                    difficulty.invalidate();
+//                }
+//            }
+//        });
+//
+//        String positiveButtonText = (edit == null)?"Add":"Edit";
+//        // Add action buttons
+//        builder.setPositiveButton(positiveButtonText, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface d, int id) {
+//                mListener.onGoalDialogPositiveClick( GoalDialogFragment.this, edit );
+//            }
+//        });
+//        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int id) {
+//                dialog.cancel();
+//            }
+//        });
 
         Dialog d = builder.create();
         d.setCanceledOnTouchOutside(true);
