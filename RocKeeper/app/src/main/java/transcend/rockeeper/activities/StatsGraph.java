@@ -173,6 +173,9 @@ public class StatsGraph {
 			i++;
 		}
 		i = (int) Math.pow(10, i);
+		if(max <= 30){
+			i = 5;
+		}
 		
 		mLineChart.setBorderSpacing(Tools.fromDpToPx(4))
 			.setGrid(LineChartView.GridType.HORIZONTAL, mLineGridPaint)

@@ -28,8 +28,8 @@ public abstract class Contract implements BaseColumns{
 	public abstract String tableName();
 	
 	public Contract(){
-		colTypes.put(CREATED_ON, TEXT);
-		colTypes.put(MODIFIED_ON, TEXT);
+		colTypes.put(CREATED_ON, INT);
+		colTypes.put(MODIFIED_ON, INT);
 	}
 	
 	//Create table SQL Command String
@@ -51,8 +51,8 @@ public abstract class Contract implements BaseColumns{
 	
 	//Put a new document in the database
 	public long insert(Unit d, SQLiteDatabase db){
-		d.put(CREATED_ON, new Date().toString());
-		d.put(MODIFIED_ON, new Date().toString());
+		d.put(CREATED_ON, new Date().getTime());
+		d.put(MODIFIED_ON, new Date().getTime());
 		ContentValues values = new ContentValues();
 		Iterator<String> i = d.keySet().iterator();
 		while(i.hasNext()){
