@@ -83,6 +83,22 @@
         <item >5.15</item>
         <item >5.16</item>
     </string-array>
+    <string-array name="ranges">
+        <item >WEEK</item>
+        <item >MONTH</item>
+        <item >YEAR</item>
+    </string-array>
+    <string-array name="columns">
+        <item >POINTS OVER TIME</item>
+        <item >ATTEMPTED ROUTES OVER TIME</item>
+        <item >COMPLETED ROUTES OVER TIME</item>
+    </string-array>
+    <string-array name="spinner_verbs">
+        <item >Attempt</item>
+        <item >Complete</item>
+        <item >Earn</item>
+        <item >Climb a</item>
+    </string-array>
 
 
 </resources>

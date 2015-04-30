@@ -41,7 +41,7 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
 	private static final String ARG_PARAM1 = "locId";
     
 	private String mParam1;
-    private ArrayList<Route> routes = new ArrayList<>();    // routes stored here after database retrieval
+    private ArrayList<Route> routes = new ArrayList<Route>();    // routes stored here after database retrieval
 
     private DatabaseHelper dbh;
     private SQLiteDatabase db;
@@ -291,46 +291,53 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
             final TextView timesClimbed = (TextView)vi.findViewById( R.id.TimesClimbed );
             timesClimbed.setText(routes.get(position).get(RouteContract.NUM_ATTEMPTS));
             
+            final Transaction incAttempts = new Transaction(db){
+				public void task(SQLiteDatabase db) {
+					routes.get(position).put(RouteContract.NUM_ATTEMPTS, 
+							Long.parseLong(routes.get(position).get(RouteContract.NUM_ATTEMPTS)) + 1);
+					dbh.routes.update(routes.get(position), 
+							RouteContract._ID + "=" + routes.get(position).get(RouteContract._ID), null, db);
+					//Log.i("DEBUG", "Route update attempted. " + routes.get(position).toString());
+				}
+				public void onComplete() {
+					listview.invalidateViews();
+				}
+				public void onProgressUpdate(Unit... data) {}
+			};
+            
             final CheckBox completed = (CheckBox)vi.findViewById( R.id.checkboxComplete );
             int comp = Integer.parseInt(routes.get(position).get(RouteContract.COMPLETED));
             completed.setChecked(comp != 0);
+            if(comp != 0) completed.setEnabled(false);
             completed.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 				public void onCheckedChanged(CompoundButton buttonView,
-						boolean isChecked) {
+						final boolean isChecked) {
 					Transaction t = new Transaction(db){
 						public void task(SQLiteDatabase db) {
-							routes.get(position).put(RouteContract.COMPLETED, (completed.isChecked())?1:0);
+							routes.get(position).put(RouteContract.COMPLETED, (isChecked)?1:0);
 							dbh.routes.update(routes.get(position), 
 									RouteContract._ID + "=" + routes.get(position).get(RouteContract._ID), null, db);
 						}
 						public void onComplete() {
+							if(isChecked)
+								completed.setEnabled(false);
+							dbh.stats.incrementStat(routes.get(position), RouteContract.COMPLETED, db);
+							dbh.stats.incrementStat(routes.get(position), RouteContract.NUM_ATTEMPTS, db);
 							listview.invalidateViews();
 						}
 						public void onProgressUpdate(Unit... data) {}
 					};
 					t.run(true, true);
 				}
-                  });
+            });
             
             Button inc = (Button)vi.findViewById(R.id.TimesClimbedIncrementor);
             inc.setOnClickListener(new OnClickListener(){
 				public void onClick(View v) {
-					Transaction t = new Transaction(db){
-						public void task(SQLiteDatabase db) {
-							routes.get(position).put(RouteContract.NUM_ATTEMPTS, 
-									Long.parseLong(routes.get(position).get(RouteContract.NUM_ATTEMPTS)) + 1);
-							dbh.routes.update(routes.get(position), 
-									RouteContract._ID + "=" + routes.get(position).get(RouteContract._ID), null, db);
-							//Log.i("DEBUG", "Route update attempted. " + routes.get(position).toString());
-						}
-						public void onComplete() {
-							listview.invalidateViews();
-						}
-						public void onProgressUpdate(Unit... data) {}
-					};
-					t.run(false, false);
+					incAttempts.run(true, true);
+					dbh.stats.incrementStat(routes.get(position), RouteContract.NUM_ATTEMPTS, db);
 				}
-                  });
+            });
             
             return vi;
         }

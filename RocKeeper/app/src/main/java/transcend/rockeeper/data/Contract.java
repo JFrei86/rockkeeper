@@ -28,8 +28,8 @@ public abstract class Contract implements BaseColumns{
 	public abstract String tableName();
 	
 	public Contract(){
-		colTypes.put(CREATED_ON, TEXT);
-		colTypes.put(MODIFIED_ON, TEXT);
+		colTypes.put(CREATED_ON, INT);
+		colTypes.put(MODIFIED_ON, INT);
 	}
 	
 	//Create table SQL Command String
@@ -51,15 +51,15 @@ public abstract class Contract implements BaseColumns{
 	
 	//Put a new document in the database
 	public long insert(Unit d, SQLiteDatabase db){
-		d.put(CREATED_ON, new Date().toString());
-		d.put(MODIFIED_ON, new Date().toString());
+		d.put(CREATED_ON, new Date().getTime());
+		d.put(MODIFIED_ON, new Date().getTime());
 		ContentValues values = new ContentValues();
 		Iterator<String> i = d.keySet().iterator();
 		while(i.hasNext()){
 			String key = i.next();
 			if(colTypes.containsKey(key)){
 				if(colTypes.get(key) == INT){
-					values.put(key, Integer.parseInt(d.get(key)));
+					values.put(key, Long.parseLong(d.get(key)));
 				}
 				if(colTypes.get(key) == NUM){
 					values.put(key, Double.parseDouble(d.get(key)));
@@ -86,7 +86,7 @@ public abstract class Contract implements BaseColumns{
 	}
 	
 	public long update(Unit d, String where, String[] args, SQLiteDatabase db){
-		d.put(Contract.MODIFIED_ON, new Date().toString());
+		d.put(Contract.MODIFIED_ON, new Date().getTime());
 		ContentValues values = new ContentValues();
 		Iterator<String> i = d.keySet().iterator();
 		while(i.hasNext()){
