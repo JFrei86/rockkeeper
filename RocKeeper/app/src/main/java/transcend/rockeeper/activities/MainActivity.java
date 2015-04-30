@@ -47,6 +47,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     private static final int DASHBOARD_POS = 1;
 
+	private static final int GOALS_POS = 2;
+
     ActionBar actionBar;
     
 	SectionsPagerAdapter mSectionsPagerAdapter;
@@ -191,6 +193,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         mViewPager.setCurrentItem(tab.getPosition());
         if( tab.getPosition() == DASHBOARD_POS ){
         	dash.refreshChart();
+        } else if( tab.getPosition() == GOALS_POS ){
+        	((GoalsFragment) goals).refresh();
         }
     }
 
