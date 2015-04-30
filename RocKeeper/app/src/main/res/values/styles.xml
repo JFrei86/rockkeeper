@@ -10,7 +10,8 @@
     </style>
 
     <color name="bg">#63B0FF</color>
+    <color name="white">#FFFFFF</color>
     <color name="list_selected_color">#999999</color>
     <color name="list_pressed_color">#666666</color>
-
+    
 </resources>
