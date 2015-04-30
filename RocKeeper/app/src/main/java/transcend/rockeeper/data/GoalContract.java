@@ -51,15 +51,17 @@ public class GoalContract extends Contract {
 	public String tableName() { return "goals";}
 	
 	public class Goal extends Unit {
-		public Goal(String type, long val, long due, long progress, long created_on){
-			put(TYPE, type);
+		public Goal(Long _id, String type, long val, long due, long progress, long created_on){
+			if( _id != null ) put(_ID, _id);
+            put(TYPE, type);
 			put(type, val);
 			put(DUE_DATE, due);
 			put(CREATED_ON, created_on);
 			put(STATUS, progress);
 		}
-		public Goal(String difficulty, long due, long progress, long created_on){
-			put(TYPE, DIFFICULTY);
+		public Goal(Long _id, String difficulty, long due, long progress, long created_on){
+            if( _id != null ) put(_ID, _id);
+            put(TYPE, DIFFICULTY);
 			put(DIFFICULTY, difficulty);
 			put(DUE_DATE, due);
 			put(CREATED_ON, created_on);
@@ -69,22 +71,24 @@ public class GoalContract extends Contract {
 	public Goal build(Cursor c){
 		if(c.getString(c.getColumnIndex(TYPE)) != DIFFICULTY)
 			return this.new Goal(
-				c.getString(c.getColumnIndex(TYPE)),
+				c.getLong(c.getColumnIndex(_ID)),
+                c.getString(c.getColumnIndex(TYPE)),
 				c.getLong(c.getColumnIndex(c.getString(c.getColumnIndex(TYPE)))),
 				c.getLong(c.getColumnIndex(DUE_DATE)),
 				c.getLong(c.getColumnIndex(STATUS)),
 				Long.parseLong((c.getString(c.getColumnIndex(CREATED_ON)))));
 		else
 			return this.new Goal(
-					c.getString(c.getColumnIndex(DIFFICULTY)),
+                    c.getLong(c.getColumnIndex(_ID)),
+                    c.getString(c.getColumnIndex(DIFFICULTY)),
 					c.getLong(c.getColumnIndex(DUE_DATE)),
 					c.getLong(c.getColumnIndex(STATUS)),
 					Long.parseLong((c.getString(c.getColumnIndex(CREATED_ON)))));
 	}
 	public Goal build(String type, long val, long due){
-		return this.new Goal(type, val, due, 0, new Date().getTime());
+		return this.new Goal(null, type, val, due, 0, new Date().getTime());
 	}
 	public Goal build(String difficulty, long due){
-		return this.new Goal(difficulty, due, 0, new Date().getTime());
+		return this.new Goal(null, difficulty, due, 0, new Date().getTime());
 	}
 }

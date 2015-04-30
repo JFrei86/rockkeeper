@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Add"
-            android:onClick="addRoute"/>
+            android:onClick="addGoal"/>
 
         <Button
             android:id="@+id/editGoalButton"
@@ -31,7 +31,7 @@
             android:layout_weight="1"
             android:text="Edit"
             android:enabled="false"
-            android:onClick="editRoute"/>
+            android:onClick="editGoal"/>
 
         <Button
             android:id="@+id/deleteGoalButton"
@@ -40,7 +40,7 @@
             android:layout_weight="1"
             android:text="Delete"
             android:enabled="false"
-            android:onClick="deleteRoute"/>
+            android:onClick="deleteGoal"/>
    	</LinearLayout>
 
 </LinearLayout>

@@ -1,11 +1,14 @@
 package transcend.rockeeper.activities;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
+import java.util.Calendar;
 
 import transcend.rockeeper.data.GoalContract;
 import transcend.rockeeper.data.Contract.Unit;
 import transcend.rockeeper.data.GoalContract.Goal;
+import transcend.rockeeper.data.RouteContract;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 import transcend.rockeeper.sqlite.Transaction;
 import activities.rockeeper.R;
@@ -13,6 +16,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
@@ -23,10 +27,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 
-public class GoalsFragment extends Fragment implements AdapterView.OnItemClickListener{
+public class GoalsFragment extends Fragment implements GoalDialogFragment.GoalDialogListener, AdapterView.OnItemClickListener{
 
 	private ArrayList<Goal> goals = new ArrayList<Goal>();
 	private DatabaseHelper dbh;
@@ -78,6 +86,61 @@ public class GoalsFragment extends Fragment implements AdapterView.OnItemClickLi
         listview = (ListView) mainActivity.findViewById(R.id.listviewGoals);
         listview.setAdapter( new GoalListAdapter( this.getActivity(), goals ));
         listview.setOnItemClickListener( this );
+    }
+
+/********************************** DIALOG HANDLERS ***************************/
+
+    public void onGoalDialogPositiveClick(DialogFragment dialog, final Goal edit) {
+
+        final Spinner verb = (Spinner) dialog.getDialog().findViewById( R.id.verbSpinner );
+        final EditText value = (EditText) dialog.getDialog().findViewById( R.id.goalValue );
+        final Spinner diff = (Spinner) dialog.getDialog().findViewById( R.id.goalDifficulty );
+        final TextView noun = (TextView) dialog.getDialog().findViewById( R.id.nounView );
+        //final RadioButton toprope = (RadioButton) dialog.getDialog().findViewById( R.id.goalTopRope );
+        //final RadioButton boulder = (RadioButton) dialog.getDialog().findViewById( R.id.goalBoulder );
+        final DatePicker date = (DatePicker) dialog.getDialog().findViewById( R.id.goalDatePicker );
+
+        final String verb_val = (String) verb.getSelectedItem();
+        final int value_val = Integer.parseInt( value.getText().toString() );
+        final String diff_val = (String) diff.getSelectedItem();
+        final String noun_val = noun.getText().toString();
+        final Calendar cal = Calendar.getInstance();
+        cal.set( date.getYear()+1900, date.getMonth(), date.getDayOfMonth() );
+        final long date_val = cal.getTimeInMillis();
+
+        String goalType = "";
+        if( verb_val.equals( "Earn" ) ) goalType = GoalContract.POINTS;
+        else if( verb_val.equals( "Attempt" ) ) goalType = GoalContract.ATTEMPTS;
+        else if( verb_val.equals( "Complete" ) ) goalType = GoalContract.COMPLETED;
+        else if( verb_val.equals( "Climb a" ) ) goalType = GoalContract.DIFFICULTY;
+
+        final Goal g = dbh.goals.build( goalType, new Date().getTime(), date_val );
+
+        Transaction t = new Transaction(db) {
+            public void task(SQLiteDatabase db) {
+                if(edit == null){
+                    dbh.routes.insert(g, db);
+                }
+                else{
+                    dbh.routes.update(g, GoalContract._ID + "=" + edit.get(GoalContract._ID), null, db);
+                }
+            }
+            public void onComplete() {
+                if(edit != null){
+                    if(selectedItem == -1)
+                        return;
+                    goals.set(selectedItem, g);
+                }
+                else{
+                    goals.add(g);
+                    click(listview, selectedItem);
+                }
+
+                ((GoalListAdapter)listview.getAdapter()).notifyDataSetChanged();
+            }
+            public void onProgressUpdate(Unit... data) {}
+        };
+        t.run(true, true);
     }
 
     /**************************** BUTTON HANDLERS ***************************/

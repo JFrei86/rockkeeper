@@ -11,15 +11,21 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 import activities.rockeeper.R;
@@ -36,12 +42,12 @@ public class GoalDialogFragment extends DialogFragment {
     //DatabaseHelper dbh;
     //SQLiteDatabase db;
 
-    ArrayList<Integer> colorsArray = new ArrayList<Integer>();
-
     Goal edit;
     int listIndex;
 
     GoalDialogListener mListener;
+
+    HashMap<Integer, String> goalNouns = new HashMap<Integer, String>();
 
 	private DatabaseHelper dbh;
 	private SQLiteDatabase db;
@@ -61,21 +67,110 @@ public class GoalDialogFragment extends DialogFragment {
         dbh = new DatabaseHelper(this.getActivity(), null);
         db = dbh.getWritableDatabase();
 
-        colorsArray.add( 0xFFFF0000 );
-        colorsArray.add( 0xFFFF8800 );
-        colorsArray.add( 0xFFFFFF00 );
-        colorsArray.add( 0xFF00FF00 );
-        colorsArray.add( 0xFF0000FF );
-        colorsArray.add( 0xFFFF00FF );
-        colorsArray.add( 0xFFFFFFFF );
-        colorsArray.add( 0xFF000000 );
+        goalNouns.put( 0, "routes" );
+        goalNouns.put( 1, "routes" );
+        goalNouns.put( 2, "points" );
+        goalNouns.put( 3, "route" );
 
         AlertDialog.Builder builder = new AlertDialog.Builder( getActivity() );
         LayoutInflater inflater = getActivity().getLayoutInflater();
-//
-//        View dialogView = inflater.inflate(R.layout.fragment_create_goal, null);
-//        builder.setView( dialogView );
-//
+
+        View dialogView = inflater.inflate(R.layout.fragment_create_goal, null);
+        builder.setView( dialogView );
+
+        final EditText value = (EditText) dialogView.findViewById( R.id.goalValue );
+        final TextView noun = (TextView) dialogView.findViewById( R.id.nounView );
+
+        final RadioGroup radioGroup = (RadioGroup) dialogView.findViewById( R.id.goalRadioGroup );
+        final RadioButton toprope = (RadioButton) dialogView.findViewById( R.id.goalTopRope );
+        final RadioButton boulder = (RadioButton) dialogView.findViewById( R.id.goalBoulder );
+
+        final Spinner diff = (Spinner) dialogView.findViewById( R.id.goalDifficulty );
+        final ArrayAdapter<CharSequence> diffAdapterRope = ArrayAdapter.createFromResource( getActivity(), R.array.rope_levels, android.R.layout.simple_spinner_item );
+        final ArrayAdapter<CharSequence> diffAdapterBoulder = ArrayAdapter.createFromResource( getActivity(), R.array.boulder_levels, android.R.layout.simple_spinner_item );
+        diff.setAdapter( diffAdapterRope );
+
+        final Spinner verb = (Spinner) dialogView.findViewById( R.id.verbSpinner );
+        ArrayAdapter<CharSequence> verbAdapter = ArrayAdapter.createFromResource( getActivity(), R.array.spinner_verbs, android.R.layout.simple_spinner_item );
+        verb.setAdapter( verbAdapter );
+        verb.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                if( position == 3 ) {
+                    value.setVisibility( View.GONE );
+                    diff.setVisibility( View.VISIBLE );
+                    radioGroup.setVisibility( View.VISIBLE );
+                    noun.setText( "route" );
+                }
+                else {
+                    value.setVisibility( View.VISIBLE );
+                    diff.setVisibility( View.GONE );
+                    radioGroup.setVisibility( View.GONE );
+
+                    if( position == 0 || position == 1 ) noun.setText( "routes" );
+                    else noun.setText( "points" );
+                }
+            }
+        });
+
+        final DatePicker date = (DatePicker) dialogView.findViewById( R.id.goalDatePicker );
+
+        if( edit != null ) {
+            String type = edit.get( GoalContract.TYPE );
+            if( type == null ) {
+                verb.setSelection( 3 );
+                noun.setText( "route" );
+                value.setVisibility( View.GONE );
+                diff.setVisibility(View.VISIBLE);
+            }
+            else {
+                verb.setSelection(Integer.parseInt(edit.get(GoalContract.TYPE)));
+                noun.setText(goalNouns.get(Integer.parseInt(edit.get(GoalContract.TYPE))));
+            }
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis( Long.parseLong( edit.get( GoalContract.DUE_DATE ) ) );
+            date.updateDate( cal.get( Calendar.YEAR ), cal.get( Calendar.MONTH ), cal.get( Calendar.DAY_OF_MONTH ) );
+
+            //TODO: Fetch difficulty data and toggle radio buttons accordingly
+        }
+
+        toprope.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged( CompoundButton buttonView, boolean isChecked ) {
+                if( isChecked ) {
+                    diff.setAdapter( diffAdapterRope );
+                    diff.invalidate();
+                }
+            }
+        });
+        boulder.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged( CompoundButton buttonView, boolean isChecked ) {
+                if( isChecked ) {
+                    diff.setAdapter( diffAdapterBoulder );
+                    diff.invalidate();
+                }
+            }
+        });
+
+        String positiveButtonText = (edit == null)?"Add":"Edit";
+        // Add action buttons
+        builder.setPositiveButton(positiveButtonText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface d, int id) {
+                mListener.onGoalDialogPositiveClick( GoalDialogFragment.this, edit );
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        Dialog d = builder.create();
+        d.setCanceledOnTouchOutside(true);
+        d.setCancelable(true);
+        return d;
+
 //        final NumberPicker difficulty = (NumberPicker) dialogView.findViewById(R.id.GoalDifficultyPicker);
 //        difficulty.setDisplayedValues( getResources().getStringArray(R.array.boulder_levels) );
 //        difficulty.setMinValue(0);
@@ -147,11 +242,6 @@ public class GoalDialogFragment extends DialogFragment {
 //                dialog.cancel();
 //            }
 //        });
-
-        Dialog d = builder.create();
-        d.setCanceledOnTouchOutside(true);
-        d.setCancelable(true);
-        return d;
     }
 
     @Override
@@ -171,7 +261,7 @@ public class GoalDialogFragment extends DialogFragment {
         mListener = null;
     }
 
-    private class ColorSpinnerAdapter extends ArrayAdapter<Integer> {
+    /*private class ColorSpinnerAdapter extends ArrayAdapter<Integer> {
 
         Context context;
         List<Integer> colors;
@@ -219,5 +309,5 @@ public class GoalDialogFragment extends DialogFragment {
 
             return vi;
         }
-    }
+    }*/
 }
