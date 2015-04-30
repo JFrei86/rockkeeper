@@ -6,6 +6,7 @@ import java.util.List;
 import transcend.rockeeper.data.GoalContract;
 import transcend.rockeeper.data.Contract.Unit;
 import transcend.rockeeper.data.GoalContract.Goal;
+import transcend.rockeeper.data.GoalContract;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 import transcend.rockeeper.sqlite.Transaction;
 import activities.rockeeper.R;
@@ -21,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 public class GoalsFragment extends Fragment implements AdapterView.OnItemClickListener{
@@ -30,15 +32,8 @@ public class GoalsFragment extends Fragment implements AdapterView.OnItemClickLi
 	private SQLiteDatabase db;
 	private FragmentActivity mainActivity;
 	private ListView listview;
-	
-	public void addGoal(View v) {
-	}
+    private int selectedItem = -1;      // the index of the list item selected
 
-	public void editGoal(View v) {
-	}
-
-	public void deleteGoal(View v) {
-	}
 
 	public static GoalsFragment newInstance() {
 		GoalsFragment fragment = new GoalsFragment();
@@ -84,6 +79,70 @@ public class GoalsFragment extends Fragment implements AdapterView.OnItemClickLi
         listview.setOnItemClickListener( this );
     }
 
+    /**************************** BUTTON HANDLERS ***************************/
+
+    public void addGoal( View v ){
+        Bundle args = new Bundle();
+        args.putInt( "selectedItem", -1 );
+        GoalDialogFragment d = new GoalDialogFragment();
+        d.setArguments( args );
+        d.setTargetFragment( this, 1 );
+        d.show( getFragmentManager(), "GoalDialog" );
+    }
+
+    public void editGoal( View v ){
+        //final Goal edit = (Goal) listview.getAdapter().getItem(selectedItem);
+        Bundle args = new Bundle();
+        args.putInt( "selectedItem", selectedItem );
+        GoalDialogFragment d = new GoalDialogFragment();
+        d.setArguments( args );
+        d.setTargetFragment( this, 1 );
+        d.show( getFragmentManager(), "GoalDialog" );
+    }
+
+    public void deleteGoal( View v ){
+        final GoalContract.Goal delete = (GoalContract.Goal) listview.getAdapter().getItem(selectedItem);
+        goals.remove(delete);
+        Transaction t = new Transaction(db){
+            public void task(SQLiteDatabase db) {
+                dbh.goals.delete(GoalContract._ID + "=" + delete.get(GoalContract._ID), null, db);
+            }
+            public void onComplete() {
+                goals.remove(delete);
+                click(listview, selectedItem);
+                ((GoalListAdapter)listview.getAdapter()).notifyDataSetChanged();
+            }
+            public void onProgressUpdate(Unit... data) {}
+        };
+        t.run(true, true);
+    }
+
+    /******************************* LIST HANDLERS ******************************/
+
+    @Override
+    public void onItemClick( AdapterView<?> parent, View view, int position, long id ) {
+        click(view, position);
+    }
+
+    private void click(View view, int position){
+        Button editB = (Button) getActivity().findViewById(R.id.editGoalButton);
+        Button deleteB = (Button) getActivity().findViewById(R.id.deleteGoalButton);
+        if( position == selectedItem ) {
+            view.setSelected(false);
+            view.setActivated(false);
+            editB.setEnabled(false);
+            deleteB.setEnabled(false);
+            listview.clearChoices();
+            selectedItem = -1;
+        } else {
+            view.setSelected( true );
+            view.setActivated( true );
+            editB.setEnabled( true );
+            deleteB.setEnabled( true );
+            selectedItem = position;
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -120,8 +179,5 @@ public class GoalsFragment extends Fragment implements AdapterView.OnItemClickLi
             return convertView;
         }
     }
-	public void onItemClick(AdapterView<?> parent, View view, int position,
-			long id) {
-		
-	}
+
 }
