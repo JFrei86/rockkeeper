@@ -14,12 +14,9 @@
 
 package transcend.rockeeper.activities;
 
-import transcend.rockeeper.sqlite.DatabaseHelper;
-
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,9 +36,6 @@ public class DashboardFragment extends Fragment {
 	
 	public StatsGraph sg;
 	private ProgressBar prog;
-
-	private DatabaseHelper dbh;
-	private SQLiteDatabase db;
 
     private SharedPreferences sharedPreferences;
 	
@@ -85,8 +79,6 @@ public class DashboardFragment extends Fragment {
     /** Called when the activity associated with the fragment has been created */
     public void onActivityCreated(Bundle b){
     	super.onActivityCreated(b);
-    	dbh = new DatabaseHelper(this.getActivity(), null);
-    	db = dbh.getReadableDatabase();
     	prog = (ProgressBar)this.getActivity().findViewById(R.id.progress);
     	Spinner spinner1 = (Spinner)this.getActivity().findViewById(R.id.columnSelector);
     	Spinner spinner2 = (Spinner)this.getActivity().findViewById(R.id.rangeSelector);

@@ -38,7 +38,7 @@ public abstract class Contract implements BaseColumns {
 	/**
 	 * Default constructor for all database objects
 	 */
-	
+
 	public Contract(){
 		colTypes.put(CREATED_ON, INT);
 		colTypes.put(MODIFIED_ON, INT);
@@ -67,7 +67,6 @@ public abstract class Contract implements BaseColumns {
 		return "DROP TABLE IF EXISTS " + tableName() + ";";
 	}
 
-	// Put a new document in the database
 	/**
 	 * @param d
 	 *            A Unit of data containing keys to insert into the table
@@ -152,6 +151,7 @@ public abstract class Contract implements BaseColumns {
 	 *            A read/write database reference
 	 * @return the number of documents in the database that were updated
 	 */
+	
 	public long update(Unit d, String where, String[] args, SQLiteDatabase db){
 		d.put(Contract.MODIFIED_ON, new Date().getTime());
 		ContentValues values = new ContentValues();

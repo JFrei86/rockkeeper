@@ -31,3 +31,4 @@ proguard/
 RocKeeper/app/src/main/.project
 *.prefs
 RocKeeper/.idea/workspace.xml
+RocKeeper/.idea/

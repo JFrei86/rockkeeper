@@ -49,6 +49,7 @@ import transcend.rockeeper.data.LocationContract;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 import transcend.rockeeper.sqlite.Transaction;
 
+@SuppressLint("InflateParams")
 @SuppressWarnings("deprecation")
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener
 {
@@ -57,9 +58,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     private static final int GOALS_POS = 2;
 
     private SharedPreferences sharedPrefs;
-
-    SectionsPagerAdapter mSectionsPagerAdapter;
-
 
     RoutesFragment routes;
     DashboardFragment dash;
@@ -74,6 +72,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     private LocationContract.Location currentLoc;
 	private ActionBar actionBar;
 	private ViewPager mViewPager;
+	private SectionsPagerAdapter mSectionsPagerAdapter;
 
     public void onBackPressed(){}
 
