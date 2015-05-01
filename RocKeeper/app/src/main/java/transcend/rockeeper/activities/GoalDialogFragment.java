@@ -1,3 +1,17 @@
+/** FILENAME: GoalDialogFragment.java
+ *  CREATED: 2015
+ *  AUTHORS:
+ *    Alex Miropolsky
+ *    Chris Berger
+ *    Jesse Freitas
+ *    Nicole Negedly
+ *  LICENSE: GNU General Public License (Version 3)
+ *    Please see the LICENSE file in the main project directory for more details.
+ *
+ *  DESCRIPTION:
+ *    DialogFragment for the goals dialog, allowing the user to add/edit a goal
+ */
+
 package transcend.rockeeper.activities;
 
 import android.app.Activity;
@@ -33,34 +47,35 @@ import transcend.rockeeper.data.GoalContract;
 import transcend.rockeeper.data.GoalContract.Goal;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 
+
 public class GoalDialogFragment extends DialogFragment {
 
+    // Interface which must be implemented by the GoalsFragment
     public interface GoalDialogListener {
         public void onGoalDialogPositiveClick(DialogFragment dialog, Goal edit);
     }
 
-    //DatabaseHelper dbh;
-    //SQLiteDatabase db;
+    private Goal edit;
+    private int listIndex;
 
-    Goal edit;
-    int listIndex;
+    private GoalDialogListener mListener;
 
-    GoalDialogListener mListener;
-
-    HashMap<Integer, String> goalNouns = new HashMap<Integer, String>();
+    private HashMap<Integer, String> goalNouns = new HashMap<Integer, String>();
 
 	private DatabaseHelper dbh;
 	private SQLiteDatabase db;
 
+    /** Called when the dialog is created - handle initializations */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+        // Retrieve the selected goal, if one was selected
         Bundle args = getArguments();
         listIndex = args.getInt("selectedItem");
         if( listIndex == -1 )
             edit = null;
         else {
-            ListView lv = (ListView) this.getActivity().findViewById(R.id.listview);
+            ListView lv = (ListView) this.getActivity().findViewById(R.id.listviewGoals);
             edit = (Goal) lv.getAdapter().getItem(listIndex);
         }
 
@@ -93,9 +108,9 @@ public class GoalDialogFragment extends DialogFragment {
         final Spinner verb = (Spinner) dialogView.findViewById( R.id.verbSpinner );
         ArrayAdapter<CharSequence> verbAdapter = ArrayAdapter.createFromResource( getActivity(), R.array.spinner_verbs, android.R.layout.simple_spinner_item );
         verb.setAdapter( verbAdapter );
-        verb.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+        verb.setOnItemSelectedListener( new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
                 if( position == 3 ) {
                     value.setVisibility( View.GONE );
@@ -112,21 +127,32 @@ public class GoalDialogFragment extends DialogFragment {
                     else noun.setText( "points" );
                 }
             }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent){}
         });
 
         final DatePicker date = (DatePicker) dialogView.findViewById( R.id.goalDatePicker );
 
+        // If a goal was selected, populate the fields with the appropriate data
         if( edit != null ) {
             String type = edit.get( GoalContract.TYPE );
-            if( type == null ) {
+            if( type == "difficulty" ) {
                 verb.setSelection( 3 );
                 noun.setText( "route" );
                 value.setVisibility( View.GONE );
                 diff.setVisibility(View.VISIBLE);
             }
-            else {
-                verb.setSelection(Integer.parseInt(edit.get(GoalContract.TYPE)));
-                noun.setText(goalNouns.get(Integer.parseInt(edit.get(GoalContract.TYPE))));
+            else if( type == "points" ) {
+                verb.setSelection( 2 );
+                noun.setText(goalNouns.get(2));
+            }
+            else if( type == "num_attempts" ) {
+                verb.setSelection( 0 );
+                noun.setText(goalNouns.get(0));
+            }
+            else if( type == "complete" ) {
+                verb.setSelection( 1 );
+                noun.setText(goalNouns.get(1));
             }
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis( Long.parseLong( edit.get( GoalContract.DUE_DATE ) ) );
@@ -166,84 +192,14 @@ public class GoalDialogFragment extends DialogFragment {
             }
         });
 
+        // Build the dialog and return it
         Dialog d = builder.create();
         d.setCanceledOnTouchOutside(true);
         d.setCancelable(true);
         return d;
-
-//        final NumberPicker difficulty = (NumberPicker) dialogView.findViewById(R.id.GoalDifficultyPicker);
-//        difficulty.setDisplayedValues( getResources().getStringArray(R.array.boulder_levels) );
-//        difficulty.setMinValue(0);
-//        difficulty.setMaxValue(14);
-//
-//        final EditText name = (EditText) dialogView.findViewById(R.id.GoalDialogName);
-//
-//        final Spinner color = (Spinner) dialogView.findViewById(R.id.GoalColorPicker);
-//        color.setAdapter( new ColorSpinnerAdapter( getActivity(), R.id.colorSpinner, colorsArray ) );
-//
-//        final EditText points = (EditText) dialogView.findViewById(R.id.GoalPoints);
-//
-//        final RadioButton rope = (RadioButton) dialogView.findViewById(R.id.topropeRB);
-//        final RadioButton boulder = (RadioButton) dialogView.findViewById(R.id.boulderRB);
-//
-//        // If opened in edit mode, populate the fields with existing values
-//        if( edit != null ) {
-//            name.setText( edit.get( GoalContract.NAME ));
-//            String GoalDiff = edit.get( GoalContract.DIFFICULTY );
-//            if( GoalDiff.charAt(0) == '5' ) {
-//                difficulty.setMaxValue(11);
-//                difficulty.setDisplayedValues(getResources().getStringArray(R.array.rope_levels));
-//                difficulty.setValue( Integer.parseInt( GoalDiff.substring( 2, GoalDiff.length() )) - 5 );
-//                difficulty.invalidate();
-//                rope.toggle();
-//            }
-//            else
-//                difficulty.setValue( Integer.parseInt( GoalDiff.substring( 1, GoalDiff.length() ) ) );
-//
-//            color.setSelection( colorsArray.indexOf( Integer.parseInt(edit.get(GoalContract.COLOR))));
-//            points.setText( edit.get( GoalContract.POINTS ));
-//        }
-//
-//        rope.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-//            public void onCheckedChanged(CompoundButton buttonView,
-//                                         boolean isChecked) {
-//                if(isChecked){
-//                    difficulty.setMinValue(0);
-//                    difficulty.setMaxValue(11);
-//                    difficulty.setDisplayedValues( getResources().getStringArray(R.array.rope_levels) );
-//                    //difficulty.setValue(0);
-//                    difficulty.invalidate();
-//                }
-//            }
-//        });
-//        boulder.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-//            public void onCheckedChanged(CompoundButton buttonView,
-//                                         boolean isChecked) {
-//                if(isChecked){
-//                    difficulty.setDisplayedValues( getResources().getStringArray(R.array.boulder_levels) );
-//                    difficulty.setMinValue(0);
-//                    difficulty.setMaxValue(14);
-//                    //difficulty.setValue(0);
-//                    difficulty.invalidate();
-//                }
-//            }
-//        });
-//
-//        String positiveButtonText = (edit == null)?"Add":"Edit";
-//        // Add action buttons
-//        builder.setPositiveButton(positiveButtonText, new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface d, int id) {
-//                mListener.onGoalDialogPositiveClick( GoalDialogFragment.this, edit );
-//            }
-//        });
-//        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int id) {
-//                dialog.cancel();
-//            }
-//        });
     }
 
+    /** Called when the fragment is attached to its activity */
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -255,59 +211,10 @@ public class GoalDialogFragment extends DialogFragment {
         }
     }
 
+    /** Called when the fragment is detached from its activity */
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
-
-    /*private class ColorSpinnerAdapter extends ArrayAdapter<Integer> {
-
-        Context context;
-        List<Integer> colors;
-        LayoutInflater inflater;
-
-        public ColorSpinnerAdapter( Context context, int resourceid, ArrayList<Integer> colors ) {
-            super( context, resourceid, colors );
-            this.context = context;
-            this.colors = colors;
-            this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        }
-
-        @Override
-        public int getCount() {
-            return colors.size();
-        }
-
-        @Override
-        public Integer getItem( int position ) {
-            return colors.get( position );
-        }
-
-        @Override
-        public long getItemId( int position ) {
-            return position;
-        }
-
-        @Override
-        public View getDropDownView( int position, View convertView, ViewGroup parent ) {
-            return getCustomView( position, convertView, parent );
-        }
-
-        @Override
-        public View getView( int position, View convertView, ViewGroup parent ) {
-            return getCustomView( position, convertView, parent );
-        }
-
-        public View getCustomView( final int position, View convertView, ViewGroup parent ) {
-            View vi = convertView;
-            if( vi == null )
-                vi = inflater.inflate( R.layout.color_spinner, null );
-
-            View colorBox = vi.findViewById(R.id.colorSpinner);
-            colorBox.setBackgroundColor(getItem(position));
-
-            return vi;
-        }
-    }*/
 }

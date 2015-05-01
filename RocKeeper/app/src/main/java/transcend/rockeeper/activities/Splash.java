@@ -1,3 +1,18 @@
+/** FILENAME: Splash.java
+ *  CREATED: 2015
+ *  AUTHORS:
+ *    Alex Miropolsky
+ *    Chris Berger
+ *    Jesse Freitas
+ *    Nicole Negedly
+ *  LICENSE: GNU General Public License (Version 3)
+ *    Please see the LICENSE file in the main project directory for more details.
+ *
+ *  DESCRIPTION:
+ *    Splash screen activity that displays when the user launches
+ *    the RocKeeper application.
+ */
+
 package transcend.rockeeper.activities;
 
 import transcend.rockeeper.data.SettingsContract;
@@ -9,7 +24,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
-//import android.view.Menu;
 
 public class Splash extends ActionBarActivity {
 
@@ -19,17 +33,12 @@ public class Splash extends ActionBarActivity {
     /** Creating database if first time */
     DatabaseHelper dbh = new DatabaseHelper(this, null);
     SQLiteDatabase db;
-    
-    /** Called when the activity is first created. */
+
+    /** Called when the activity is created - handle initializations */
     @Override
-    
-    public void onBackPressed(){}
-    
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
-        
         
         /* New Handler to start the Menu-Activity 
          * and close this Splash-Screen after some seconds.*/
@@ -38,7 +47,7 @@ public class Splash extends ActionBarActivity {
 	        new Handler().postDelayed(new Runnable(){
 	            @Override
 	            public void run() {
-	                /* Create an Intent that will start the Menu-Activity. */
+	                /* Create an Intent that will start the FirstTimePage. */
 	                Intent mainIntent = new Intent(Splash.this, FirstTimePage.class);
 	                Splash.this.startActivity(mainIntent);
 	                Splash.this.finish();
@@ -48,7 +57,7 @@ public class Splash extends ActionBarActivity {
         	new Handler().postDelayed(new Runnable(){
 	            @Override
 	            public void run() {
-	                /* Create an Intent that will start the Menu-Activity. */
+	                /* Create an Intent that will start the MainActivity. */
 	                Intent mainIntent = new Intent(Splash.this, MainActivity.class);
 	                Splash.this.startActivity(mainIntent);
 	                Splash.this.finish();
@@ -57,6 +66,12 @@ public class Splash extends ActionBarActivity {
         }
     }
 
+    /** Disable user pressing back button */
+    @Override
+    public void onBackPressed(){}
+
+    /** Checks to see if the user is launching the app for the first time by seeing
+        if there are any entries in the database. */
 	private boolean firstTime() {
 		db = dbh.getWritableDatabase();
 		String[] rows = { SettingsContract.USER, SettingsContract.LEVEL };
