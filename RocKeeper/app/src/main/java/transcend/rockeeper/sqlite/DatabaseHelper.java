@@ -1,3 +1,16 @@
+/** FILENAME: DatabaseHelper.java
+ *  CREATED: 2015
+ *  AUTHORS:
+ *    Alex Miropolsky
+ *    Chris Berger
+ *    Jesse Freitas
+ *    Nicole Negedly
+ *  LICENSE: GNU General Public License (Version 3)
+ *    Please see the LICENSE file in the main project directory for more details.
+ *
+ *  DESCRIPTION:
+ *    Sets up DB tables on app first time launch and retrieves a reference to the database object
+ */
 package transcend.rockeeper.sqlite;
 
 import android.annotation.SuppressLint;

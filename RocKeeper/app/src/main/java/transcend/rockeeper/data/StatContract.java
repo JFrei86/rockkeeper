@@ -1,3 +1,16 @@
+/** FILENAME: StatContract.java
+ *  CREATED: 2015
+ *  AUTHORS:
+ *    Alex Miropolsky
+ *    Chris Berger
+ *    Jesse Freitas
+ *    Nicole Negedly
+ *  LICENSE: GNU General Public License (Version 3)
+ *    Please see the LICENSE file in the main project directory for more details.
+ *
+ *  DESCRIPTION:
+ *    Stat Contract for creating, storing, and viewing users statistical progress as the user climbs
+ */
 package transcend.rockeeper.data;
 
 import java.util.Calendar;

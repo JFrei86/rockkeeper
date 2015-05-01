@@ -257,13 +257,11 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
     /** Custom adapter for the list of routes */
     private class RouteListAdapter extends ArrayAdapter<Route> {
 
-        Context context;
         List<Route> routes;
         LayoutInflater inflater = null;
 
         public RouteListAdapter( Context context, ArrayList<Route> routes ) {
             super( context, 0, routes );
-            this.context = context;
             this.routes = routes;
             this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         }

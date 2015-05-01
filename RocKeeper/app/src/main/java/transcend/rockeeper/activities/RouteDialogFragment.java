@@ -14,6 +14,7 @@
 
 package transcend.rockeeper.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -31,14 +32,13 @@ import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.Spinner;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import activities.rockeeper.R;
 import transcend.rockeeper.data.RouteContract;
 import transcend.rockeeper.data.RouteContract.Route;
 
+@SuppressLint("InflateParams")
 public class RouteDialogFragment extends DialogFragment {
 
     // Interface which must be implemented by the RoutesFragment
@@ -185,13 +185,11 @@ public class RouteDialogFragment extends DialogFragment {
     /** Custom adapter for the ColorSpinner */
     private class ColorSpinnerAdapter extends ArrayAdapter<Integer> {
 
-        Context context;
         List<Integer> colors;
         LayoutInflater inflater;
 
         public ColorSpinnerAdapter( Context context, int resourceid, ArrayList<Integer> colors ) {
             super( context, resourceid, colors );
-            this.context = context;
             this.colors = colors;
             this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         }

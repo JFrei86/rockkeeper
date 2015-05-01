@@ -71,7 +71,7 @@
         android:text="No goals here yet :( \nSwipe to the right to create some."
         android:textSize="12sp"
         android:textStyle="bold|italic"
-        android:visibility="gone" />
+        android:visibility="visible" />
     
     <ListView
         android:id="@+id/listviewDash"

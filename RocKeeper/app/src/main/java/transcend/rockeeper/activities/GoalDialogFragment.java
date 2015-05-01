@@ -14,40 +14,34 @@
 
 package transcend.rockeeper.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
-
 import activities.rockeeper.R;
 import transcend.rockeeper.data.GoalContract;
 import transcend.rockeeper.data.GoalContract.Goal;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 
 
+@SuppressLint("InflateParams")
 public class GoalDialogFragment extends DialogFragment {
 
     // Interface which must be implemented by the GoalsFragment
@@ -60,12 +54,11 @@ public class GoalDialogFragment extends DialogFragment {
 
     private GoalDialogListener mListener;
 
-    private HashMap<Integer, String> goalNouns = new HashMap<Integer, String>();
+    @SuppressLint("UseSparseArrays")
+	private HashMap<Integer, String> goalNouns = new HashMap<Integer, String>();
 
 	private DatabaseHelper dbh;
-	private SQLiteDatabase db;
-
-    /** Called when the dialog is created - handle initializations */
+	/** Called when the dialog is created - handle initializations */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -80,7 +73,7 @@ public class GoalDialogFragment extends DialogFragment {
         }
 
         dbh = new DatabaseHelper(this.getActivity(), null);
-        db = dbh.getWritableDatabase();
+        dbh.getWritableDatabase();
 
         goalNouns.put( 0, "routes" );
         goalNouns.put( 1, "routes" );

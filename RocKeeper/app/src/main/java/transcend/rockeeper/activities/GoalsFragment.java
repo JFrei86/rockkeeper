@@ -15,17 +15,15 @@
 package transcend.rockeeper.activities;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Calendar;
-
 import transcend.rockeeper.data.GoalContract;
 import transcend.rockeeper.data.Contract.Unit;
 import transcend.rockeeper.data.GoalContract.Goal;
-import transcend.rockeeper.data.RouteContract;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 import transcend.rockeeper.sqlite.Transaction;
 import activities.rockeeper.R;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -45,7 +43,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.CheckBox;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -107,14 +104,12 @@ public class GoalsFragment extends Fragment implements GoalDialogFragment.GoalDi
         final Spinner verb = (Spinner) dialog.getDialog().findViewById( R.id.verbSpinner );
         final EditText value = (EditText) dialog.getDialog().findViewById( R.id.goalValue );
         final Spinner diff = (Spinner) dialog.getDialog().findViewById( R.id.goalDifficulty );
-        final TextView noun = (TextView) dialog.getDialog().findViewById( R.id.nounView );
         final DatePicker date = (DatePicker) dialog.getDialog().findViewById( R.id.goalDatePicker );
 
         // Get the values from the fields
         final String verb_val = (String) verb.getSelectedItem();
         final int value_val = Integer.parseInt( value.getText().toString() );
         final String diff_val = (String) diff.getSelectedItem();
-        final String noun_val = noun.getText().toString();
         final Calendar cal = Calendar.getInstance();
         cal.set( date.getYear(), date.getMonth(), date.getDayOfMonth() );
         final long date_val = cal.getTimeInMillis();
@@ -256,7 +251,8 @@ public class GoalsFragment extends Fragment implements GoalDialogFragment.GoalDi
 /********************************* ADAPTERS *******************************************/
     
     /** Custom adapter for the list of goals */
-    public class GoalListAdapter extends ArrayAdapter<Goal> {
+    @SuppressLint("InflateParams")
+	public class GoalListAdapter extends ArrayAdapter<Goal> {
 
         Context context;
         LayoutInflater inflater = null;

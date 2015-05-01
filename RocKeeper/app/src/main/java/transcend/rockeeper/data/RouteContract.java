@@ -1,3 +1,16 @@
+/** FILENAME: RouteContract.java
+ *  CREATED: 2015
+ *  AUTHORS:
+ *    Alex Miropolsky
+ *    Chris Berger
+ *    Jesse Freitas
+ *    Nicole Negedly
+ *  LICENSE: GNU General Public License (Version 3)
+ *    Please see the LICENSE file in the main project directory for more details.
+ *
+ *  DESCRIPTION:
+ *    Route Contract to manage routes in different locations the use creates
+ */
 package transcend.rockeeper.data;
 
 import android.database.Cursor;
