@@ -1,10 +1,23 @@
+/** FILENAME: RouteDialogFragment.java
+ *  CREATED: 2015
+ *  AUTHORS:
+ *    Alex Miropolsky
+ *    Chris Berger
+ *    Jesse Freitas
+ *    Nicole Negedly
+ *  LICENSE: GNU General Public License (Version 3)
+ *    Please see the LICENSE file in the main project directory for more details.
+ *
+ *  DESCRIPTION:
+ *    DialogFragment for the routes dialog, allowing the user to add/edit a route
+ */
+
 package transcend.rockeeper.activities;
 
 import android.app.Dialog;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.DialogFragment;
 import android.app.Activity;
 import android.os.Bundle;
@@ -25,27 +38,26 @@ import java.util.List;
 import activities.rockeeper.R;
 import transcend.rockeeper.data.RouteContract;
 import transcend.rockeeper.data.RouteContract.Route;
-import transcend.rockeeper.sqlite.DatabaseHelper;
 
 public class RouteDialogFragment extends DialogFragment {
 
+    // Interface which must be implemented by the RoutesFragment
     public interface RouteDialogListener {
         public void onRouteDialogPositiveClick( DialogFragment dialog, Route edit );
     }
 
-    //DatabaseHelper dbh;
-    //SQLiteDatabase db;
+    private ArrayList<Integer> colorsArray = new ArrayList<Integer>();
 
-    ArrayList<Integer> colorsArray = new ArrayList<Integer>();
+    private Route edit;
+    private int listIndex;
 
-    Route edit;
-    int listIndex;
+    private RouteDialogListener mListener;
 
-    RouteDialogListener mListener;
-
+    /** Called when the dialog is created - handle initializations */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+        // Get the selected Route object (if one was selected)
         Bundle args = getArguments();
         listIndex = args.getInt("selectedItem");
         if( listIndex == -1 )
@@ -54,9 +66,6 @@ public class RouteDialogFragment extends DialogFragment {
             ListView lv = (ListView) this.getActivity().findViewById(R.id.listview);
             edit = (Route) lv.getAdapter().getItem(listIndex);
         }
-
-        //dbh = new DatabaseHelper(this.getActivity(), null);
-        //db = dbh.getWritableDatabase();
 
         colorsArray.add( 0xFFFF0000 );
         colorsArray.add( 0xFFFF8800 );
@@ -106,6 +115,8 @@ public class RouteDialogFragment extends DialogFragment {
             points.setText( edit.get( RouteContract.POINTS ));
         }
 
+        // Define what happens when the radio buttons are clicked - in this case, change the
+        //   difficulty spinner to the appropriate set of difficulties
         rope.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
@@ -145,12 +156,14 @@ public class RouteDialogFragment extends DialogFragment {
             }
         });
 
+        // Build the dialog and return it
         Dialog d = builder.create();
         d.setCanceledOnTouchOutside(true);
         d.setCancelable(true);
         return d;
     }
 
+    /** Called when the dialog is attached to its activity */
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -162,12 +175,14 @@ public class RouteDialogFragment extends DialogFragment {
         }
     }
 
+    /** Called when the dialog is detached from its activity */
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
+    /** Custom adapter for the ColorSpinner */
     private class ColorSpinnerAdapter extends ArrayAdapter<Integer> {
 
         Context context;

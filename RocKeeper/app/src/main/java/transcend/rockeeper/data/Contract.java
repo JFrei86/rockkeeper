@@ -38,9 +38,10 @@ public abstract class Contract implements BaseColumns {
 	/**
 	 * Default constructor for all database objects
 	 */
-	public Contract() {
-		colTypes.put(CREATED_ON, TEXT);
-		colTypes.put(MODIFIED_ON, TEXT);
+	
+	public Contract(){
+		colTypes.put(CREATED_ON, INT);
+		colTypes.put(MODIFIED_ON, INT);
 	}
 
 	// Create table SQL Command String
@@ -75,9 +76,10 @@ public abstract class Contract implements BaseColumns {
 	 * @return the ID of the Unit created. Unit will be modified to contain the
 	 *         new id as well.
 	 */
-	public long insert(Unit d, SQLiteDatabase db) {
-		d.put(CREATED_ON, new Date().toString());
-		d.put(MODIFIED_ON, new Date().toString());
+	//Put a new document in the database
+	public long insert(Unit d, SQLiteDatabase db){
+		d.put(CREATED_ON, new Date().getTime());
+		d.put(MODIFIED_ON, new Date().getTime());
 		ContentValues values = new ContentValues();
 		Iterator<String> i = d.keySet().iterator();
 		while (i.hasNext()) {
@@ -150,8 +152,8 @@ public abstract class Contract implements BaseColumns {
 	 *            A read/write database reference
 	 * @return the number of documents in the database that were updated
 	 */
-	public long update(Unit d, String where, String[] args, SQLiteDatabase db) {
-		d.put(Contract.MODIFIED_ON, new Date().toString());
+	public long update(Unit d, String where, String[] args, SQLiteDatabase db){
+		d.put(Contract.MODIFIED_ON, new Date().getTime());
 		ContentValues values = new ContentValues();
 		Iterator<String> i = d.keySet().iterator();
 		while (i.hasNext()) {

@@ -1,3 +1,17 @@
+/** FILENAME: RoutesFragment.java
+ *  CREATED: 2015
+ *  AUTHORS:
+ *    Alex Miropolsky
+ *    Chris Berger
+ *    Jesse Freitas
+ *    Nicole Negedly
+ *  LICENSE: GNU General Public License (Version 3)
+ *    Please see the LICENSE file in the main project directory for more details.
+ *
+ *  DESCRIPTION:
+ *    Fragment for the routes page, showing the list of routes filtered by location
+ */
+
 package transcend.rockeeper.activities;
 
 import java.util.ArrayList;
@@ -39,8 +53,8 @@ import activities.rockeeper.R;
 public class RoutesFragment extends Fragment implements RouteDialogFragment.RouteDialogListener, AdapterView.OnItemClickListener {
 	
 	private static final String ARG_PARAM1 = "locId";
-    
 	private String mParam1;
+
     private ArrayList<Route> routes = new ArrayList<Route>();    // routes stored here after database retrieval
 
     private DatabaseHelper dbh;
@@ -56,6 +70,7 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
 
 /******************** LIFECYCLE METHODS ************************/
 
+    /** Returns a new instance of the fragment */
     public static RoutesFragment newInstance( long loc_id ) {
         RoutesFragment fragment = new RoutesFragment();
         Bundle args = new Bundle();
@@ -69,6 +84,7 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         // Required empty public constructor
     }
 
+    /** Called when the fragment is created - handle initializations */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +98,7 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         Log.d( "rockeeper", "RoutesFragment: onCreate()" );
     }
 
+    /** Sets up the view for the fragment */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -90,6 +107,7 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         return inflater.inflate(R.layout.fragment_routes, container, false);
     }
 
+    /** Called when the fragment's associated activity has been created */
     @Override
     public void onActivityCreated( Bundle savedInstanceState ) {
         super.onActivityCreated(savedInstanceState);
@@ -97,23 +115,21 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         listview = (ListView) mainActivity.findViewById(R.id.listview);
         listview.setAdapter( new RouteListAdapter( mainActivity, routes ));
         listview.setOnItemClickListener( this );
-        //LocationContract.Location curLoc = ((MainActivity)mainActivity).getCurrentLocation();
-        //getRoutes( Long.parseLong( curLoc.get( LocationContract._ID ) ) );
-        //((RouteListAdapter)listview.getAdapter()).notifyDataSetChanged();
         Log.d( "rockeeper", "RoutesFragment(): onActivityCreated()" );
     }
 
 /************************* DIALOG HANDLERS *****************************/
 
+    /** Called if the user has selected the positive button (i.e. 'OK') of the dialog */
     public void onRouteDialogPositiveClick( DialogFragment dialog, final Route edit ) {
 
         final EditText name = (EditText) dialog.getDialog().findViewById(R.id.routeDialogName);
         final RadioButton rope = (RadioButton) dialog.getDialog().findViewById(R.id.topropeRB);
-        //final RadioButton boulder = (RadioButton) dialog.getDialog().findViewById(R.id.boulderRB);
         final NumberPicker difficulty = (NumberPicker) dialog.getDialog().findViewById(R.id.routeDifficultyPicker);
         final Spinner color = (Spinner) dialog.getDialog().findViewById(R.id.routeColorPicker);
         final EditText points = (EditText) dialog.getDialog().findViewById(R.id.routePoints);
 
+        // Pull the values from the fields
         final int col_val = (Integer)color.getSelectedItem();
         String diff = getResources().getStringArray(R.array.boulder_levels)[difficulty.getValue()];
         if(rope.isChecked())
@@ -122,6 +138,7 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         final int pts = Integer.parseInt( points.getText().toString() );
         final Route r = dbh.routes.build(diff, 0, Long.parseLong(mParam1), col_val, name_val, 0, pts);
 
+        // Insert or update the database entry accordingly
         Transaction t = new Transaction(db){
             public void task(SQLiteDatabase db) {
                 if(edit == null){
@@ -141,7 +158,6 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
                     routes.add(r);
                     click(listview, selectedItem);
                 }
-
                 ((RouteListAdapter)listview.getAdapter()).notifyDataSetChanged();
             }
             public void onProgressUpdate(Unit... data) {}
@@ -151,6 +167,7 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
 
 /**************************** BUTTON HANDLERS ***************************/
 
+    /** Launch the route dialog in add mode */
     public void addRoute( View v ){
         Bundle args = new Bundle();
         args.putInt( "selectedItem", -1 );
@@ -159,9 +176,9 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         d.setTargetFragment( this, 1 );
         d.show( getFragmentManager(), "RouteDialog" );
 	}
-	
+
+    /** Launch the route dialog in edit mode */
 	public void editRoute( View v ){
-		//final Route edit = (Route) listview.getAdapter().getItem(selectedItem);
         Bundle args = new Bundle();
         args.putInt( "selectedItem", selectedItem );
         RouteDialogFragment d = new RouteDialogFragment();
@@ -169,7 +186,8 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         d.setTargetFragment( this, 1 );
         d.show( getFragmentManager(), "RouteDialog" );
 	}
-	
+
+    /** Remove the selected route from the list and the database */
 	public void deleteRoute( View v ){
 		final Route delete = (Route) listview.getAdapter().getItem(selectedItem);
 		routes.remove(delete);
@@ -189,11 +207,13 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
 
 /******************************* LIST HANDLERS ******************************/
 
+    /** Called when the user selects an item in the list */
     @Override
     public void onItemClick( AdapterView<?> parent, View view, int position, long id ) {
         click(view, position);
     }
-    
+
+    /** Handle what happens when a list item is clicked */
     private void click(View view, int position){
     	Button editB = (Button) getActivity().findViewById(R.id.editRouteButton);
         Button deleteB = (Button) getActivity().findViewById(R.id.deleteRouteButton);
@@ -213,7 +233,7 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         }
     }
 
-    /* Queries the database for the list of available routes */
+    /** Queries the database for the list of available routes */
     public void getRoutes( final long loc_id ) {
 		Transaction t = new Transaction(db){
 			public void task(SQLiteDatabase db) {
@@ -234,7 +254,7 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
 		t.run(true, true);
 	}
 
-    /* Custom adapter for the list of routes */
+    /** Custom adapter for the list of routes */
     private class RouteListAdapter extends ArrayAdapter<Route> {
 
         Context context;
@@ -248,21 +268,25 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
             this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         }
 
+        /** Return the number of items in the list */
         @Override
         public int getCount() {
             return routes.size();
         }
 
+        /** Return the Route at the given position */
         @Override
         public Route getItem( int position ) {
             return routes.get( position );
         }
 
+        /** Return the ID of the item at the given position */
         @Override
         public long getItemId( int position ) {
             return position;
         }
 
+        /** Get the view associated with the selected list item */
         @SuppressLint("InflateParams")
 		@Override
         public View getView( final int position, View convertView, ViewGroup parent ) {
@@ -291,24 +315,11 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
             final TextView timesClimbed = (TextView)vi.findViewById( R.id.TimesClimbed );
             timesClimbed.setText(routes.get(position).get(RouteContract.NUM_ATTEMPTS));
             
-            final Transaction incAttempts = new Transaction(db){
-				public void task(SQLiteDatabase db) {
-					routes.get(position).put(RouteContract.NUM_ATTEMPTS, 
-							Long.parseLong(routes.get(position).get(RouteContract.NUM_ATTEMPTS)) + 1);
-					dbh.routes.update(routes.get(position), 
-							RouteContract._ID + "=" + routes.get(position).get(RouteContract._ID), null, db);
-					//Log.i("DEBUG", "Route update attempted. " + routes.get(position).toString());
-				}
-				public void onComplete() {
-					listview.invalidateViews();
-				}
-				public void onProgressUpdate(Unit... data) {}
-			};
-            
+            // Define what happens when the user clicks the "completed" check box
             final CheckBox completed = (CheckBox)vi.findViewById( R.id.checkboxComplete );
             int comp = Integer.parseInt(routes.get(position).get(RouteContract.COMPLETED));
             completed.setChecked(comp != 0);
-            if(comp != 0) completed.setEnabled(false);
+            if(comp != 0) completed.setClickable(false);
             completed.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 				public void onCheckedChanged(CompoundButton buttonView,
 						final boolean isChecked) {
@@ -319,10 +330,13 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
 									RouteContract._ID + "=" + routes.get(position).get(RouteContract._ID), null, db);
 						}
 						public void onComplete() {
-							if(isChecked)
-								completed.setEnabled(false);
+							if(isChecked){
+								completed.setClickable(false);
+							}
 							dbh.stats.incrementStat(routes.get(position), RouteContract.COMPLETED, db);
 							dbh.stats.incrementStat(routes.get(position), RouteContract.NUM_ATTEMPTS, db);
+							dbh.goals.updateGoals(routes.get(position), RouteContract.COMPLETED, db);
+							dbh.goals.updateGoals(routes.get(position), RouteContract.NUM_ATTEMPTS, db);
 							listview.invalidateViews();
 						}
 						public void onProgressUpdate(Unit... data) {}
@@ -330,12 +344,27 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
 					t.run(true, true);
 				}
             });
-            
+
+            // Define what happens when the user clicks the attempt increment button
             Button inc = (Button)vi.findViewById(R.id.TimesClimbedIncrementor);
             inc.setOnClickListener(new OnClickListener(){
 				public void onClick(View v) {
+					Transaction incAttempts = new Transaction(db){
+						public void task(SQLiteDatabase db) {
+							routes.get(position).put(RouteContract.NUM_ATTEMPTS, 
+									Long.parseLong(routes.get(position).get(RouteContract.NUM_ATTEMPTS)) + 1);
+							dbh.routes.update(routes.get(position), 
+									RouteContract._ID + "=" + routes.get(position).get(RouteContract._ID), null, db);
+							//Log.i("DEBUG", "Route update attempted. " + routes.get(position).toString());
+						}
+						public void onComplete() {
+							dbh.stats.incrementStat(routes.get(position), RouteContract.NUM_ATTEMPTS, db);
+							dbh.goals.updateGoals(routes.get(position), RouteContract.NUM_ATTEMPTS, db);
+							listview.invalidateViews();
+						}
+						public void onProgressUpdate(Unit... data) {}
+					};
 					incAttempts.run(true, true);
-					dbh.stats.incrementStat(routes.get(position), RouteContract.NUM_ATTEMPTS, db);
 				}
             });
             
