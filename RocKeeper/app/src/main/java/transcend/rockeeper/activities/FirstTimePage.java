@@ -1,6 +1,25 @@
+/** FILENAME: FirstTimePage.java
+ *  CREATED: 2015
+ *  AUTHORS:
+ *    Alex Miropolsky
+ *    Chris Berger
+ *    Jesse Freitas
+ *    Nicole Negedly
+ *  LICENSE: GNU General Public License (Version 3)
+ *    Please see the LICENSE file in the main project directory for more details.
+ *
+ *  DESCRIPTION:
+ *    Activity that displays only when the user has launched the application for the
+ *    first time after install, allowing user to enter his/her basic information.
+ */
+
 package transcend.rockeeper.activities;
 
+import java.util.Date;
+
 import transcend.rockeeper.data.Contract.Unit;
+import transcend.rockeeper.data.GoalContract;
+import transcend.rockeeper.data.GoalContract.Goal;
 import transcend.rockeeper.data.LocationContract;
 import transcend.rockeeper.data.LocationContract.Location;
 import transcend.rockeeper.data.RouteContract.Route;
@@ -17,7 +36,6 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
 import android.view.View;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -25,6 +43,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class FirstTimePage extends ActionBarActivity {
 
+    /** Called when the activity is created - handle initializations */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +55,7 @@ public class FirstTimePage extends ActionBarActivity {
         spinner.setAdapter(arrayAdapter);
     }
 
+    /** Initializes the options menu */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -43,6 +63,7 @@ public class FirstTimePage extends ActionBarActivity {
         return true;
     }
 
+    /** Called when an options menu item is selected */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -58,23 +79,28 @@ public class FirstTimePage extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /** Disable user pressing back button */
     @Override
     public void onBackPressed(){}
-    
+
+    /** Prepares the main activity and launches it */
     public void launchMainPage(View view) {
     	final DatabaseHelper dbh = new DatabaseHelper(this, null);
     	SQLiteDatabase db = dbh.getWritableDatabase();
-    	
+
+        // Get the values from the fields
     	final String location = ((EditText) this.findViewById(R.id.fav_location)).getText().toString();
         final String city = ((EditText) this.findViewById(R.id.location_city)).getText().toString();
     	final String name = ((EditText) this.findViewById(R.id.user_name)).getText().toString();
     	final Object level = ((Spinner) this.findViewById(R.id.experience_level)).getSelectedItem();
-    	
+
+        // Warn the user if some fields are left blank
     	if(location.equals("") || name.equals("") || level == null){
     		this.findViewById(R.id.missingFirstFields).setVisibility(View.VISIBLE);
     		return;
     	}
-    	
+
+        // Insert data into database
     	Transaction t = new Transaction(db){
 			public void task(SQLiteDatabase db) {
 				Settings s = dbh.settings.build(name, level.toString());
@@ -96,18 +122,24 @@ public class FirstTimePage extends ActionBarActivity {
 			    	Route r1 = dbh.routes.build("v0", 2, locID, 0xFF00FF00, "Rainbow Road", 0, 50);
 			    	Route r2 = dbh.routes.build("v3", 0, locID, 0xFFFF0000, "Death Drop", 0, 200);
 			    	Route r3 = dbh.routes.build("v2", 1, locID, 0xFF0000FF, "Inner Peaks", 0, 100);
-         
+			    	Goal g1 = dbh.goals.build(GoalContract.POINTS, 4000, new Date().getTime() + 2592000000l);
+			    	Goal g2 = dbh.goals.build(GoalContract.COMPLETED, 10, new Date().getTime() + 2592000000l);
+			    	Goal g3 = dbh.goals.build(GoalContract.ATTEMPTS, 20, new Date().getTime() + (2592000000l / 4));
+			    	
 			    	dbh.routes.insert(r1, db);
 			    	dbh.routes.insert(r2, db);
 			    	dbh.routes.insert(r3, db);
+			    	dbh.goals.insert(g1, db);
+			    	dbh.goals.insert(g2, db);
+			    	dbh.goals.insert(g3, db);
                 }
 			}
 			public void onComplete(){}
 			public void onProgressUpdate(Unit... data){}
     	};
-    	
     	t.run(true, true);
-    	
+
+        // Create the intent for MainActivity and start it
         Intent mainIntent = new Intent(this, MainActivity.class);
         this.startActivity(mainIntent);
         this.finish();

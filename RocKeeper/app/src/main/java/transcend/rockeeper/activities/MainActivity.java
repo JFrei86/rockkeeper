@@ -1,14 +1,27 @@
+/** FILENAME: MainActivity.java
+ *  CREATED: 2015
+ *  AUTHORS:
+ *    Alex Miropolsky
+ *    Chris Berger
+ *    Jesse Freitas
+ *    Nicole Negedly
+ *  LICENSE: GNU General Public License (Version 3)
+ *    Please see the LICENSE file in the main project directory for more details.
+ *
+ *  DESCRIPTION:
+ *    The main activity of the application - maintains the three fragments that make
+ *    up the different page tabs and handles location information
+ */
+
 package transcend.rockeeper.activities;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -26,7 +39,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
@@ -35,33 +47,29 @@ import transcend.rockeeper.data.Contract;
 import transcend.rockeeper.data.LocationContract;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 import transcend.rockeeper.sqlite.Transaction;
-//import transcend.rockeeper.activities.DashboardFragment;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener
 {
-
-    //private static final String PREF_FILE = "rockeeper_preferences";
     private static final String PREF_LOCATION = "location";
-    SharedPreferences sharedPrefs;
-
-    ActionBar actionBar;
-
-    SectionsPagerAdapter mSectionsPagerAdapter;
-
     private static final int DASHBOARD_POS = 1;
+    private static final int GOALS_POS = 2;
+
+    private SharedPreferences sharedPrefs;
+
+    private ActionBar actionBar;
+	private SectionsPagerAdapter mSectionsPagerAdapter;
+    private ViewPager mViewPager;
 
     RoutesFragment routes;
     DashboardFragment dash;
-    
-    ViewPager mViewPager;
-
-    @SuppressLint("UseSparseArrays")
-	private HashMap<Long, LocationContract.Location> locationMap = new HashMap<Long, LocationContract.Location>();
+    GoalsFragment goals;
 
     private DatabaseHelper dbh = new DatabaseHelper(this, null);
     private SQLiteDatabase db;
 
+    @SuppressLint("UseSparseArrays")
+	private HashMap<Long, LocationContract.Location> locationMap = new HashMap<Long, LocationContract.Location>();
     private long currentLocId = 1;
     private LocationContract.Location currentLoc;
 
@@ -69,6 +77,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
 /*********************************** LIFECYCLE METHODS ********************************/
 
+    /** Called when the activity is created - handle initializations */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,31 +91,29 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
+        // Retrieve the database and refresh locations
         db = dbh.getWritableDatabase();
         refreshLocations(currentLocId);
     }
 
+    /** Initializes the page fragments and sets up the page view */
     public void setupPager() {
 
         routes = RoutesFragment.newInstance( currentLocId );
         dash = DashboardFragment.newInstance();
+        goals = GoalsFragment.newInstance();
 
-        // Create the adapter that will return a fragment for each of the four
-        // primary sections of the activity.
+        // Adapter that will return a fragment for each section of the activity
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        // When swiping between different sections, select the corresponding
-        // tab. We can also use ActionBar.Tab#select() to do this if we have
-        // a reference to the Tab.
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener()
-        {
+        // When swiping between different sections, select the corresponding tab
+        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
-            public void onPageSelected(int position)
-            {
+            public void onPageSelected(int position) {
                 actionBar.setSelectedNavigationItem(position);
             }
         });
@@ -114,23 +121,15 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++)
         {
-            // Create a tab with text corresponding to the page title defined by
-            // the adapter. Also specify this Activity object, which implements
-            // the TabListener interface, as the callback (listener) for when
-            // this tab is selected.
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(mSectionsPagerAdapter.getPageTitle(i))
-                            .setTabListener(this));
+            actionBar.addTab( actionBar.newTab()
+                                       .setText(mSectionsPagerAdapter.getPageTitle(i))
+                                       .setTabListener(this));
         }
 
-        //db = dbh.getReadableDatabase();
-
         mViewPager.setCurrentItem( 1 );
-
-        //routes.getRoutes( currentLocId );
     }
 
+    /** Called when the activity is stopped (i.e. no longer visible on screen) */
     @Override
     public void onStop() {
         super.onStop();
@@ -142,14 +141,15 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
 /****************************** MENU METHODS *****************************/
 
+    /** Initializes options menu */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
+    /** Called when an options menu item is selected - take the appropriate action */
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
@@ -177,45 +177,46 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
 /****************************** TAB METHODS *********************************/
 
+    /** Called when the user selects a particular tab */
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction)
     {
-        /*if( tab.getPosition() == 0 ) {
-            routes.getRoutes( currentLocId );
-        }*/
-
         // When the given tab is selected, switch to the corresponding page in
         // the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
+
+        // Refresh the appropriate views
         if( tab.getPosition() == DASHBOARD_POS ){
         	dash.refreshChart();
+        } else if( tab.getPosition() == GOALS_POS ){
+        	goals.refresh();
         }
     }
 
     @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction)
-    {
-    }
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {}
 
     @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction)
-    {
-    }
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {}
 
 /****************************** LOCATION METHODS ********************************/
 
+    /** Return the current location object */
     public LocationContract.Location getCurrentLocation() {
         return currentLoc;
     }
 
+    /** Return the location map */
     public HashMap<Long, LocationContract.Location> getLocations() {
         return locationMap;
     }
 
+    /** Retrieves the location matching the given id */
     public LocationContract.Location getLocationFromId( long loc_id ) {
         return locationMap.get( loc_id );
     }
 
+    /** Updates the current location to the location matching loc_id */
     public void updateCurrentLocation( final long loc_id ) {
         LocationContract.Location loc = locationMap.get( loc_id );
         currentLocId = loc_id;
@@ -225,6 +226,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         if( routes != null ) routes.getRoutes( loc_id );
     }
 
+    /** Refreshes the location map by pulling from the database */
     public void refreshLocations( final long loc_id ) {
         Transaction t = new Transaction(db) {
             public void task(SQLiteDatabase db) {
@@ -246,11 +248,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         t.run(true, true);
     }
 
+    /** Displays a dialog allowing the user to select a location */
     public void showChangeLocationDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder( this, AlertDialog.THEME_HOLO_LIGHT );
         builder.setTitle( R.string.title_location_dialog );
 
+        // Get array of locations from the location map
         final ArrayList<LocationContract.Location> locations = new ArrayList<LocationContract.Location>( locationMap.values() );
         Iterator<LocationContract.Location> iter = locations.iterator();
         String[] locNames = new String[locations.size()];
@@ -260,6 +264,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             ++c;
         }
 
+        // Set up the dialog builder and show the dialog
         builder.setItems( locNames, new DialogInterface.OnClickListener() {
             public void onClick( DialogInterface dialog, int which ) {
                 Log.d("LocationDialog", ""+locations.get(which).get( LocationContract.NAME ));
@@ -269,6 +274,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         builder.show();
     }
 
+    /** Displays a dialog allowing the user to add a new location */
     public void showAddLocationDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder( this, AlertDialog.THEME_HOLO_LIGHT );
@@ -332,8 +338,21 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 		this.routes.deleteRoute(v);
 	}
 
+    public void addGoal(View v){
+		this.goals.addGoal(v);
+	}
+	
+	public void editGoal(View v){
+		this.goals.editGoal(v);
+	}
+	
+	public void deleteGoal(View v){
+		this.goals.deleteGoal(v);
+	}
+
 /********************************** ADAPTERS *********************************/
 
+    /** Custom adapter for the ViewPager */
     public class SectionsPagerAdapter extends FragmentPagerAdapter
     {
         public SectionsPagerAdapter(FragmentManager fm)
@@ -341,28 +360,28 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             super(fm);
         }
 
+        // Returns the fragment at the given position
         @Override
         public Fragment getItem(int position)
         {
             if( position == 0 ){	
             	return routes;
-            }//TODO: make this the actual loc_id
-            if( position == 1 ){
+            }
+            else if( position == 1 ){
             	return dash;
             }
-            else
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-                return PlaceholderFragment.newInstance(position + 1);
+            else //( position == 2 )
+            	return goals;
         }
 
+        // Returns the number of pages
         @Override
         public int getCount()
         {
-            // Show 3 total pages.
             return 3;
         }
 
+        // Returns the title of the selected page.
         @Override
         public CharSequence getPageTitle(int position)
         {
@@ -379,42 +398,4 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             return null;
         }
     }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment
-    {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber)
-        {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment()
-        {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState)
-        {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
-        }
-    }
-
 }

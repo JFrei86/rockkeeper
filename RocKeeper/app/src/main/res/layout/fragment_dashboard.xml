@@ -54,5 +54,30 @@
 	        android:layout_gravity="center"/>
     
     </FrameLayout>
+    <TextView
+	    android:id="@+id/goalLabel"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:textSize="12sp" 
+	    android:padding="10dp"
+	    android:textStyle="bold"
+	    android:text="TOP GOALS IN PROGRESS:"/>
+    
+    <TextView
+        android:id="@+id/emptyLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="No goals here yet :( \nSwipe to the right to create some."
+        android:textSize="12sp"
+        android:textStyle="bold|italic"
+        android:visibility="gone" />
+    
+    <ListView
+        android:id="@+id/listviewDash"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:choiceMode="none">
+    </ListView>
     
 </LinearLayout>

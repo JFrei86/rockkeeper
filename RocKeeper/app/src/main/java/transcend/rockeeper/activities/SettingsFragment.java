@@ -1,3 +1,17 @@
+/** FILENAME: SettingsFragment.java
+ *  CREATED: 2015
+ *  AUTHORS:
+ *    Alex Miropolsky
+ *    Chris Berger
+ *    Jesse Freitas
+ *    Nicole Negedly
+ *  LICENSE: GNU General Public License (Version 3)
+ *    Please see the LICENSE file in the main project directory for more details.
+ *
+ *  DESCRIPTION:
+ *    Fragment which maintains a list of settings
+ */
+
 package transcend.rockeeper.activities;
 
 import android.app.Activity;

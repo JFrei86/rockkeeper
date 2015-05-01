@@ -1,3 +1,17 @@
+/** FILENAME: DashboardFragment.java
+ *  CREATED: 2015
+ *  AUTHORS:
+ *    Alex Miropolsky
+ *    Chris Berger
+ *    Jesse Freitas
+ *    Nicole Negedly
+ *  LICENSE: GNU General Public License (Version 3)
+ *    Please see the LICENSE file in the main project directory for more details.
+ *
+ *  DESCRIPTION:
+ *    Fragment for the dashboard page, showing the graph and top goals
+ */
+
 package transcend.rockeeper.activities;
 
 import transcend.rockeeper.sqlite.DatabaseHelper;
@@ -18,17 +32,16 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import activities.rockeeper.R;
 
+
 public class DashboardFragment extends Fragment {
 
     private static final String PREF_GRAPH_TYPE = "default_graph_type";
     private static final String PREF_GRAPH_TIME = "default_graph_time";
 	
 	public StatsGraph sg;
-
 	private ProgressBar prog;
 
 	private DatabaseHelper dbh;
-
 	private SQLiteDatabase db;
 
     private SharedPreferences sharedPreferences;
@@ -42,7 +55,8 @@ public class DashboardFragment extends Fragment {
 	private final int WEEK = 0;
 	private final int MONTH = 1;
 	private final int YEAR = 2;
-	
+
+    /** Returns a new instance of the fragment */
     public static DashboardFragment newInstance( ) {
         DashboardFragment fragment = new DashboardFragment();
         Bundle b = new Bundle();
@@ -54,12 +68,14 @@ public class DashboardFragment extends Fragment {
         // Required empty public constructor
     }
 
+    /** Called when the fragment is created - handle initializations */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences( getActivity() );
     }
 
+    /** Sets up the view of the fragment */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -67,6 +83,7 @@ public class DashboardFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_dashboard, container, false);
     }
 
+    /** Called when the activity associated with the fragment has been created */
     public void onActivityCreated(Bundle b){
     	super.onActivityCreated(b);
     	dbh = new DatabaseHelper(this.getActivity(), null);
@@ -143,6 +160,7 @@ public class DashboardFragment extends Fragment {
 
     }
 
+    /** Refreshes the chart */
 	public void refreshChart() {
 		if(sg != null)
 			sg.refresh();

@@ -65,19 +65,12 @@ public abstract class Contract implements BaseColumns {
 	public String dropTable() {
 		return "DROP TABLE IF EXISTS " + tableName() + ";";
 	}
+	
+	//Put a new document in the database
+	public long insert(Unit d, SQLiteDatabase db){
+		d.put(CREATED_ON, new Date().getTime());
+		d.put(MODIFIED_ON, new Date().getTime());
 
-	// Put a new document in the database
-	/**
-	 * @param d
-	 *            A Unit of data containing keys to insert into the table
-	 * @param db
-	 *            The database to insert into. Database must be read/write
-	 * @return the ID of the Unit created. Unit will be modified to contain the
-	 *         new id as well.
-	 */
-	public long insert(Unit d, SQLiteDatabase db) {
-		d.put(CREATED_ON, new Date().toString());
-		d.put(MODIFIED_ON, new Date().toString());
 		ContentValues values = new ContentValues();
 		Iterator<String> i = d.keySet().iterator();
 		while (i.hasNext()) {
@@ -139,19 +132,10 @@ public abstract class Contract implements BaseColumns {
 	public void delete(String where, String[] args, SQLiteDatabase db) {
 		db.delete(tableName(), where, args);
 	}
+	
+	public long update(Unit d, String where, String[] args, SQLiteDatabase db){
+		d.put(Contract.MODIFIED_ON, new Date().getTime());
 
-	/**
-	 * @param d
-	 * @param where
-	 *            A SQL where clause that the query will use to look up values
-	 * @param args
-	 *            Query arguments
-	 * @param db
-	 *            A read/write database reference
-	 * @return the number of documents in the database that were updated
-	 */
-	public long update(Unit d, String where, String[] args, SQLiteDatabase db) {
-		d.put(Contract.MODIFIED_ON, new Date().toString());
 		ContentValues values = new ContentValues();
 		Iterator<String> i = d.keySet().iterator();
 		while (i.hasNext()) {
