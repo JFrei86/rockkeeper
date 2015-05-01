@@ -109,6 +109,7 @@ public class GoalDialogFragment extends DialogFragment {
         ArrayAdapter<CharSequence> verbAdapter = ArrayAdapter.createFromResource( getActivity(), R.array.spinner_verbs, android.R.layout.simple_spinner_item );
         verb.setAdapter( verbAdapter );
         verb.setOnItemSelectedListener( new AdapterView.OnItemSelectedListener() {
+
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
@@ -127,8 +128,9 @@ public class GoalDialogFragment extends DialogFragment {
                     else noun.setText( "points" );
                 }
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent){}
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
         final DatePicker date = (DatePicker) dialogView.findViewById( R.id.goalDatePicker );
