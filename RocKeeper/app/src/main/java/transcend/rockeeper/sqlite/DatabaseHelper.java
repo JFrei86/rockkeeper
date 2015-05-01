@@ -17,7 +17,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	public final RouteContract routes = new RouteContract();
 	public final GoalContract goals = new GoalContract();
-	public final NoteContract notes = new NoteContract();
 	public final LocationContract locations = new LocationContract();
 	public final SettingsContract settings = new SettingsContract();
 	public final StatContract stats = new StatContract();
@@ -36,7 +35,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(routes.createTable());
 		db.execSQL(goals.createTable());
-		db.execSQL(notes.createTable());
 		db.execSQL(locations.createTable());
 		db.execSQL(settings.createTable());
 		db.execSQL(stats.createTable());
@@ -46,7 +44,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		db.execSQL(routes.dropTable());
 		db.execSQL(goals.dropTable());
-		db.execSQL(notes.dropTable());
 		db.execSQL(locations.dropTable());
 		db.execSQL(settings.dropTable());
 		db.execSQL(stats.dropTable());
@@ -56,7 +53,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		db.execSQL(routes.dropTable());
 		db.execSQL(goals.dropTable());
-		db.execSQL(notes.dropTable());
 		db.execSQL(locations.dropTable());
 		db.execSQL(settings.dropTable());
 		db.execSQL(stats.dropTable());
