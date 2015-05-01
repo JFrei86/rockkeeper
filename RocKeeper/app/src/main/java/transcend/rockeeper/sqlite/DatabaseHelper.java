@@ -13,6 +13,11 @@
  */
 package transcend.rockeeper.sqlite;
 
+import transcend.rockeeper.data.GoalContract;
+import transcend.rockeeper.data.LocationContract;
+import transcend.rockeeper.data.RouteContract;
+import transcend.rockeeper.data.SettingsContract;
+import transcend.rockeeper.data.StatContract;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.DatabaseErrorHandler;
@@ -20,7 +25,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import transcend.rockeeper.data.*;
 
 @SuppressLint("NewApi")
 public class DatabaseHelper extends SQLiteOpenHelper {

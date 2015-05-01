@@ -48,7 +48,7 @@ public class LocationContract extends Contract {
 
 	// Default values for schema
 	/**
-	 * @author Jesse
+	 * @author Team Transcend
 	 *
 	 */
 	public class Location extends Unit {

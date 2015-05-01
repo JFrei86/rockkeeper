@@ -14,6 +14,13 @@
 
 package transcend.rockeeper.activities;
 
+import java.util.Calendar;
+import java.util.HashMap;
+
+import transcend.rockeeper.data.GoalContract;
+import transcend.rockeeper.data.GoalContract.Goal;
+import transcend.rockeeper.sqlite.DatabaseHelper;
+import activities.rockeeper.R;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -33,12 +40,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
-import java.util.Calendar;
-import java.util.HashMap;
-import activities.rockeeper.R;
-import transcend.rockeeper.data.GoalContract;
-import transcend.rockeeper.data.GoalContract.Goal;
-import transcend.rockeeper.sqlite.DatabaseHelper;
 
 
 @SuppressLint("InflateParams")

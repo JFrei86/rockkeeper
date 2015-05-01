@@ -20,6 +20,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
+import transcend.rockeeper.data.Contract;
+import transcend.rockeeper.data.LocationContract;
+import transcend.rockeeper.sqlite.DatabaseHelper;
+import transcend.rockeeper.sqlite.Transaction;
+import activities.rockeeper.R;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -27,15 +32,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,11 +48,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import activities.rockeeper.R;
-import transcend.rockeeper.data.Contract;
-import transcend.rockeeper.data.LocationContract;
-import transcend.rockeeper.sqlite.DatabaseHelper;
-import transcend.rockeeper.sqlite.Transaction;
 
 @SuppressLint("InflateParams")
 @SuppressWarnings("deprecation")

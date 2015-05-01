@@ -42,8 +42,10 @@ import android.widget.ProgressBar;
 
 import com.db.chart.Tools;
 import com.db.chart.listener.OnEntryClickListener;
-import com.db.chart.model.*;
-import com.db.chart.view.*;
+import com.db.chart.model.LineSet;
+import com.db.chart.view.LineChartView;
+import com.db.chart.view.XController;
+import com.db.chart.view.YController;
 import com.db.chart.view.animation.Animation;
 import com.db.chart.view.animation.easing.QuintEase;
 

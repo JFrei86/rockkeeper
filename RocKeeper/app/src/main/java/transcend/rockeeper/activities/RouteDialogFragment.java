@@ -14,14 +14,20 @@
 
 package transcend.rockeeper.activities;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import transcend.rockeeper.data.RouteContract;
+import transcend.rockeeper.data.RouteContract.Route;
+import activities.rockeeper.R;
 import android.annotation.SuppressLint;
-import android.app.Dialog;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.v4.app.DialogFragment;
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +38,6 @@ import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.Spinner;
-import java.util.ArrayList;
-import java.util.List;
-import activities.rockeeper.R;
-import transcend.rockeeper.data.RouteContract;
-import transcend.rockeeper.data.RouteContract.Route;
 
 @SuppressLint("InflateParams")
 public class RouteDialogFragment extends DialogFragment {

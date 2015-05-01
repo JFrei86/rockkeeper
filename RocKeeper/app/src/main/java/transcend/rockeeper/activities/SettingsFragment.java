@@ -14,12 +14,12 @@
 
 package transcend.rockeeper.activities;
 
+import activities.rockeeper.R;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
 import android.util.Log;
-import activities.rockeeper.R;
 
 public class SettingsFragment extends PreferenceFragment
 {

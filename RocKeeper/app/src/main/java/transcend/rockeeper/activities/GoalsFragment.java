@@ -15,10 +15,11 @@
 package transcend.rockeeper.activities;
 
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Calendar;
-import transcend.rockeeper.data.GoalContract;
+import java.util.Locale;
+
 import transcend.rockeeper.data.Contract.Unit;
+import transcend.rockeeper.data.GoalContract;
 import transcend.rockeeper.data.GoalContract.Goal;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 import transcend.rockeeper.sqlite.Transaction;
@@ -39,9 +40,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;

@@ -18,12 +18,12 @@ package transcend.rockeeper.activities;
 import transcend.rockeeper.data.SettingsContract;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 import activities.rockeeper.R;
-import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.ActionBarActivity;
 
 public class Splash extends ActionBarActivity {
 

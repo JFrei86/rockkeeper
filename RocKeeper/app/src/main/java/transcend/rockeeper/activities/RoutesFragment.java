@@ -16,18 +16,28 @@ package transcend.rockeeper.activities;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import transcend.rockeeper.data.Contract.Unit;
 import transcend.rockeeper.data.LocationContract;
 import transcend.rockeeper.data.RouteContract;
 import transcend.rockeeper.data.RouteContract.Route;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 import transcend.rockeeper.sqlite.Transaction;
-import android.os.Bundle;
+import activities.rockeeper.R;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.content.Context;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -35,19 +45,10 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.NumberPicker;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.AdapterView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.support.v4.app.DialogFragment;
-import activities.rockeeper.R;
 
 
 public class RoutesFragment extends Fragment implements RouteDialogFragment.RouteDialogListener, AdapterView.OnItemClickListener {
