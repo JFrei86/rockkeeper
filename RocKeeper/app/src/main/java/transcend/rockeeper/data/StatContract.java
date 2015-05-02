@@ -29,6 +29,9 @@ public class StatContract extends Contract {
 	public static final String COMPLETED = RouteContract.COMPLETED;
 	public static final String POINTS = RouteContract.POINTS;
 
+	/**
+	 * Columns for StatsContract initialized
+	 */
 	public StatContract() {
 		super();
 		colTypes.put(DATE, INT);
@@ -36,7 +39,12 @@ public class StatContract extends Contract {
 		colTypes.put(COMPLETED, INT);
 		colTypes.put(POINTS, INT);
 	}
-	
+	/**
+	 * Increment Statistics for a day in the database
+	 * @param r The route that the statistic is about
+	 * @param column The column the statistic is about
+	 * @param db a writable reference of the database
+	 */
 	public void incrementStat(final Route r, final String column , SQLiteDatabase db){
 		final GregorianCalendar c = new GregorianCalendar();
 		c.set(Calendar.HOUR, 0);
@@ -71,7 +79,14 @@ public class StatContract extends Contract {
 		};
 		t.run(true, true);
 	}
-	
+	/**
+	 * Factory function
+	 * @param d The date of the statistic
+	 * @param attempts The number of attempts that day
+	 * @param completed The number of completed routes that day
+	 * @param points The number of points that day
+	 * @return A Statistic Instance
+	 */
 	public Stat build(Date d, long attempts, long completed, long points){
 		return new Stat(null, d, attempts, completed, points);
 	}
@@ -81,7 +96,9 @@ public class StatContract extends Contract {
 		return "stats";
 	}
 
+	
 	public class Stat extends Unit{
+		//Constructors
 		public Stat(Long _id, Date d, long attempts, long completed, long points){
 			if(_id != null)
 				put(_ID, _id);
@@ -99,7 +116,11 @@ public class StatContract extends Contract {
 			put(POINTS, points);
 		}
 	}
-	
+	/**
+	 * A Factory function for that instance
+	 * @param c A Cursor to a row in the database of a Stat to construct
+	 * @return A Statistic Instance
+	 */
 	public Stat build(Cursor c) {
 		return this.new Stat(
 				c.getLong(c.getColumnIndex(_ID)),

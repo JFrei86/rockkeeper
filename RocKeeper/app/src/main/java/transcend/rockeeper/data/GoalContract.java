@@ -36,6 +36,9 @@ public class GoalContract extends Contract {
 	public HashMap<String, String> verbs = new HashMap<String, String>();
 	public HashMap<String, String> nouns = new HashMap<String, String>();
 	
+	/**
+	 * Constructor: sets up goal contract columns & form verbs
+	 */
 	public GoalContract(){
 		super();
 		colTypes.put(TYPE, TEXT);
@@ -55,11 +58,18 @@ public class GoalContract extends Contract {
 		nouns.put(POINTS, " points");
 		nouns.put(DIFFICULTY, " route");
 	}
-	
+	/**
+	 * See Contract tableName();
+	 */
 	@Override
 	public String tableName() { return "goals";}
-	
+	/**
+	 * 
+	 * @author Team Transcend
+	 *
+	 */
 	public class Goal extends Unit {
+		//Constructors for Goal objects
 		public Goal(Long l, String type, long val, long due, long progress, long created_on){
 			if(l != null)
 				put(_ID, l);
@@ -69,7 +79,6 @@ public class GoalContract extends Contract {
 			put(CREATED_ON, created_on);
 			put(STATUS, progress);
 		}
-
 		public Goal(Long l, String difficulty, long due, long progress, long created_on){
 			if(l != null)
 				put(_ID, l);
@@ -80,6 +89,11 @@ public class GoalContract extends Contract {
 			put(STATUS, progress);
 		}
 	}
+	/**
+	 * Factory function for Goals
+	 * @param c Cursor pointing to a row in the database
+	 * @return Goal object from cursor
+	 */
 	public Goal build(Cursor c){
 		if(c.getString(c.getColumnIndex(TYPE)) != DIFFICULTY)
 			return this.new Goal(
@@ -97,13 +111,29 @@ public class GoalContract extends Contract {
 					c.getLong(c.getColumnIndex(STATUS)),
 					Long.parseLong((c.getString(c.getColumnIndex(CREATED_ON)))));
 	}
+	/**
+	 * Factory function for Goals
+	 * @param c Cursor pointing to a row in the database
+	 * @return Goal object from cursor
+	 */
 	public Goal build(String type, long val, long due){
 		return this.new Goal(null, type, val, due, 0, new Date().getTime());
 	}
+	/**
+	 * Factory function for Goals
+	 * @param c Cursor pointing to a row in the database
+	 * @return Goal object
+	 */
 	public Goal build(String difficulty, long due){
 		return this.new Goal(null, difficulty, due, 0, new Date().getTime());
 	}
-	
+	/**
+	 * Update manager for goals. Called when goals in the database should be updated from climbing action
+	 * @param r The route that caused the climbing action
+	 * @param column RouteContract.NUM_ATTEMPTS or RouteContract.COMPLETED to signal an attempt action
+	 * or completion action
+	 * @param db A writable database reference
+	 */
 	public void updateGoals(final Route r, final String column, SQLiteDatabase db){
 		Transaction t = new Transaction(db){
 			public void task(SQLiteDatabase db) {

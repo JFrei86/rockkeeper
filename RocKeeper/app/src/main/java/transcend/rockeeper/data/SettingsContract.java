@@ -21,6 +21,9 @@ public class SettingsContract extends Contract {
 	public static String USER = "username";
 	public static String LEVEL = "level";
 	
+	/**
+	 * Constructor: Sets up settings unique columns in contract
+	 */
 	public SettingsContract() {
 		super();
 		colTypes.put(USER, TEXT);
@@ -38,9 +41,20 @@ public class SettingsContract extends Contract {
 		}
 	}
 
+	/**
+	 * Factory functions for creating Settings instance
+	 * @param name
+	 * @param level
+	 * @return A Settings instance
+	 */
 	public Settings build(String name, String level) {
 		return this.new Settings(name, level);
 	}
+	/**
+	 * Factory functions for creating Settings instance
+	 * @param c A cursor to a row in the database
+	 * @return A Settings instance
+	 */
 	public Settings build(Cursor c){
 		return this.new Settings(
 				c.getString(c.getColumnIndex(USER)),
