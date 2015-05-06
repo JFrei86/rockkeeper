@@ -21,6 +21,7 @@ import java.util.Locale;
 import transcend.rockeeper.data.Contract.Unit;
 import transcend.rockeeper.data.GoalContract;
 import transcend.rockeeper.data.GoalContract.Goal;
+import transcend.rockeeper.data.RouteContract;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 import transcend.rockeeper.sqlite.Transaction;
 import activities.rockeeper.R;
@@ -28,6 +29,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -248,6 +250,74 @@ public class GoalsFragment extends Fragment implements GoalDialogFragment.GoalDi
         t.run(true, true);
     }
 
+    public void updateGoals( final RouteContract.Route r, final String column, SQLiteDatabase db ) {
+
+        Transaction t = new Transaction(db){
+            public void task(SQLiteDatabase db) {
+                ArrayList<Goal> gs = new ArrayList<Goal>();
+                //ArrayList<Long> delete = new ArrayList<Long>();
+                Cursor c = dbh.goals.query(null, null, null, GoalContract._ID, false, null, db);
+                c.moveToFirst();
+                while(c.getCount() > 0 && !c.isAfterLast()){
+                    gs.add(dbh.goals.build(c));
+                    c.moveToNext();
+                }
+
+                for(int i = 0; i < gs.size(); i++){
+                    Goal g = gs.get(i);
+
+                    String type = g.get( GoalContract.TYPE );
+                    long status = Long.parseLong( g.get( GoalContract.STATUS ));
+
+                    // If the goal has already been satisfied, ignore it
+                    if( !type.equals( GoalContract.DIFFICULTY ) && Long.parseLong(g.get(type)) <= status) continue;
+                    else if( type.equals(GoalContract.DIFFICULTY) && status > 0) continue;
+
+                    // Increment the status
+                    if( column.equals( GoalContract.ATTEMPTS ) ) {
+                        if( type.equals( GoalContract.ATTEMPTS ) ) {
+                            g.put( GoalContract.STATUS, status+1 );
+                            //if( status < Long.parseLong( g.get( GoalContract.ATTEMPTS ) ) && status+1 >= Long.parseLong(g.get(GoalContract.ATTEMPTS)) )
+                            //    ((MainActivity)mainActivity).showToast( "You completed a goal!", Toast.LENGTH_LONG );
+                        }
+                        else if( type.equals( GoalContract.DIFFICULTY ) && g.get( GoalContract.DIFFICULTY ).equals( r.get( GoalContract.DIFFICULTY ) ) ) {
+                            g.put( GoalContract.STATUS, 1 );
+                            //if( status == 0 )
+                            //    ((MainActivity)mainActivity).showToast( "You completed a goal!", Toast.LENGTH_LONG );
+                        }
+                    }
+                    if( column.equals( GoalContract.COMPLETED ) ) {
+                        if( type.equals( GoalContract.POINTS ) ) {
+                            g.put( GoalContract.STATUS, status + Long.parseLong( r.get( GoalContract.POINTS ) ) );
+                            //if( status < Long.parseLong(g.get(GoalContract.POINTS)) && status+Long.parseLong(r.get(GoalContract.POINTS)) >= Long.parseLong(g.get(GoalContract.POINTS)) )
+                            //    ((MainActivity)mainActivity).showToast( "You completed a goal!", Toast.LENGTH_LONG );
+                        }
+                        else if( type.equals( GoalContract.COMPLETED ) ) {
+                            g.put( GoalContract.STATUS, status+1 );
+                            //if( status < Long.parseLong(g.get(GoalContract.COMPLETED)) && status+1 >= Long.parseLong(g.get(GoalContract.COMPLETED)) )
+                            //    ((MainActivity)mainActivity).showToast( "You completed a goal!", Toast.LENGTH_LONG );
+                        }
+                    }
+					/*if(g.get(column) != null) g.put(STATUS, Long.parseLong(g.get(STATUS) + 1));
+                    //
+					if(column.equals( POINTS ) && g.get(POINTS) != null) g.put(STATUS, Long.parseLong(g.get(STATUS)) + Long.parseLong(r.get(POINTS)));
+					if(column.equals( ATTEMPTS ) && g.get(DIFFICULTY) != null && g.get(DIFFICULTY).equals( r.get(DIFFICULTY) )) g.put(STATUS, 1);*/
+                    gs.set(i, g);
+                }
+                for(int i = 0; i < gs.size(); i++){
+                    dbh.goals.update(gs.get(i), GoalContract._ID + "=" + gs.get(i).get(GoalContract._ID), null, db);
+                }
+                //String where = (_ID + " IN " + delete.toString()).replace('[', '(').replace(']', ')');
+                //delete(where, null, db);
+            }
+            public void onComplete() {
+                ((GoalListAdapter)listview.getAdapter()).notifyDataSetChanged();
+            }
+            public void onProgressUpdate(Unit... data) {}
+        };
+        t.run(true, true);
+    }
+
     /** Refreshes the list of goals */
     public void refresh() {
         //goals.clear();
@@ -289,10 +359,16 @@ public class GoalsFragment extends Fragment implements GoalDialogFragment.GoalDi
                 TextView goalText = (TextView) convertView.findViewById(R.id.goalName);
                 TextView started = (TextView) convertView.findViewById(R.id.dueDate);
                 CheckBox completed = (CheckBox) convertView.findViewById(R.id.checkboxComplete);
-                if(g.get(GoalContract.TYPE) == GoalContract.DIFFICULTY){
-                	completed.setChecked(Long.parseLong(g.get(GoalContract.STATUS)) > 0); 
+                if(g.get(GoalContract.TYPE).equals( GoalContract.DIFFICULTY )){
+                	if( Long.parseLong(g.get(GoalContract.STATUS)) > 0 ) {
+                        completed.setChecked( true );
+                        //Toast.makeText( getActivity(), "You completed a goal!", Toast.LENGTH_LONG ).show();
+                    }
                 } else {
-                	completed.setChecked(Long.parseLong(g.get(GoalContract.STATUS)) >= Long.parseLong(g.get(g.get(GoalContract.TYPE))));
+                	if( Long.parseLong(g.get(GoalContract.STATUS)) >= Long.parseLong(g.get(g.get(GoalContract.TYPE))) ) {
+                        completed.setChecked( true );
+                        //Toast.makeText(getActivity(), "You completed a goal!", Toast.LENGTH_LONG).show();
+                    }
                 }
                 
                 String goal = dbh.goals.verbs.get(g.get(GoalContract.TYPE)) + 

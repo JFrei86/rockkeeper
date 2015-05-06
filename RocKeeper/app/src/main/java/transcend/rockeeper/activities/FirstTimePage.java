@@ -106,11 +106,12 @@ public class FirstTimePage extends ActionBarActivity {
 				Settings s = dbh.settings.build(name, level.toString());
 		    	Location l = dbh.locations.build(location, city);
 
-                // TODO: DUMMY LOCATIONS, REMOVE AFTER TESTING
-                Location dummy1 = dbh.locations.build("Location1", "City1");
-                Location dummy2 = dbh.locations.build("Location2", "City2");
-                dbh.locations.insert(dummy1, db);
-                dbh.locations.insert(dummy2, db);
+                /*if( BuildConfig.DEBUG ) {
+                    Location dummy1 = dbh.locations.build("Location1", "City1");
+                    Location dummy2 = dbh.locations.build("Location2", "City2");
+                    dbh.locations.insert(dummy1, db);
+                    dbh.locations.insert(dummy2, db);
+                }*/
 
                 dbh.locations.insert(l, db);
                 dbh.settings.insert(s, db);
@@ -118,7 +119,7 @@ public class FirstTimePage extends ActionBarActivity {
                 long locID = Long.parseLong( l.get( LocationContract._ID ) );
                 Log.d( "FirstTimePage", "location ID is "+locID );
 		    	
-                if(BuildConfig.DEBUG){
+                /*if(BuildConfig.DEBUG){
 			    	Route r1 = dbh.routes.build("v0", 2, locID, 0xFF00FF00, "Rainbow Road", 0, 50);
 			    	Route r2 = dbh.routes.build("v3", 0, locID, 0xFFFF0000, "Death Drop", 0, 200);
 			    	Route r3 = dbh.routes.build("v2", 1, locID, 0xFF0000FF, "Inner Peaks", 0, 100);
@@ -132,7 +133,7 @@ public class FirstTimePage extends ActionBarActivity {
 			    	dbh.goals.insert(g1, db);
 			    	dbh.goals.insert(g2, db);
 			    	dbh.goals.insert(g3, db);
-                }
+                }*/
 			}
 			public void onComplete(){}
 			public void onProgressUpdate(Unit... data){}

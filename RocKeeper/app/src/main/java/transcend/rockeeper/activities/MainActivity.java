@@ -60,9 +60,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     private SharedPreferences sharedPrefs;
 
-    RoutesFragment routes;
-    DashboardFragment dash;
-    GoalsFragment goals;
+    public RoutesFragment routes;
+    public DashboardFragment dash;
+    public GoalsFragment goals;
 
     private DatabaseHelper dbh = new DatabaseHelper(this, null);
     private SQLiteDatabase db;
@@ -139,6 +139,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         editor.putLong( PREF_LOCATION, currentLocId );
         editor.apply();
         Log.i( "rockeeper", "Preferences saved" );
+    }
+
+    public void showToast( String text, int length ) {
+        Toast.makeText( MainActivity.this, text, length ).show();
     }
 
 /****************************** MENU METHODS *****************************/
