@@ -49,6 +49,7 @@ import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class RoutesFragment extends Fragment implements RouteDialogFragment.RouteDialogListener, AdapterView.OnItemClickListener {
@@ -136,6 +137,10 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         if(rope.isChecked())
             diff = getResources().getStringArray(R.array.rope_levels)[difficulty.getValue()];
         final String name_val = name.getText().toString();
+        if( name_val.equals("") || points.getText().toString().equals("") ) {
+            Toast.makeText( getActivity(), "Field(s) left blank. Try again", Toast.LENGTH_LONG ).show();
+            return;
+        }
         final int pts = Integer.parseInt( points.getText().toString() );
         final Route r = dbh.routes.build(diff, 0, Long.parseLong(mParam1), col_val, name_val, 0, pts);
 

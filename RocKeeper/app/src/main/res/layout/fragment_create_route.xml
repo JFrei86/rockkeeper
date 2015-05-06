@@ -8,20 +8,19 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="activities.rockeeper.CreateActivity$PlaceholderFragment" >
 
+    <!--
     <TextView
         android:id="@+id/topMessage"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:textColor="#000"
-        android:text="Create route for: " />
+        android:text="Create route for: " /> -->
 
     <EditText
         android:id="@+id/routeDialogName"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/topMessage"
-        android:layout_marginTop="20dp"
         android:hint="Route name" />
 
     <RadioGroup

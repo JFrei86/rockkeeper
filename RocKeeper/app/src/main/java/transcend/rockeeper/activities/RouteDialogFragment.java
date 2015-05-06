@@ -17,6 +17,7 @@ package transcend.rockeeper.activities;
 import java.util.ArrayList;
 import java.util.List;
 
+import transcend.rockeeper.data.LocationContract;
 import transcend.rockeeper.data.RouteContract;
 import transcend.rockeeper.data.RouteContract.Route;
 import activities.rockeeper.R;
@@ -77,8 +78,9 @@ public class RouteDialogFragment extends DialogFragment {
         colorsArray.add( 0xFFFFFFFF );
         colorsArray.add( 0xFF000000 );
 
-        AlertDialog.Builder builder = new AlertDialog.Builder( getActivity() );
+        AlertDialog.Builder builder = new AlertDialog.Builder( getActivity(), AlertDialog.THEME_HOLO_LIGHT );
         LayoutInflater inflater = getActivity().getLayoutInflater();
+        builder.setTitle( ((edit==null)?"Create":"Edit") + " route" );
 
         View dialogView = inflater.inflate(R.layout.fragment_create_route, null);
         builder.setView( dialogView );

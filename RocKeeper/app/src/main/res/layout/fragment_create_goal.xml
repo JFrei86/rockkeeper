@@ -13,11 +13,11 @@
             android:id="@+id/verbSpinner"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:layout_gravity="center"/>
 
         <EditText
             android:id="@+id/goalValue"
-            android:text="300"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

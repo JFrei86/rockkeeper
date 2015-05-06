@@ -81,8 +81,9 @@ public class GoalDialogFragment extends DialogFragment {
         goalNouns.put( 2, "points" );
         goalNouns.put( 3, "route" );
 
-        AlertDialog.Builder builder = new AlertDialog.Builder( getActivity() );
+        AlertDialog.Builder builder = new AlertDialog.Builder( getActivity(), AlertDialog.THEME_HOLO_LIGHT );
         LayoutInflater inflater = getActivity().getLayoutInflater();
+        builder.setTitle( ((edit==null)?"Create":"Edit") + " a goal" );
 
         View dialogView = inflater.inflate(R.layout.fragment_create_goal, null);
         builder.setView( dialogView );
@@ -93,6 +94,7 @@ public class GoalDialogFragment extends DialogFragment {
         final RadioGroup radioGroup = (RadioGroup) dialogView.findViewById( R.id.goalRadioGroup );
         final RadioButton toprope = (RadioButton) dialogView.findViewById( R.id.goalTopRope );
         final RadioButton boulder = (RadioButton) dialogView.findViewById( R.id.goalBoulder );
+        toprope.toggle();
 
         final Spinner diff = (Spinner) dialogView.findViewById( R.id.goalDifficulty );
         final ArrayAdapter<CharSequence> diffAdapterRope = ArrayAdapter.createFromResource( getActivity(), R.array.rope_levels, android.R.layout.simple_spinner_item );
@@ -132,29 +134,42 @@ public class GoalDialogFragment extends DialogFragment {
         // If a goal was selected, populate the fields with the appropriate data
         if( edit != null ) {
             String type = edit.get( GoalContract.TYPE );
-            if( type == "difficulty" ) {
+            if( type.equals( GoalContract.DIFFICULTY ) ) {
                 verb.setSelection( 3 );
                 noun.setText( "route" );
                 value.setVisibility( View.GONE );
                 diff.setVisibility(View.VISIBLE);
+
+                String diff_value = edit.get( GoalContract.DIFFICULTY );
+                if( diff_value.charAt(0) == 'v' ) {
+                    boulder.toggle();
+                    diff.setAdapter(diffAdapterBoulder);
+                    diff.setSelection( Integer.parseInt( diff_value.substring( 1, diff_value.length() ) ) );
+                    diff.invalidate();
+                }
+                else
+                    diff.setSelection( Integer.parseInt( diff_value.substring( 2, diff_value.length() ) ) - 5 );
             }
-            else if( type == "points" ) {
+            else if( type.equals( GoalContract.POINTS ) ) {
                 verb.setSelection( 2 );
+                value.setText( edit.get( GoalContract.POINTS ));
                 noun.setText(goalNouns.get(2));
             }
-            else if( type == "num_attempts" ) {
+            else if( type.equals( GoalContract.ATTEMPTS ) ) {
                 verb.setSelection( 0 );
+                value.setText( edit.get( GoalContract.ATTEMPTS ));
                 noun.setText(goalNouns.get(0));
             }
-            else if( type == "complete" ) {
+            else if( type.equals( GoalContract.COMPLETED ) ) {
                 verb.setSelection( 1 );
+                value.setText( edit.get( GoalContract.COMPLETED ));
                 noun.setText(goalNouns.get(1));
             }
             Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis( Long.parseLong( edit.get( GoalContract.DUE_DATE ) ) );
+            cal.setTimeInMillis(Long.parseLong(edit.get(GoalContract.DUE_DATE)));
             date.updateDate( cal.get( Calendar.YEAR ), cal.get( Calendar.MONTH ), cal.get( Calendar.DAY_OF_MONTH ) );
 
-            //TODO: Fetch difficulty data and toggle radio buttons accordingly
+            verb.setEnabled( false );
         }
 
         toprope.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {

@@ -46,6 +46,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class GoalsFragment extends Fragment implements GoalDialogFragment.GoalDialogListener, AdapterView.OnItemClickListener{
 
@@ -109,7 +110,11 @@ public class GoalsFragment extends Fragment implements GoalDialogFragment.GoalDi
 
         // Get the values from the fields
         final String verb_val = (String) verb.getSelectedItem();
-        final int value_val = Integer.parseInt( value.getText().toString() );
+        if( value.getText().toString().equals("") && !verb_val.equals("Climb a") ) {
+            Toast.makeText( getActivity(), "Field(s) left blank. Try again", Toast.LENGTH_LONG ).show();
+            return;
+        }
+        final int value_val = ( value.getText().toString().equals("") )?0:Integer.parseInt( value.getText().toString() );
         final String diff_val = (String) diff.getSelectedItem();
         final Calendar cal = Calendar.getInstance();
         cal.set( date.getYear(), date.getMonth(), date.getDayOfMonth() );
@@ -123,14 +128,14 @@ public class GoalsFragment extends Fragment implements GoalDialogFragment.GoalDi
         else if( verb_val.equals( "Climb a" ) ) goalType = GoalContract.DIFFICULTY;
 
         // Build the goal object and add/update it in the database
-        final Goal g = (goalType == GoalContract.DIFFICULTY) ? dbh.goals.build( diff_val, date_val ) : dbh.goals.build( goalType, value_val, date_val );
+        final Goal g = (goalType.equals( GoalContract.DIFFICULTY ) ) ? dbh.goals.build( diff_val, date_val ) : dbh.goals.build( goalType, value_val, date_val );
         Transaction t = new Transaction(db) {
             public void task(SQLiteDatabase db) {
                 if(edit == null){
-                    dbh.routes.insert(g, db);
+                    dbh.goals.insert(g, db);
                 }
                 else{
-                    dbh.routes.update(g, GoalContract._ID + "=" + edit.get(GoalContract._ID), null, db);
+                    dbh.goals.update(g, GoalContract._ID + "=" + edit.get(GoalContract._ID), null, db);
                 }
             }
             public void onComplete() {
@@ -226,9 +231,10 @@ public class GoalsFragment extends Fragment implements GoalDialogFragment.GoalDi
     private void getGoals(SQLiteDatabase db2) {
         Transaction t = new Transaction(db){
             public void task(SQLiteDatabase db) {
+                goals.clear();
                 Cursor c = dbh.goals.query(null, null, null, GoalContract.DUE_DATE, false, null, db);
                 c.moveToFirst();
-                while(c.getCount() > 0 && !c.isAfterLast()){
+                while(c.getCount() > 0 && !c.isAfterLast()) {
                     goals.add(dbh.goals.build(c));
                     c.moveToNext();
                 }
@@ -244,9 +250,9 @@ public class GoalsFragment extends Fragment implements GoalDialogFragment.GoalDi
 
     /** Refreshes the list of goals */
     public void refresh() {
-        goals.clear();
+        //goals.clear();
         getGoals(db);
-        ((GoalListAdapter)listview.getAdapter()).notifyDataSetChanged();
+        //((GoalListAdapter)listview.getAdapter()).notifyDataSetChanged();
     }
 
 /********************************* ADAPTERS *******************************************/

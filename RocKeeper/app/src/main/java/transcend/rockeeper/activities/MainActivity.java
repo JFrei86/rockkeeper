@@ -48,6 +48,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 @SuppressLint("InflateParams")
 @SuppressWarnings("deprecation")
@@ -294,8 +295,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 final String name = locName.getText().toString();
                 final String city = locCity.getText().toString();
 
-                if( name == null || city == null ) {
-                    // TODO: Toast or something else here?
+                if( name.equals("") || city.equals("") ) {
+                    Toast.makeText( MainActivity.this, "Field(s) left blank. Try again", Toast.LENGTH_LONG ).show();
                     return;
                 }
 
