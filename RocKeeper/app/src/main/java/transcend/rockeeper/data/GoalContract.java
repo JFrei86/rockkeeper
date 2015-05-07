@@ -92,6 +92,9 @@ public class GoalContract extends Contract {
 			put(CREATED_ON, created_on);
 			put(STATUS, progress);
 		}
+        public String toString() {
+            return verbs.get(get(TYPE)) + " " + get(get(TYPE)) + " " + nouns.get(get(TYPE));
+        }
 	}
 	/**
 	 * Factory function for Goals
