@@ -4,6 +4,15 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
+    <TextView
+        android:id="@+id/noRoutesMessage"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="You currently have no routes for this location. Select ADD below to create some!"
+        android:layout_margin="10dp"
+        android:visibility="visible"/>
+
     <ListView
         android:id="@+id/listview"
         android:layout_width="fill_parent"

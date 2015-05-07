@@ -119,6 +119,7 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         listview.setAdapter( new RouteListAdapter( mainActivity, routes ));
         listview.setOnItemClickListener( this );
         Log.d( "rockeeper", "RoutesFragment(): onActivityCreated()" );
+        mainActivity.findViewById( R.id.noRoutesMessage ).setVisibility( (routes.size()==0)?View.VISIBLE:View.GONE );
     }
 
 /************************* DIALOG HANDLERS *****************************/
@@ -144,6 +145,8 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
         }
         final int pts = Integer.parseInt( points.getText().toString() );
         final Route r = dbh.routes.build(diff, 0, Long.parseLong(mParam1), col_val, name_val, 0, pts);
+
+        getActivity().findViewById( R.id.noRoutesMessage ).setVisibility( View.GONE );
 
         // Insert or update the database entry accordingly
         Transaction t = new Transaction(db){
@@ -206,6 +209,7 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
 				routes.remove(delete);
 				click(listview, selectedItem);
                 ((RouteListAdapter)listview.getAdapter()).notifyDataSetChanged();
+                if( routes.size() == 0 ) getActivity().findViewById( R.id.noRoutesMessage ).setVisibility( View.VISIBLE );
 			}
 			public void onProgressUpdate(Unit... data) {}
 		};

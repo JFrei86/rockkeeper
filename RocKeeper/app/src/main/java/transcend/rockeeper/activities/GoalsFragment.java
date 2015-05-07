@@ -98,6 +98,7 @@ public class GoalsFragment extends Fragment implements GoalDialogFragment.GoalDi
         listview = (ListView) mainActivity.findViewById(R.id.listviewGoals);
         listview.setAdapter( new GoalListAdapter( this.getActivity(), goals ));
         listview.setOnItemClickListener( this );
+        mainActivity.findViewById( R.id.noGoalsMessage ).setVisibility( (goals.size()==0)?View.VISIBLE:View.GONE );
     }
 
 /********************************** DIALOG HANDLERS ***************************/
@@ -131,8 +132,26 @@ public class GoalsFragment extends Fragment implements GoalDialogFragment.GoalDi
 
         final GoalListAdapter adapter = (GoalListAdapter)listview.getAdapter();
 
-        // Build the goal object and add/update it in the database
+        mainActivity.findViewById( R.id.noGoalsMessage ).setVisibility( View.GONE );
+
         final Goal g = (goalType.equals( GoalContract.DIFFICULTY ) ) ? dbh.goals.build( diff_val, date_val ) : dbh.goals.build( goalType, value_val, date_val );
+
+        if(edit != null){
+            if(selectedItem == -1)
+                return;
+            //goals.set(selectedItem, g);
+            adapter.remove( edit );
+            adapter.insert( g, selectedItem );
+        }
+        else{
+            //goals.add(g);
+            adapter.add( g );
+            click(listview, selectedItem);
+        }
+        listview.invalidateViews();
+
+        // Build the goal object and add/update it in the database
+
         Transaction t = new Transaction(db) {
             public void task(SQLiteDatabase db) {
                 if(edit == null){
@@ -143,7 +162,7 @@ public class GoalsFragment extends Fragment implements GoalDialogFragment.GoalDi
                 }
             }
             public void onComplete() {
-                if(edit != null){
+                /*if(edit != null){
                     if(selectedItem == -1)
                         return;
                     //goals.set(selectedItem, g);
@@ -154,8 +173,8 @@ public class GoalsFragment extends Fragment implements GoalDialogFragment.GoalDi
                     //goals.add(g);
                     adapter.add( g );
                     click(listview, selectedItem);
-                }
-
+                }*/
+                listview.invalidateViews();
                 //adapter.notifyDataSetChanged();
             }
             public void onProgressUpdate(Unit... data) {}
@@ -200,7 +219,7 @@ public class GoalsFragment extends Fragment implements GoalDialogFragment.GoalDi
                 dbh.goals.delete(GoalContract._ID + "=" + delete.get(GoalContract._ID), null, db);
             }
             public void onComplete() {
-                //goals.remove(delete);
+                if( goals.size() == 0 ) getActivity().findViewById( R.id.noGoalsMessage ).setVisibility( View.VISIBLE );
             }
             public void onProgressUpdate(Unit... data) {}
         };
