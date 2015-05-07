@@ -18,10 +18,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import transcend.rockeeper.activities.MainActivity;
+import transcend.rockeeper.activities.RoutesFragment;
 import transcend.rockeeper.data.RouteContract.Route;
 import transcend.rockeeper.sqlite.Transaction;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.ListView;
+import android.widget.Toast;
 
 public class GoalContract extends Contract {
 
@@ -134,7 +138,7 @@ public class GoalContract extends Contract {
 	 * or completion action
 	 * @param db A writable database reference
 	 */
-	public void updateGoals(final Route r, final String column, SQLiteDatabase db){
+	public void updateGoals(final Route r, final String column, final MainActivity mainActivity, final ListView listview, SQLiteDatabase db){
 		Transaction t = new Transaction(db){
 			public void task(SQLiteDatabase db) {
 				ArrayList<Goal> gs = new ArrayList<Goal>();
@@ -148,13 +152,43 @@ public class GoalContract extends Contract {
 				
 				for(int i = 0; i < gs.size(); i++){
 					Goal g = gs.get(i);
-					
-					if(g.get(TYPE) != DIFFICULTY && Long.parseLong(g.get(g.get(TYPE))) <= Long.parseLong(g.get(STATUS))) continue;
-					else if(g.get(TYPE) == DIFFICULTY && Long.parseLong(g.get(STATUS)) > 0) continue;
-					
-					if(g.get(column) != null) g.put(STATUS, Long.parseLong(g.get(STATUS) + 1));
-					if(column != ATTEMPTS && g.get(POINTS) != null) g.put(STATUS, Long.parseLong(g.get(STATUS) + Long.parseLong(r.get(POINTS))));
-					if(column != ATTEMPTS && g.get(DIFFICULTY) != null && g.get(DIFFICULTY) == r.get(DIFFICULTY)) g.put(STATUS, 1);
+
+                    String type = g.get( TYPE );
+                    long status = Long.parseLong( g.get( STATUS ));
+
+                    // If the goal has already been satisfied, ignore it
+					if( !type.equals( DIFFICULTY ) && Long.parseLong(g.get(type)) <= status) continue;
+					else if( type.equals(DIFFICULTY) && status > 0) continue;
+
+                    // Increment the status
+                    if( column.equals( ATTEMPTS ) ) {
+                        if( type.equals( ATTEMPTS ) ) {
+                            g.put( STATUS, status+1 );
+                            if( status < Long.parseLong( g.get( ATTEMPTS ) ) && status+1 >= Long.parseLong(g.get(ATTEMPTS)) )
+                                mainActivity.showToast( "You completed a goal!", Toast.LENGTH_LONG );
+                        }
+                        else if( type.equals( DIFFICULTY ) && g.get( DIFFICULTY ).equals( r.get( DIFFICULTY ) ) ) {
+                            g.put( STATUS, 1 );
+                            if( status == 0 )
+                                mainActivity.showToast( "You completed a goal!", Toast.LENGTH_LONG );
+                        }
+                    }
+                    if( column.equals( COMPLETED ) ) {
+                        if( type.equals( POINTS ) ) {
+                            g.put( STATUS, status + Long.parseLong( r.get( POINTS ) ) );
+                            if( status < Long.parseLong(g.get(POINTS)) && status+Long.parseLong(r.get(POINTS)) >= Long.parseLong(g.get(POINTS)) )
+                                mainActivity.showToast( "You completed a goal!", Toast.LENGTH_LONG );
+                        }
+                        else if( type.equals( COMPLETED ) ) {
+                            g.put( STATUS, status+1 );
+                            if( status < Long.parseLong(g.get(COMPLETED)) && status+1 >= Long.parseLong(g.get(COMPLETED)) )
+                                mainActivity.showToast( "You completed a goal!", Toast.LENGTH_LONG );
+                        }
+                    }
+					/*if(g.get(column) != null) g.put(STATUS, Long.parseLong(g.get(STATUS) + 1));
+                    //
+					if(column.equals( POINTS ) && g.get(POINTS) != null) g.put(STATUS, Long.parseLong(g.get(STATUS)) + Long.parseLong(r.get(POINTS)));
+					if(column.equals( ATTEMPTS ) && g.get(DIFFICULTY) != null && g.get(DIFFICULTY).equals( r.get(DIFFICULTY) )) g.put(STATUS, 1);*/
 					gs.set(i, g);
 				}
 				for(int i = 0; i < gs.size(); i++){
@@ -163,7 +197,9 @@ public class GoalContract extends Contract {
 				//String where = (_ID + " IN " + delete.toString()).replace('[', '(').replace(']', ')');
 				//delete(where, null, db);
 			}
-			public void onComplete() {}
+			public void onComplete() {
+                ((RoutesFragment.RouteListAdapter)listview.getAdapter()).notifyDataSetChanged();
+            }
 			public void onProgressUpdate(Unit... data) {}
 		};
 		t.run(true, true);

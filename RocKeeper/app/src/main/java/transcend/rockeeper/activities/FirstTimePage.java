@@ -152,6 +152,7 @@ public class FirstTimePage extends ActionBarActivity {
                 		dbh.stats.insert(a, db);
                 	}
                 }
+
 			}
 			public void onComplete(){}
 			public void onProgressUpdate(Unit... data){}

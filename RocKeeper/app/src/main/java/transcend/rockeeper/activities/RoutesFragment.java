@@ -17,6 +17,7 @@ package transcend.rockeeper.activities;
 import java.util.ArrayList;
 import java.util.List;
 
+import transcend.rockeeper.activities.GoalsFragment;
 import transcend.rockeeper.data.Contract.Unit;
 import transcend.rockeeper.data.LocationContract;
 import transcend.rockeeper.data.RouteContract;
@@ -261,7 +262,7 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
 	}
 
     /** Custom adapter for the list of routes */
-    private class RouteListAdapter extends ArrayAdapter<Route> {
+    public class RouteListAdapter extends ArrayAdapter<Route> {
 
         List<Route> routes;
         LayoutInflater inflater = null;
@@ -339,9 +340,11 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
 							}
 							dbh.stats.incrementStat(routes.get(position), RouteContract.COMPLETED, db);
 							dbh.stats.incrementStat(routes.get(position), RouteContract.NUM_ATTEMPTS, db);
-							dbh.goals.updateGoals(routes.get(position), RouteContract.COMPLETED, db);
-							dbh.goals.updateGoals(routes.get(position), RouteContract.NUM_ATTEMPTS, db);
-							listview.invalidateViews();
+							//dbh.goals.updateGoals(routes.get(position), RouteContract.COMPLETED, (MainActivity)mainActivity, listview, db);
+							//dbh.goals.updateGoals(routes.get(position), RouteContract.NUM_ATTEMPTS, (MainActivity)mainActivity, listview, db);
+                            ((MainActivity)mainActivity).goals.updateGoals( routes.get( position ), RouteContract.COMPLETED, db );
+                            ((MainActivity)mainActivity).goals.updateGoals( routes.get( position ), RouteContract.NUM_ATTEMPTS, db );
+							//listview.invalidateViews();
 						}
 						public void onProgressUpdate(Unit... data) {}
 					};
@@ -363,8 +366,9 @@ public class RoutesFragment extends Fragment implements RouteDialogFragment.Rout
 						}
 						public void onComplete() {
 							dbh.stats.incrementStat(routes.get(position), RouteContract.NUM_ATTEMPTS, db);
-							dbh.goals.updateGoals(routes.get(position), RouteContract.NUM_ATTEMPTS, db);
-							listview.invalidateViews();
+                            ((MainActivity)mainActivity).goals.updateGoals( routes.get( position ), RouteContract.NUM_ATTEMPTS, db );
+                            ((RouteListAdapter)listview.getAdapter()).notifyDataSetChanged();
+							//listview.invalidateViews();
 						}
 						public void onProgressUpdate(Unit... data) {}
 					};
