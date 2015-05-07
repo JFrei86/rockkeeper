@@ -15,7 +15,10 @@
 
 package transcend.rockeeper.activities;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Random;
 
 import transcend.rockeeper.data.Contract.Unit;
 import transcend.rockeeper.data.GoalContract;
@@ -24,6 +27,7 @@ import transcend.rockeeper.data.LocationContract;
 import transcend.rockeeper.data.LocationContract.Location;
 import transcend.rockeeper.data.RouteContract.Route;
 import transcend.rockeeper.data.SettingsContract.Settings;
+import transcend.rockeeper.data.StatContract.Stat;
 import transcend.rockeeper.sqlite.DatabaseHelper;
 import transcend.rockeeper.sqlite.Transaction;
 import activities.rockeeper.BuildConfig;
@@ -106,12 +110,6 @@ public class FirstTimePage extends ActionBarActivity {
 				Settings s = dbh.settings.build(name, level.toString());
 		    	Location l = dbh.locations.build(location, city);
 
-                // TODO: DUMMY LOCATIONS, REMOVE AFTER TESTING
-                Location dummy1 = dbh.locations.build("Location1", "City1");
-                Location dummy2 = dbh.locations.build("Location2", "City2");
-                dbh.locations.insert(dummy1, db);
-                dbh.locations.insert(dummy2, db);
-
                 dbh.locations.insert(l, db);
                 dbh.settings.insert(s, db);
 
@@ -119,25 +117,46 @@ public class FirstTimePage extends ActionBarActivity {
                 Log.d( "FirstTimePage", "location ID is "+locID );
 		    	
                 if(BuildConfig.DEBUG){
-			    	Route r1 = dbh.routes.build("v0", 2, locID, 0xFF00FF00, "Rainbow Road", 0, 50);
-			    	Route r2 = dbh.routes.build("v3", 0, locID, 0xFFFF0000, "Death Drop", 0, 200);
-			    	Route r3 = dbh.routes.build("v2", 1, locID, 0xFF0000FF, "Inner Peaks", 0, 100);
-			    	Goal g1 = dbh.goals.build(GoalContract.POINTS, 4000, new Date().getTime() + 2592000000l);
-			    	Goal g2 = dbh.goals.build(GoalContract.COMPLETED, 10, new Date().getTime() + 2592000000l);
-			    	Goal g3 = dbh.goals.build(GoalContract.ATTEMPTS, 20, new Date().getTime() + (2592000000l / 4));
-			    	
-			    	dbh.routes.insert(r1, db);
-			    	dbh.routes.insert(r2, db);
-			    	dbh.routes.insert(r3, db);
-			    	dbh.goals.insert(g1, db);
-			    	dbh.goals.insert(g2, db);
-			    	dbh.goals.insert(g3, db);
+                	for(int i = 0; i < 6; i++){
+                		Random r = new Random((long)(Math.random() * 100000000));
+                		int diff = r.nextInt(14);
+                		int attempts = r.nextInt(4);
+                		
+                		boolean red = r.nextBoolean();
+                		boolean green = r.nextBoolean();
+                		boolean blue = r.nextBoolean();
+                		String name = "Route " + (i + 1);
+                		int completed = r.nextInt(2);
+                		int points = 50 * (diff + 1);
+                		
+                		int color = 0xFF000000;
+                		if(red) color += 0x00FF0000;
+                		if(green) color += 0x0000FF00;
+                		if(blue) color += 0x000000FF;
+                		
+                		Route a = dbh.routes.build("v"+diff, attempts, locID, color, name, completed, points);
+                		dbh.routes.insert(a, db);
+                	}
+                	for(int i = 0; i < 360; i++){
+                		Random r = new Random((long)(Math.random() * 100000000));
+                		GregorianCalendar c = new GregorianCalendar();
+                		c.set(Calendar.HOUR, 0);
+                		c.set(Calendar.MINUTE, 0);
+                		c.set(Calendar.SECOND, 0);
+                		c.set(Calendar.MILLISECOND, 0);
+                		c.add(Calendar.DATE, -i);
+                		int x = r.nextInt(5);
+                		int y = r.nextInt(3);
+                		int z = y * (50 + 50 * (1 + r.nextInt(15)));
+                		Stat a = dbh.stats.build(c.getTime(), x, y, z);
+                		dbh.stats.insert(a, db);
+                	}
                 }
 			}
 			public void onComplete(){}
 			public void onProgressUpdate(Unit... data){}
     	};
-    	t.run(true, true);
+    	t.run(true, false);
 
         // Create the intent for MainActivity and start it
         Intent mainIntent = new Intent(this, MainActivity.class);
